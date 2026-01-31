@@ -17,15 +17,11 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('branch_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('department_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('shift_id')->constrained()->cascadeOnUpdate();
+            $table->foreignId('shift_id')->nullable()->constrained()->nullOnDelete();
 
             $table->date('start_date');
             $table->date('end_date');
-
-            $table->string('working_days');                // Sun–Thu
-            $table->string('weekly_off_days')->nullable(); // Fri,Sat
             $table->enum('status', ['active', 'inactive'])->default('active');
-
             $table->timestamps();
 
             $table->index(['branch_id', 'department_id']);

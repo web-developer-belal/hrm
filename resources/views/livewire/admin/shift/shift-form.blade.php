@@ -2,7 +2,7 @@
     <!-- Breadcrumb -->
     <div class="md:flex block items-center justify-between page-breadcrumb mb-4">
         <div class="my-auto mb-2">
-            <h2 class="mb-1">{{ $isEditMode ? 'Edit Branch' : 'Create Branch' }}</h2>
+            <h2 class="mb-1">{{ $isEditMode ? 'Edit Shift' : 'Create Shift' }}</h2>
             <nav class="flex" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-2">
                     <li class="inline-flex items-center">
@@ -14,7 +14,7 @@
                     <li>
                         <span class="text-default">/</span>
                     </li>
-                    <li class="text-xs text-default">{{ $isEditMode ? 'Edit Branch' : 'Create Branch' }}</li>
+                    <li class="text-xs text-default">{{ $isEditMode ? 'Edit Shift' : 'Create Shift' }}</li>
 
                 </ol>
             </nav>
@@ -22,9 +22,9 @@
         <div class="flex my-xl-auto right-content items-center flex-wrap ">
 
             <div class="mb-2">
-                <a href="{{ route('admin.branches.index') }}"
+                <a href="{{ route('admin.shifts.index') }}"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
-                        class="ti ti-circle-plus me-2"></i>Branches</a>
+                        class="ti ti-circle-plus me-2"></i>Shifts</a>
             </div>
 
         </div>
@@ -35,20 +35,23 @@
     <div class="">
         <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white mb-6">
             <div class="card-header p-5 border-b border-borderColor">
-                <h5 class="card-title">{{ $isEditMode ? 'Edit Branch' : 'Create Branch' }}</h5>
+                <h5 class="card-title">{{ $isEditMode ? 'Edit Shift' : 'Create Shift' }}</h5>
             </div>
             <div class="card-body p-5">
                 <form wire:submit.prevent="save" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-                    <x-form.input label="Branch Name" name="name" :is_required="true" :error="true"
-                        placeholder="Enter Branch Name" />
-                    <x-form.input label="Contact" name="contact" :is_required="true" :error="true"
-                        placeholder="Enter Contact" />
-                    <div class="md:col-span-2">
-                        <x-form.textarea label="Branch Address" name="address" :is_required="false" :error="true" />
-                    </div>
-
+                    <x-form.input label="Shift Name" name="name" :is_required="true" :error="true"
+                        placeholder="Enter Shift Name" />
+                    <x-form.input label="Start Time" type="time" name="start_time" :is_required="true"
+                        :error="true" placeholder="Enter Start Time" live="true" />
+                    <x-form.input label="End Time" type="time" name="end_time" :is_required="true" :error="true"
+                        placeholder="Enter End Time" live="true" />
                     <x-form.select label="Status" name="status" :is_required="true" :error="true"
                         :options="['active' => 'Active', 'inactive' => 'Inactive']" />
+                    <div class="md:col-span-2">
+                        {{ $workingText }}
+                    </div>
+
+
 
                     <div class="text-end md:col-span-2">
                         <x-form.button type="submit" />

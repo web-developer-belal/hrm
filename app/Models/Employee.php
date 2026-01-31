@@ -11,7 +11,8 @@ class Employee extends Model
 
     protected $fillable = [
         'photo',
-        'employee_name',
+        'first_name',
+        'last_name',
         'date_of_birth',
         'gender',
         'contact_number',
@@ -74,6 +75,16 @@ class Employee extends Model
     public function subordinates()
     {
         return $this->hasMany(Employee::class, 'supervisor_id');
+    }
+
+    public function rosters()
+    {
+        return $this->belongsToMany(Roster::class);
+    }
+
+    public function getFullNameAttribute()
+    {
+        return trim($this->first_name . ' ' . $this->last_name);
     }
 }
 

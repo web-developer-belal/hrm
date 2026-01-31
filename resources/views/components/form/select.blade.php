@@ -2,11 +2,18 @@
     @if ($label)
         <label class="form-label">{{ $label }}</label>
     @endif
-    <select class="form-control {{ $class ?? '' }}"
+    <select @if ($is_multiple)
+        wire:ignore.self
+    @endif class="form-control {{ $class ?? '' }}"
         @if ($live) wire:model.live="{{ $name }}" @else wire:model="{{ $name }}" @endif
-        @if ($is_required) required @endif>
-        <option value="active">Active</option>
-        <option value="inactive">Inactive</option>
+        @if ($is_required) required @endif
+        @if ($is_multiple) multiple @endif
+        >
+        @foreach ($options as $index=>$item)
+            <option value="{{ $index }}">
+                {{ $item }}
+            </option>
+        @endforeach
     </select>
     @if ($error)
         @error($name)

@@ -9,7 +9,8 @@ return new class extends Migration {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->string('photo')->nullable();
-            $table->string('employee_name');
+            $table->string('first_name');
+            $table->string('last_name')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->enum('gender', ['male', 'female', 'other'])->nullable();
             $table->string('contact_number', 20);
@@ -40,7 +41,6 @@ return new class extends Migration {
             $table->index('designation_id');
             $table->index('shift_id');
             $table->index('supervisor_id');
-            $table->index('employee_name');
         });
     }
 

@@ -73,16 +73,16 @@
                                 <li><a href="{{ route('admin.branches.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Branch</a>
                                 </li>
-                                <li><a href="department.html"
+                                <li><a href="{{ route('admin.departments.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Department</a>
                                 </li>
-                                <li><a href="shift.html"
+                                <li><a href="{{ route('admin.shifts.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Shift</a>
                                 </li>
-                                <li><a href="roster.html"
+                                <li><a href="{{ route('admin.rosters.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Roster</a>
                                 </li>
-                                <li><a href="designation.html"
+                                <li><a href="{{ route('admin.designations.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Designation</a>
                                 </li>
                                 <li><a href="transfer.html"

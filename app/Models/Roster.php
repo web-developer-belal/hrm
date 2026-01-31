@@ -12,8 +12,6 @@ class Roster extends Model
         'shift_id',
         'start_date',
         'end_date',
-        'working_days',
-        'weekly_off_days',
         'status',
     ];
 
@@ -39,6 +37,18 @@ class Roster extends Model
 
     public function employees()
     {
-        return $this->belongsToMany(Employee::class);
+        return $this->belongsToMany(RosterEmployee::class);
     }
+
+    public function workingDays()
+    {
+        return $this->hasMany(RosterWorkingDay::class)->where('type', 'working');
+    }
+
+    public function weeklyOffDays()
+    {
+        return $this->hasMany(RosterWorkingDay::class)->where('type', 'off');
+    }
+
+
 }
