@@ -7,9 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class RosterEmployee extends Model
 {
     protected $table = 'roster_employees';
-    protected $fillable = [
+  protected $fillable = [
         'roster_id',
         'employee_id',
+        'date',
+        'is_off_day',
+        'shift_id',
+        'notes'
+    ];
+       protected $casts = [
+        'date' => 'date',
+        'is_off_day' => 'boolean',
     ];
     public function roster()
     {
@@ -19,5 +27,10 @@ class RosterEmployee extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class);
+    }
+
+      public function shift()
+    {
+        return $this->belongsTo(Shift::class);
     }
 }

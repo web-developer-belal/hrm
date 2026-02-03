@@ -11,7 +11,7 @@ class RosterRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,6 +29,8 @@ class RosterRequest extends FormRequest
             'start_date'     => 'required|date',
             'end_date'       => 'required|date|after_or_equal:start_date',
             'status'         => 'required|in:active,inactive',
+            'working_days.*'         => 'required',
+            'weekly_off_days.*'         => 'required',
         ];
     }
 
@@ -48,6 +50,8 @@ class RosterRequest extends FormRequest
             'end_date.date'           => 'End date must be a valid date.',
             'end_date.after_or_equal' => 'End date must be after or equal to start date.',
             'status.required'         => 'Status is required.',
+            'working_days.required'   => 'Working Days is requird .',
+            'weekly_off_days.required'   => 'Working Days off is requird .',
             'status.in'               => 'Status must be either active or inactive.',
         ];
     }
