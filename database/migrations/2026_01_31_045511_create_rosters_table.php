@@ -21,6 +21,9 @@ return new class extends Migration
 
             $table->date('start_date');
             $table->date('end_date');
+            $table->json('working_days')->nullable();
+            $table->json('weekly_off_days')->nullable();
+
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
 

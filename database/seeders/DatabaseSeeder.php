@@ -1,9 +1,11 @@
 <?php
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
 {
@@ -145,6 +147,8 @@ class DatabaseSeeder extends Seeder
                     \App\Models\RosterEmployee::create([
                         'roster_id'   => $newRoster->id,
                         'employee_id' => $employeeId,
+                        'date' => '2026-01-01',
+                        'shift_id' => 1,
                     ]);
                 }
 
@@ -154,5 +158,16 @@ class DatabaseSeeder extends Seeder
                 }
             });
         }
+
+         User::updateOrCreate([
+            'first_name'=> 'Akbar',
+            'last_name'=> 'Ali',
+            'role'=> 'admin',
+            'email' => 'admin@mail.com',
+            'password' => Hash::make('password'),
+
+        ]);
+
+
     }
 }
