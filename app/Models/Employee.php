@@ -34,6 +34,7 @@ class Employee extends Model
         'bank_account_type',
         'account_number',
         'bank_notes',
+        'status',
     ];
 
     protected $casts = [
@@ -91,5 +92,6 @@ public function rosters()
 {
     return $this->belongsToMany(Roster::class, 'roster_employee');
 }
-}
 
+
+}

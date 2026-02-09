@@ -24,6 +24,7 @@ return new class extends Migration {
             $table->foreignId('designation_id')->nullable()->constrained('designations')->nullOnDelete();
             $table->foreignId('shift_id')->nullable()->constrained('shifts')->nullOnDelete();
             $table->date('joining_date');
+            $table->tinyInteger('status')->default(0);
             $table->string('workspace')->nullable();
             $table->foreignId('supervisor_id')
                   ->nullable()

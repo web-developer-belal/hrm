@@ -148,7 +148,7 @@
                         name="end_date"
                         :is_required="true"
                         :error="true"
-                        type="date" />s
+                        type="date" />
 
                     <!-- Status -->
                     <x-form.select
