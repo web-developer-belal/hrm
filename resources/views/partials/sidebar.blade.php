@@ -85,8 +85,11 @@
                                 <li><a href="{{ route('admin.designations.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Designation</a>
                                 </li>
-                                <li><a href="transfer.html"
-                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Transfer</a>
+                                <li><a href="{{ route('admin.transfer.new') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Transfer New</a>
+                                </li>
+                                <li><a href="{{ route('admin.transfer.index') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Transfer List</a>
                                 </li>
                                 <li><a href="complain.html"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Complain</a>
