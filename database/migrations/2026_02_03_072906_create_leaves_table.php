@@ -13,13 +13,16 @@ return new class extends Migration
     {
         Schema::create('leaves', function (Blueprint $table) {
             $table->id();
+             $table->foreignId('branch_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
             $table->foreignId('leave_type_id')->constrained();
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->string('leave_type');
+            $table->date('from_date');
+            $table->date('to_date');
             $table->integer('total_days');
+            $table->mediumText('descriptions')->nullable();
             $table->enum('status',['pending','approved','rejected'])->default('pending');
+              $table->foreignId('confirmed_by')->constrained();
+              $table->foreignId('approved_by')->constrained();
             $table->timestamps();
         });
     }

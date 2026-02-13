@@ -44,10 +44,10 @@
                             </a>
                             <ul
                                 class="relative mt-2 before:absolute before:top-0 before:left-3.5 before:w-[1.5px] before:h-full before:bg-gray-100">
-                                <li><a href="add-attendance.html"
+                                <li><a href="{{ route('admin.attendance.add.mannual') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Add
                                         Attendance</a></li>
-                                <li><a href="attendance-report.html"
+                                <li><a href="{{ route('admin.attendance.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Attendance
                                         Reports</a></li>
                                 <li><a href="overtime.html"
@@ -85,8 +85,11 @@
                                 <li><a href="{{ route('admin.designations.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Designation</a>
                                 </li>
-                                <li><a href="transfer.html"
-                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Transfer</a>
+                                <li><a href="{{ route('admin.transfer.new') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Transfer New</a>
+                                </li>
+                                <li><a href="{{ route('admin.transfer.index') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Transfer List</a>
                                 </li>
                                 <li><a href="complain.html"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Complain</a>
@@ -105,10 +108,10 @@
                             </a>
                             <ul
                                 class="relative mt-2 before:absolute before:top-0 before:left-3.5 before:w-[1.5px] before:h-full before:bg-gray-100">
-                                <li><a href="add-employee.html"
+                                <li><a href="{{ route('admin.employees.create') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Add
                                         Employee</a></li>
-                                <li><a href="employees.html"
+                                <li><a href="{{ route('admin.employees.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Employees</a>
                                 </li>
                             </ul>
@@ -125,10 +128,10 @@
                             </a>
                             <ul
                                 class="relative mt-2 before:absolute before:top-0 before:left-3.5 before:w-[1.5px] before:h-full before:bg-gray-100">
-                                <li><a href="leave-types.html"
+                                <li><a href="{{ route('admin.leavemgt.leave.types') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Leave
                                         Types</a></li>
-                                <li><a href="leave-management.html"
+                                <li><a href="{{ route('admin.leavemgt.leave.list') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Leave
                                         Management</a></li>
                             </ul>

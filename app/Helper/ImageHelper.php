@@ -180,4 +180,28 @@ if (! function_exists('customAsset')) {
         return $placeHolderImage;
     }
 
+
+function formatDuration(?string $duration): ?string
+{
+    // Return null if empty/invalid
+    if (empty($duration) || !is_string($duration)) {
+        return null;
+    }
+
+    $parts = explode(':', $duration);
+    if (count($parts) < 2) { // Need at least HH:MM
+        return null;
+    }
+
+    $hours = isset($parts[0]) ? (int) $parts[0] : 0;
+    $minutes = isset($parts[1]) ? (int) $parts[1] : 0;
+    $seconds = isset($parts[2]) ? (int) $parts[2] : 0;
+
+    $formatted = [];
+    if ($hours > 0) $formatted[] = "{$hours}h";
+    if ($minutes > 0 || $hours > 0) $formatted[] = "{$minutes}m";
+    if ($seconds > 0 || empty($formatted)) $formatted[] = "{$seconds}s";
+
+    return implode(' ', $formatted);
+}
 }

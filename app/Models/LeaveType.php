@@ -10,5 +10,14 @@ class LeaveType extends Model
 
    protected $fillable = [
         'branch_id',
+        'name',
+        'annual_limit',
+        'is_paid',
     ];
+
+
+     public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
 }
