@@ -66,7 +66,7 @@
 										</th>
                         </tr>
 
-                      
+
 
                     </thead>
                     <tbody class="bg-white divide-y divide-borderColor">
@@ -80,11 +80,11 @@
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500 p-3">
                                     <div class="flex items-center file-name-icon">
-                                        <a href="employee-details.html" class="size-8 rounded-full border border-borderColor">
-                                            <img src="assets/img/users/user-32.jpg" class="rounded-full size-8 img-fluid" alt="img">
+                                        <a href="{{ route('admin.employees.details', ['emp' => $emp->id]) }}" class="size-8 rounded-full border border-borderColor">
+                                            <img src="{{ customAsset($emp->photo, true, 'emp', $emp->first_anme) }}" class="rounded-full size-8 img-fluid" alt="img">
                                         </a>
                                         <div class="ms-2">
-                                            <h6 class="font-medium"><a href="employee-details.html" class="text-gray-900 hover:text-primary">{{ $emp->first_name.' '. $emp->last_name }}</a>
+                                            <h6 class="font-medium"><a href="{{ route('admin.employees.details', ['emp' => $emp->id]) }}" class="text-gray-900 hover:text-primary">{{ $emp->first_name.' '. $emp->last_name }}</a>
                                             </h6>
                                             <span class="text-xs leading-normal">  {{ $emp->designation->name }}</span>
                                         </div>
@@ -123,7 +123,10 @@
                                             class="size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"
                                             ></input>
 
-                                            {{-- <i class="ti ti-eye"></i> --}}
+
+                                             <a href="{{ route('admin.employees.details', ['emp' => $emp->id]) }}"
+                                            class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
+                                                class="ti ti-eye"></i></a>
                                     </div>
                                 </td>
                             </tr>

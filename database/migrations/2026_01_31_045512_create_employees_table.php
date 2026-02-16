@@ -36,6 +36,11 @@ return new class extends Migration {
             $table->enum('bank_account_type', ['savings', 'current', 'other'])->nullable();
             $table->string('account_number')->nullable();
             $table->text('bank_notes')->nullable();
+            $table->string('resume')->nullable();
+            $table->string('offer_letter')->nullable();
+            $table->string('joining_letter')->nullable();
+            $table->string('contract_agreement')->nullable();
+            $table->string('Id_proof')->nullable();
             $table->timestamps();
             $table->index('branch_id');
             $table->index('department_id');
@@ -44,6 +49,12 @@ return new class extends Migration {
             $table->index('supervisor_id');
         });
     }
+
+
+
+
+
+
 
     public function down(): void
     {
