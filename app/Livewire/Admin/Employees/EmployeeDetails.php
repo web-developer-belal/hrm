@@ -73,18 +73,36 @@ class EmployeeDetails extends Component
          $salay = Salary::where('employee_id',$emp)->first();
         //  $this->totalSalary = $salay->basic_salary + $salay->house_rent +$salay->medical_allowance+$salay->dear_allowance +$salay->transport_allowance ;
 
-        $this->basic_salary= $this->employee->salaryData->basic_salary;
-        $this->house_rent= $this->employee->salaryData->house_rent;
-        $this->medical_allowance= $this->employee->salaryData->medical_allowance;
-        $this->dear_allowance= $this->employee->salaryData->dear_allowance;
-        $this->transport_allowance= $this->employee->salaryData->transport_allowance;
-        $this->pf_employer_contribution= $this->employee->salaryData->pf_employer_contribution;
-        $this->other_allowance= $this->employee->salaryData->other_allowance;
-        $this->pf_employee_contribution= $this->employee->salaryData->pf_employee_contribution;
-        $this->welfare_contribution= $this->employee->salaryData->welfare_contribution;
-        $this->tax_deduction= $this->employee->salaryData->tax_deduction;
-        $this->totalSalary= $this->employee->salaryData->basic_salary + $this->employee->salaryData->house_rent +$this->employee->salaryData->medical_allowance+$this->employee->salaryData->dear_allowance +$this->employee->salaryData->transport_allowance -  $this->employee->salaryData->pf_employee_contribution -$this->employee->salaryData->welfare_contribution -$this->employee->salaryData->tax_deduction;
+        // $this->basic_salary= $this->employee->salaryData->basic_salary ?? null;
+        // $this->house_rent= $this->employee->salaryData->house_rent ?? null;
+        // $this->medical_allowance= $this->employee->salaryData->medical_allowance ?? null;
+        // $this->dear_allowance= $this->employee->salaryData->dear_allowance ?? null;
+        // $this->transport_allowance= $this->employee->salaryData->transport_allowance ?? null;
+        // $this->pf_employer_contribution= $this->employee->salaryData->pf_employer_contribution ?? null;
+        // $this->other_allowance= $this->employee->salaryData->other_allowance ?? null;
+        // $this->pf_employee_contribution= $this->employee->salaryData->pf_employee_contribution ?? null;
+        // $this->welfare_contribution= $this->employee->salaryData->welfare_contribution ?? null;
+        // $this->tax_deduction= $this->employee->salaryData->tax_deduction ?? null;
+        // $this->totalSalary= $this->employee->salaryData->basic_salary + $this->employee->salaryData->house_rent +$this->employee->salaryData->medical_allowance+$this->employee->salaryData->dear_allowance +$this->employee->salaryData->transport_allowance -  $this->employee->salaryData->pf_employee_contribution -$this->employee->salaryData->welfare_contribution -$this->employee->salaryData->tax_deduction ?? null;
+$this->basic_salary = $this->employee->salaryData->basic_salary ?? 0;
+$this->house_rent = $this->employee->salaryData->house_rent ?? 0;
+$this->medical_allowance = $this->employee->salaryData->medical_allowance ?? 0;
+$this->dear_allowance = $this->employee->salaryData->dear_allowance ?? 0;
+$this->transport_allowance = $this->employee->salaryData->transport_allowance ?? 0;
+$this->pf_employer_contribution = $this->employee->salaryData->pf_employer_contribution ?? 0;
+$this->other_allowance = $this->employee->salaryData->other_allowance ?? 0;
+$this->pf_employee_contribution = $this->employee->salaryData->pf_employee_contribution ?? 0;
+$this->welfare_contribution = $this->employee->salaryData->welfare_contribution ?? 0;
+$this->tax_deduction = $this->employee->salaryData->tax_deduction ?? 0;
 
+$this->totalSalary = $this->basic_salary
+    + $this->house_rent
+    + $this->medical_allowance
+    + $this->dear_allowance
+    + $this->transport_allowance
+    - $this->pf_employee_contribution
+    - $this->welfare_contribution
+    - $this->tax_deduction;
 
     }
 

@@ -154,9 +154,12 @@
                                 <li><a href="{{ route('admin.adjustment.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Advance
                                        </a></li>
-                                <li><a href="payroll-generate.html"
+                                <li><a href="{{ route('admin.payroll.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Payroll
                                         Generate</a></li>
+                                <li><a href="{{ route('admin.payroll.payroll.list') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Payroll
+                                        List</a></li>
                                 <li><a href="payslips.html"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Payslips</a>
                                 </li>
