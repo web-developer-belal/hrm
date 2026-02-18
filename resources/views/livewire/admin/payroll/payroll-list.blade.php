@@ -70,43 +70,43 @@
 
                     </thead>
                     <tbody class="bg-white divide-y divide-borderColor">
-                        @foreach ($employees as $emp)
+                        @foreach ($payrolls as $pay)
                             <tr class="even:bg-white dark:even-bg-white">
                                 <td class="px-5 py-2.5 text-gray-500">
                                     {{ $loop->iteration }}
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $emp->employee_code }}
+                                    {{ $pay->employee->employee_code }}
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500 p-3">
                                     <div class="flex items-center file-name-icon">
-                                        <a href="{{ route('admin.employees.details', ['emp' => $emp->id]) }}" class="size-8 rounded-full border border-borderColor">
-                                            <img src="{{ customAsset($emp->photo, true, 'emp', $emp->first_anme) }}" class="rounded-full size-8 img-fluid" alt="img">
+                                        <a href="{{ route('admin.employees.details', ['emp' => $pay->employee->id]) }}" class="size-8 rounded-full border border-borderColor">
+                                            <img src="{{ customAsset($pay->employee->photo, true, 'emp', $pay->employee->first_anme) }}" class="rounded-full size-8 img-fluid" alt="img">
                                         </a>
                                         <div class="ms-2">
-                                            <h6 class="font-medium"><a href="{{ route('admin.employees.details', ['emp' => $emp->id]) }}" class="text-gray-900 hover:text-primary">{{ $emp->first_name.' '. $emp->last_name }}</a>
+                                            <h6 class="font-medium"><a href="{{ route('admin.employees.details', ['emp' => $pay->employee->id]) }}" class="text-gray-900 hover:text-primary">{{ $pay->employee->first_name.' '. $pay->employee->last_name }}</a>
                                             </h6>
-                                            <span class="text-xs leading-normal">  {{ $emp->designation->name }}</span>
+                                            <span class="text-xs leading-normal">  {{ $pay->employee->designation->name }}</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $emp->contact_number }}
+                                    {{ $pay->employee->contact_number }}
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $emp->branch->name }}
+                                    {{ $pay->employee->branch->name }}
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $emp->department->name }}
+                                    {{ $pay->employee->department->name }}
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $emp->joining_date->format('d M Y') }}
+                                    {{ $pay->employee->joining_date->format('d M Y') }}
                                 </td>
 
                                 <td class="px-5 py-2.5 text-gray-500">
 
-                                    <span class="bg-{{ $emp->status ==1 ? 'success' : 'warning' }} text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs cursor-pointer">
-                                        <i class="ti ti-point-filled me-1"> {{ $emp->status==1? 'Active':'Deactive'}}</i>
+                                    <span class="bg-{{ $pay->employee->status ==1 ? 'success' : 'warning' }} text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs cursor-pointer">
+                                        <i class="ti ti-point-filled me-1"> {{ $pay->employee->status==1? 'Active':'Deactive'}}</i>
                                     </span>
 
                                 </td>
@@ -114,17 +114,17 @@
 
                                 <td class="px-5 py-2.5 text-gray-500">
                                     <div class="action-icon inline-flex">
-                                        <a href="{{ route('admin.employees.edit', ['emp' => $emp->id]) }}"
+                                        <a href="{{ route('admin.employees.edit', ['emp' => $pay->employee->id]) }}"
                                             class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-edit"></i></a>
-                                        <input type="checkbox" @if($emp->status ===1) checked @endif
-    wire:click="statusToggle({{ $emp->id }})"
+                                        <input type="checkbox" @if($pay->employee->status ===1) checked @endif
+    wire:click="statusToggle({{ $pay->employee->id }})"
     wire:confirm="Are you sure you want to change Status this employee?"
                                             class="size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"
                                             ></input>
 
 
-                                             <a href="{{ route('admin.employees.details', ['emp' => $emp->id]) }}"
+                                             <a href="{{ route('admin.employees.details', ['emp' => $pay->employee->id]) }}"
                                             class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-eye"></i></a>
                                     </div>
@@ -136,9 +136,9 @@
                 </table>
             </div>
         </div>
-        @if ($employees->hasPages())
+        @if ($payrolls->hasPages())
             <div class="card-footer py-4 px-5 border-t border-borderColor">
-                {{ $employees->links() }}
+                {{ $payrolls->links() }}
             </div>
         @endif
 

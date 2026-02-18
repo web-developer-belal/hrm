@@ -10,6 +10,7 @@ class Salary extends Model
 
    protected $fillable = [
         'branch_id',
+        'employee_id',
         'basic_salary',
         'house_rent',
         'medical_allowance',

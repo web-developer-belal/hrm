@@ -35,6 +35,13 @@ class Employee extends Model
         'account_number',
         'bank_notes',
         'status',
+        'resume',
+        'offer_letter',
+        'joining_letter',
+        'contract_agreement',
+        'Id_proof',
+
+
     ];
 
     protected $casts = [
@@ -64,6 +71,10 @@ class Employee extends Model
     public function shift()
     {
         return $this->belongsTo(Shift::class);
+    }
+    public function salaryData()
+    {
+        return $this->hasOne(Salary::class);
     }
 
     // Supervisor (Manager)

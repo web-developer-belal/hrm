@@ -2,7 +2,7 @@
     <!-- Breadcrumb -->
     <div class="md:flex block items-center justify-between page-breadcrumb mb-4">
         <div class="my-auto mb-2">
-            <h2 class="mb-1">Attendance Admin</h2>
+            <h2 class="mb-1">Loan Management</h2>
             <nav class="flex" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-2">
                     <li class="inline-flex items-center">
@@ -14,7 +14,7 @@
                     <li>
                         <span class="text-default">/</span>
                     </li>
-                    <li class="text-xs text-default">Attendance Admin</li>
+                    <li class="text-xs text-default">Loan Management</li>
 
                 </ol>
             </nav>
@@ -22,9 +22,9 @@
         <div class="flex my-xl-auto right-content items-center flex-wrap ">
 
             <div class="mb-2">
-                <a href="{{ route('admin.rosters.create') }}"
+                <a href="{{ route('admin.loan.new') }}"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
-                        class="ti ti-circle-plus me-2"></i>Attendance Admin</a>
+                        class="ti ti-circle-plus me-2"></i>New Loan</a>
             </div>
 
         </div>
@@ -33,7 +33,11 @@
 
     <!-- Employees List -->
     <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white">
+        <div
+            class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3">
+            <h5>Loan List</h5>
 
+        </div>
         <div class="card-body p-0">
             <div class="overflow-x-auto">
                 <table class="table w-full border-b border-borderColor">
@@ -44,77 +48,61 @@
                                 SL
                             </th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                               Employee</th>
+                                Branch</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                               Name</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                               Amount</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                               Installment</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                               Emi Amount</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Remaining Amount</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Start Month</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Status</th>
-                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Check IN</th>
-                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Check Out</th>
-
-                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Late</th>
-                                <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Early Exit</th>
-                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Over Times</th>
 
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Action
                             </th>
                         </tr>
                     </thead>
+
+
                     <tbody class="bg-white divide-y divide-borderColor">
-                        @foreach ($attendancelist as $attendance)
+                        @foreach ($loans as $item)
                             <tr class="even:bg-white dark:even-bg-white">
                                 <td class="px-5 py-2.5 text-gray-500">
-                                        {{ $loop->iteration }}
+                                  {{ $loop->iteration }}
                                 </td>
-                                <td class="px-5 py-2.5 text-gray-500 font-medium p-3">
-											<div class="flex items-center file-name-icon">
-												<a href="#" class="size-8 rounded-full border border-borderColor">
-													<img src="assets/img/users/user-32.jpg" class="rounded-full size-8 img-fluid" alt="img">
-												</a>
-												<div class="ms-2">
-													<h6 class="font-medium"><a href="#" class="text-gray-900 hover:text-primary">{{$attendance->employee->first_name .''.$attendance->employee->last_name }}</a>
-													</h6>
-													<span class="text-xs leading-normal">{{$attendance->employee->designation->name}}</span>
-												</div>
-											</div>
-										</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->branch->name ?? 'N/A' }}</td>
+                                <td class="px-5 py-2.5 text-gray-900">{{ $item->employee->first_name }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->amount ?? 'N/A' }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->installments ?? 'N/A' }}</td>
 
-                      <td class="px-5 py-2.5 text-gray-500 p-3">
-											<span class="bg-success-100 text-success rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs">
-												<i class="ti ti-point-filled me-1"></i>{{ucFirst($attendance->status)}}
-											</span>
-										</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->emi_amount ?? 'N/A' }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->remaining_amount ?? 'N/A' }}</td>
 
-                                        <td class="px-5 py-2.5 text-gray-500 p-3">
-                                            {{-- {{ $attendance->clock_in->format('h:i A') ?? '' }} --}}
-                                            {{ $attendance?->clock_in?->format('h:i A') ?? '' }}
-                                        </td>
-                                        <td class="px-5 py-2.5 text-gray-500 p-3">{{ $attendance->clock_out?->format('h:i A') ?? '' }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->start_month ?? 'N/A' }}</td>
 
-                                        <td class="px-5 py-2.5 text-gray-500 p-3">
-
-
-                                           {{ formatDuration($attendance->late_minutes) ?? '' }}
-                                        </td>
-
-                                        <td class="px-5 py-2.5 text-gray-500 p-3">
-
-                                           {{ formatDuration($attendance?->early_exit_minutes) ?? '' }}
-                                        </td>
-                                        <td class="px-5 py-2.5 text-gray-500 p-3">
-
-                                           {{ formatDuration($attendance->overtime_minutes) ?? '' }}
-                                        </td>
 
                                 <td class="px-5 py-2.5 text-gray-500">
+
+                                    <span wire:click="toggleStatus({{ $item->id }})"
+                                        class="bg-{{ $item->is_settled ==='completed' ? 'success' : 'warning' }} text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs cursor-pointer">
+                                        <i class="ti ti-point-filled me-1"></i>{{ $item->is_settled ==='completed' ? 'Completed' : 'Active' }}
+                                    </span>
+
+                                </td>
+                                <td class="px-5 py-2.5 text-gray-500">
                                     <div class="action-icon inline-flex">
-                                        <a href="#"
+
+
+                                        <a href="{{ route('admin.loan.show', ['loan' => $item->id]) }}"
                                             class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
-                                                class="ti ti-edit"></i></a>
+                                                class="ti ti-eye"></i></a>
 
                                     </div>
                                 </td>
@@ -125,9 +113,9 @@
                 </table>
             </div>
         </div>
-        @if ($attendancelist->hasPages())
+        @if ($loans->hasPages())
             <div class="card-footer py-4 px-5 border-t border-borderColor">
-                {{ $attendancelist->links() }}
+                {{ $loans->links() }}
             </div>
         @endif
 

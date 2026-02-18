@@ -28,7 +28,6 @@ class StoreEmployeeRequest extends FormRequest
             'branch_id'      => 'required|exists:branches,id',
             'department_id'  => 'required|exists:departments,id',
             'first_name' => 'required|string|max:255',
-            'photo' => 'nullable|image|max:2048',
             'last_name' => 'nullable|string|max:255',
             'date_of_birth' => 'nullable|date',
             'gender' => 'required',
@@ -72,7 +71,6 @@ class StoreEmployeeRequest extends FormRequest
             'local_address.required'         => 'Present Address is required.',
             'permanent_address.required'         => 'Permanent Address is required.',
             'status.required'         => 'Status is required.',
-
         ];
     }
 }

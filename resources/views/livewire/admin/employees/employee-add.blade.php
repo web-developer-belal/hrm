@@ -42,6 +42,23 @@
                 <form wire:submit.prevent="saveEmployee"
                     class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
+
+                    <x-form.input
+                    label="Photo"
+                    name="photo"
+
+                    :error="true"
+
+                    type="file"
+                    />
+                    @if ($oldPhoto)
+                        <img src="{{ customAsset($oldPhoto) }}" height="200" width="200">
+                    @endif
+                    @if ($photo)
+                        <img src="{{ $photo->temporaryUrl() }}" height="200" width="200">
+                    @endif
+
+
                     <x-form.select
                     label="Select Branch"
                     name="branch_id"
@@ -131,7 +148,7 @@
 
 
                             <x-form.input
-                            label="Banke Name"
+                            label="Banks Name"
                             name="bank_name"
                             :is_required="true"
                             :error="true"
@@ -158,13 +175,6 @@
                             :error="true"
                             type="text" />
 
-
-
-
-
-
-
-
                     <!-- Start Date -->
                     <x-form.textarea
                         label="About Employee"
@@ -183,6 +193,38 @@
 
 
 
+
+                    <x-form.input
+                    label="Add Resume"
+                    name="resume"
+                    :error="true"
+                    type="file"
+                    />
+                    <x-form.input
+                    label="Add Offer Letter"
+                    name="offer_letter"
+                    :error="true"
+                    type="file"
+                    />
+                    <x-form.input
+                    label="Add Joinging Letter"
+                    name="joining_letter"
+                    :error="true"
+                    type="file"
+                    />
+                    <x-form.input
+                    label="Add Contract & Agreement"
+                    name="contract_agreement"
+                    :error="true"
+                    type="file"
+                    />
+                    <x-form.input
+                    label="Add ID Proof"
+                    name="Id_proof"
+                    :error="true"
+                    type="file"
+                    />
+
                     <!-- Status -->
                     <x-form.select
                         label="Status"
@@ -190,6 +232,9 @@
                         :is_required="true"
                         :error="true"
                         :options="['1' => 'Active', '0' => 'Inactive']" />
+
+
+
 
                     <!-- Submit Button -->
                     <div class="text-end md:col-span-2">

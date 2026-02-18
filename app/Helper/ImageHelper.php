@@ -204,4 +204,250 @@ function formatDuration(?string $duration): ?string
 
     return implode(' ', $formatted);
 }
+
+/**
+ * Store document file (PDF, DOC, DOCX, etc.)
+ *
+ * @param  \Illuminate\Http\UploadedFile  $file  The uploaded file
+ * @param  string  $path  The storage path (e.g., 'documents', 'contracts')
+ * @param  string|null  $customName  Custom filename (optional, without extension)
+ * @return array ['path' => string, 'original_name' => string, 'size' => int, 'extension' => string]
+ */
+// if (! function_exists('storeDocument')) {
+//     function storeDocument($file, $path, $customName = null)
+//     {
+//         try {
+//             // Get original file information
+//             $originalName = $file->getClientOriginalName();
+//             $extension = $file->getClientOriginalExtension();
+//             $size = $file->getSize(); // in bytes
+
+//             // Generate filename
+//             if ($customName) {
+//                 // Use custom name if provided
+//                 $filename = Str::slug($customName) . '_' . Str::random(8);
+//             } else {
+//                 // Use original name with random suffix
+//                 $baseFilename = pathinfo($originalName, PATHINFO_FILENAME);
+//                 $filename = Str::slug($baseFilename) . '_' . Str::random(8);
+//             }
+
+//             // Ensure the storage path exists
+//             $storagePath = storage_path('app/public/' . $path);
+//             if (!file_exists($storagePath)) {
+//                 mkdir($storagePath, 0755, true);
+//             }
+
+//             // Full file path with extension
+//             $fullFilename = $filename . '.' . $extension;
+//             $fullPath = $storagePath . '/' . $fullFilename;
+
+//             // Move uploaded file
+//             move_uploaded_file($file->getPathname(), $fullPath);
+
+//             // Return file information
+//             return [
+//                 'path' => $path . '/' . $fullFilename,
+//                 'original_name' => $originalName,
+//                 'size' => $size,
+//                 'extension' => $extension,
+//                 'filename' => $fullFilename
+//             ];
+
+//         } catch (\Exception $e) {
+//             Log::error('Document storage failed: ' . $e->getMessage());
+//             throw new \Exception('Failed to store document: ' . $e->getMessage());
+//         }
+//     }
+// }
+/**
+ * Store document file (PDF, DOC, DOCX, etc.)
+ */
+if (! function_exists('storeDocument')) {
+    function storeDocument($file, $path, $customName = null)
+    {
+        try {
+            $originalName = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension();
+            $size = $file->getSize();
+
+            if ($customName) {
+                $filename = Str::slug($customName) . '_' . Str::random(8);
+            } else {
+                $baseFilename = pathinfo($originalName, PATHINFO_FILENAME);
+                $filename = Str::slug($baseFilename) . '_' . Str::random(8);
+            }
+
+            $storagePath = storage_path('app/public/' . $path);
+            if (!file_exists($storagePath)) {
+                mkdir($storagePath, 0755, true);
+            }
+
+            $fullFilename = $filename . '.' . $extension;
+            $fullPath = $storagePath . '/' . $fullFilename;
+
+            // Use copy with getPathname (same as storeImage approach)
+            copy($file->getPathname(), $fullPath);
+
+            return [
+                'path' => $path . '/' . $fullFilename,
+                'original_name' => $originalName,
+                'size' => $size,
+                'extension' => $extension,
+                'filename' => $fullFilename
+            ];
+
+        } catch (\Exception $e) {
+            Log::error('Document storage failed: ' . $e->getMessage());
+            throw new \Exception('Failed to store document: ' . $e->getMessage());
+        }
+    }
+}
+/**
+ * Delete document from storage
+ *
+ * @param  string  $documentPath  The document path to delete
+ * @return bool Success status
+ */
+if (! function_exists('deleteDocument')) {
+    function deleteDocument($documentPath)
+    {
+        try {
+            if (empty($documentPath)) {
+                return false;
+            }
+
+            // Check if file exists in storage/app/public
+            $fullPath = storage_path('app/public/' . $documentPath);
+
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
+                return true;
+            }
+
+            // Also check in public directory for backward compatibility
+            $publicPath = public_path($documentPath);
+            if (file_exists($publicPath)) {
+                unlink($publicPath);
+                return true;
+            }
+
+            return false;
+
+        } catch (\Exception $e) {
+            Log::error('Document deletion failed: ' . $e->getMessage());
+            return false;
+        }
+    }
+}
+
+/**
+ * Get full URL for stored document
+ *
+ * @param  string  $documentPath  The stored document path
+ * @param  bool  $secure  Whether to use secure storage (default: true)
+ * @return string|null Full URL to the document or null if not found
+ */
+if (! function_exists('documentAsset')) {
+    function documentAsset($path, $secure = true)
+    {
+        if (empty($path)) {
+            return null;
+        }
+
+        // Check if file exists
+        $fileExists = false;
+        if ($secure) {
+            $fullPath = storage_path('app/public/' . $path);
+            $fileExists = file_exists($fullPath);
+        } else {
+            $publicPath = public_path($path);
+            $fileExists = file_exists($publicPath);
+        }
+
+        if ($fileExists) {
+            return $secure ? asset(Storage::url($path)) : asset($path);
+        }
+
+        return null;
+    }
+}
+
+/**
+ * Get document file size in human readable format
+ *
+ * @param  string  $documentPath  The document path
+ * @return string|null Formatted file size (e.g., "2.5 MB")
+ */
+if (! function_exists('getDocumentSize')) {
+    function getDocumentSize($documentPath)
+    {
+        try {
+            if (empty($documentPath)) {
+                return null;
+            }
+
+            $fullPath = storage_path('app/public/' . $documentPath);
+
+            if (!file_exists($fullPath)) {
+                return null;
+            }
+
+            $bytes = filesize($fullPath);
+            $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+
+            for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
+                $bytes /= 1024;
+            }
+
+            return round($bytes, 2) . ' ' . $units[$i];
+
+        } catch (\Exception $e) {
+            Log::error('Get document size failed: ' . $e->getMessage());
+            return null;
+        }
+    }
+}
+
+/**
+ * Check if document exists
+ *
+ * @param  string  $documentPath  The document path
+ * @return bool
+ */
+if (! function_exists('documentExists')) {
+    function documentExists($documentPath)
+    {
+        if (empty($documentPath)) {
+            return false;
+        }
+
+        $fullPath = storage_path('app/public/' . $documentPath);
+        return file_exists($fullPath);
+    }
+}
+
+/**
+ * Get document icon based on extension
+ *
+ * @param  string  $extension  File extension
+ * @return string Icon class or emoji
+ */
+if (! function_exists('getDocumentIcon')) {
+    function getDocumentIcon($extension)
+    {
+        $icons = [
+            'pdf' => '📄',
+            'doc' => '📝',
+            'docx' => '📝',
+            'txt' => '📃',
+            'jpeg' => '📷',
+            'jpg' => '📷',
+            'webp' => '📷',
+        ];
+
+        return $icons[strtolower($extension)] ?? '📎';
+    }
+}
+
 }

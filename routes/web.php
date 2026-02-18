@@ -1,26 +1,35 @@
 <?php
 
-use App\Livewire\Admin\Dashboard;
-use Illuminate\Support\Facades\Route;
-use App\Livewire\Admin\Shift\ShiftForm;
+use App\Livewire\Admin\Attendance\AddManualAttendance;
+use App\Livewire\Admin\Attendance\AttendanceList;
 use App\Livewire\Admin\Branch\BranchForm;
-use App\Livewire\Admin\Roster\RosterForm;
+use App\Livewire\Admin\Branch\BranchManagement;
+use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\Department\DepartmentForm;
+use App\Livewire\Admin\Department\DepartmentManagement;
+use App\Livewire\Admin\Designation\DesignationForm;
+use App\Livewire\Admin\Designation\DesignationManagement;
+use App\Livewire\Admin\Employees\EmployeeAdd;
+use App\Livewire\Admin\Employees\EmployeeDetails;
+use App\Livewire\Admin\Employees\EmployeeList;
+use App\Livewire\Admin\Leavemgt\LeaveApplication;
 use App\Livewire\Admin\Leavemgt\LeaveList;
 use App\Livewire\Admin\Leavemgt\LeaveType;
-use App\Livewire\Admin\Transfer\TransferNew;
-use App\Livewire\Admin\Employees\EmployeeAdd;
+use App\Livewire\Admin\Loan\LoanCreate;
+use App\Livewire\Admin\Loan\LoanDetails;
+use App\Livewire\Admin\Loan\LoanList;
+use App\Livewire\Admin\Payroll\PayrollEngine;
+use App\Livewire\Admin\Payroll\PayrollList;
+use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeduction;
+use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeductionNew;
+use App\Livewire\Admin\Roster\RosterForm;
+use App\Livewire\Admin\Roster\RosterManagement;
+use App\Livewire\Admin\Shift\ShiftForm;
 use App\Livewire\Admin\Shift\ShiftManagement;
 use App\Livewire\Admin\Transfer\TransferList;
-use App\Livewire\Admin\Employees\EmployeeList;
-use App\Livewire\Admin\Branch\BranchManagement;
-use App\Livewire\Admin\Roster\RosterManagement;
-use App\Livewire\Admin\Attendance\AttendanceList;
-use App\Livewire\Admin\Department\DepartmentForm;
-use App\Livewire\Admin\Leavemgt\LeaveApplication;
-use App\Livewire\Admin\Designation\DesignationForm;
-use App\Livewire\Admin\Attendance\AddManualAttendance;
-use App\Livewire\Admin\Department\DepartmentManagement;
-use App\Livewire\Admin\Designation\DesignationManagement;
+use App\Livewire\Admin\Transfer\TransferNew;
+use Illuminate\Support\Facades\Route;
+
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::livewire('dashboard', Dashboard::class)
@@ -95,6 +104,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->name('create');
         Route::livewire('/edit/{emp}', EmployeeAdd::class)
             ->name('edit');
+        Route::livewire('/details/{emp}', EmployeeDetails::class)
+            ->name('details');
     });
 
      // Attendance Management
@@ -118,5 +129,41 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->name('edit');
 
     });
+
+           // Payroll Adjustment Management
+           Route::prefix('adjustment')->name('adjustment.')->group(function () {
+            Route::livewire('/', AdjustmentAdditionDeduction::class)
+                ->name('index');
+            Route::livewire('/adjustment/new', AdjustmentAdditionDeductionNew::class)
+                ->name('new');
+
+             Route::livewire('/adjustment/edit/{adjustment}', AdjustmentAdditionDeductionNew::class)
+                ->name('edit');
+
+        });
+           // Loan Management
+           Route::prefix('loan')->name('loan.')->group(function () {
+            Route::livewire('/', LoanList::class)
+                ->name('index');
+            Route::livewire('/create', LoanCreate::class)
+                ->name('new');
+
+             Route::livewire('/adjustment/details/{loan}', LoanDetails::class)
+                ->name('show');
+
+        });
+
+           // Payroll Engine
+           Route::prefix('payroll')->name('payroll.')->group(function () {
+            Route::livewire('/', PayrollEngine::class)
+                ->name('index');
+            Route::livewire('/payroll/list', PayrollList::class)
+                ->name('payroll.list');
+
+             Route::livewire('/adjustment/details/{loan}', LoanDetails::class)
+                ->name('show');
+
+        });
+
 
 });

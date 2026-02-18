@@ -151,12 +151,15 @@
                                 <li><a href="salary-setup.html"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Salary
                                         Setup</a></li>
-                                <li><a href="advance-salary.html"
+                                <li><a href="{{ route('admin.adjustment.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Advance
-                                        Salary</a></li>
-                                <li><a href="payroll-generate.html"
+                                       </a></li>
+                                <li><a href="{{ route('admin.payroll.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Payroll
                                         Generate</a></li>
+                                <li><a href="{{ route('admin.payroll.payroll.list') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Payroll
+                                        List</a></li>
                                 <li><a href="payslips.html"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Payslips</a>
                                 </li>
@@ -172,10 +175,9 @@
                                 class="relative flex item-center w-full p-2 text-sm font-medium text-gray-900 group hover:bg-dark-transparent rounded-[5px]"><i
                                     class="ti ti-chart-bar text-gray-500"></i><span class="ms-2">Performance
                                     (PMS)</span></a></li>
-                        <li class="mb-[5px]"><a href="loan.html"
+                        <li class="mb-[5px]"><a href="{{ route('admin.loan.index') }}"
                                 class="relative flex item-center w-full p-2 text-sm font-medium text-gray-900 group hover:bg-dark-transparent rounded-[5px]"><i
-                                    class="ti ti-wallet text-gray-500"></i><span class="ms-2">Loan &
-                                    Advance</span></a></li>
+                                    class="ti ti-wallet text-gray-500"></i><span class="ms-2">Loan Management</span></a></li>
                         <li class="mb-[5px]"><a href="notice.html"
                                 class="relative flex item-center w-full p-2 text-sm font-medium text-gray-900 group hover:bg-dark-transparent rounded-[5px]"><i
                                     class="ti ti-speakerphone text-gray-500"></i><span class="ms-2">Notice

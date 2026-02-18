@@ -9,7 +9,7 @@ use App\Models\Designation;
 use Livewire\WithFileUploads;
 use App\Http\Requests\StoreEmployeeRequest;
 use App\Models\Employee;
-
+use Livewire\Attributes\Validate;
 class EmployeeAdd extends Component
 {
     use WithFileUploads;
@@ -20,6 +20,7 @@ class EmployeeAdd extends Component
     public $emp;
     public $employee_id;
     public $existingPhoto;
+    #[Validate('image|max:1024')]
     public $photo;
     public $first_name;
     public $last_name;
@@ -44,7 +45,22 @@ class EmployeeAdd extends Component
     public $bank_account_type;
     public $account_number;
     public $bank_notes;
+    public $oldPhoto;
     public $status;
+
+    #[Validate('nullable|file|mimes:jpeg,png,webp,pdf,doc,docx|max:10240')]
+    public $resume;
+    #[Validate('nullable|file|mimes:jpeg,png,webp,pdf,doc,docx|max:10240')]
+    public $offer_letter;
+    #[Validate('nullable|file|mimes:jpeg,png,webp,pdf,doc,docx|max:10240')]
+    public $joining_letter;
+    #[Validate('nullable|file|mimes:jpeg,png,webp,pdf,doc,docx|max:10240')]
+    public $contract_agreement;
+    #[Validate('nullable|file|mimes:jpeg,png,webp,pdf,doc,docx|max:10240')]
+    public $Id_proof;
+
+
+
 
     public function mount($emp = null)
     {
@@ -82,22 +98,95 @@ class EmployeeAdd extends Component
             $this->bank_account_type = $emp->bank_account_type;
             $this->account_number = $emp->account_number;
             $this->bank_notes = $emp->bank_notes;
+            $this->oldPhoto = $emp->photo;
             $this->status = $emp->status;
+
         }
     }
 
     public function saveEmployee()
     {
+
+
         $data = $this->validate(new StoreEmployeeRequest()->rules(), new StoreEmployeeRequest()->messages());
 
-        if( $this->isEditMode = true)
-        {
-            $emp = Employee::findorfail($this->employee_id);
+        if ($this->isEditMode) {
+        $emp = Employee::findOrFail($this->employee_id);
+        $emp->update($data);
+    } else {
+        $emp = Employee::create($data);
+    }
 
-            $emp->update($data);
-        }else{
-            Employee::create($data);
-        }
+      // Handle file uploads
+    $this->handleFileUploads($emp);
+
+        // if( $this->isEditMode == true)
+        // {
+
+        //     $emp = Employee::findorfail($this->employee_id);
+
+        //     $emp->update($data);
+
+        // if ($this->photo) {
+        //     deleteImage($emp->photo);
+        // }
+
+        // if ($this->resume) {
+        // deleteDocument($emp->resume);
+        // }
+        // if ($this->offer_letter) {
+        // deleteDocument($emp->offer_letter);
+        // }
+        // if ($this->joining_letter) {
+        // deleteDocument($emp->joining_letter);
+        // }
+        // if ($this->contract_agreement) {
+        // deleteDocument($emp->contract_agreement);
+        // }
+        // if ($this->Id_proof) {
+        // deleteDocument($emp->Id_proof);
+        // }
+
+        //     $imagePath = storeImage($this->photo, 'products', 300, 300);
+
+        //     $resume = storeDocument($this->resume, 'documents', 'resume-emps');
+        //     $offerLetter = storeDocument($this->offer_letter, 'documents', 'offer_letter-emps');
+        //     $joinginLetter = storeDocument($this->joining_letter, 'documents', 'joining_letter-emps');
+        //     $contractAgreement = storeDocument($this->contract_agreement, 'documents', 'contract_agreement-emps');
+        //     $idProof = storeDocument($this->Id_proof, 'documents', 'contract_agreement-emps');
+
+        //     $emp->update([
+        //         'photo' => $imagePath,
+        //         'resume' => $resume['path'] ?? '',
+        //         'offer_letter' => $offerLetter['path'] ?? '',
+        //         'joining_letter' => $joinginLetter['path'] ?? '',
+        //         'contract_agreement' => $contractAgreement['path'] ?? '',
+        //         'Id_proof' => $idProof['path'] ?? '',
+        //         ]);
+        // }else{
+        //    $storeEmployee= Employee::create($data);
+        //     $imagePath = storeImage(
+        //         $this->photo,
+        //         'products',
+        //         300,
+        //         300,
+        //         'webp'
+        //     );
+        //     $resume = storeDocument($this->resume, 'documents', 'resume-emps');
+        //     $offerLetter = storeDocument($this->offer_letter, 'documents', 'offer_letter-emps');
+        //     $joinginLetter = storeDocument($this->joining_letter, 'documents', 'joining_letter-emps');
+        //     $contractAgreement = storeDocument($this->contract_agreement, 'documents', 'contract_agreement-emps');
+        //     $idProof = storeDocument($this->Id_proof, 'documents', 'contract_agreement-emps');
+
+        //     $storeEmployee->update([
+        //         'photo' => $imagePath,
+        //         'resume' => $resume['path'] ?? '',
+        //         'offer_letter' => $offerLetter['path'] ?? '',
+        //         'joining_letter' => $joinginLetter['path'] ?? '',
+        //         'contract_agreement' => $contractAgreement['path'] ?? '',
+        //         'Id_proof' => $idProof['path'] ?? '',
+        //     ]);
+        // }
 
 
         flash()->success($this->isEditMode ? 'Employee updated successfully.' : 'Employee created successfully.');
@@ -108,4 +197,43 @@ class EmployeeAdd extends Component
     {
         return view('livewire.admin.employees.employee-add');
     }
+
+
+
+    private function handleFileUploads(Employee $emp)
+{
+    $fileUpdates = [];
+
+    // Handle photo
+    if ($this->photo) {
+        if ($this->isEditMode && $emp->photo) {
+            deleteImage($emp->photo);
+        }
+        $fileUpdates['photo'] = storeImage($this->photo, 'employees/photos', 300, 300, 'webp');
+    }
+
+    // Handle documents
+    $documents = [
+        'resume' => 'resume-emps',
+        'offer_letter' => 'offer_letter-emps',
+        'joining_letter' => 'joining_letter-emps',
+        'contract_agreement' => 'contract_agreement-emps',
+        'Id_proof' => 'id_proof-emps',
+    ];
+
+    foreach ($documents as $field => $prefix) {
+        if ($this->{$field}) {
+            if ($this->isEditMode && $emp->{$field}) {
+                deleteDocument($emp->{$field});
+            }
+            $result = storeDocument($this->{$field}, 'employees/documents', $prefix);
+            $fileUpdates[$field] = $result['path'];
+        }
+    }
+
+    if (!empty($fileUpdates)) {
+        $emp->update($fileUpdates);
+    }
+}
+
 }
