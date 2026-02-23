@@ -72,6 +72,7 @@ class Employee extends Authenticatable
     {
         return $this->belongsTo(Shift::class);
     }
+    
     public function salaryData()
     {
         return $this->hasOne(Salary::class);

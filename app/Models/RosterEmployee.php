@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class RosterEmployee extends Model
 {
     use HasFactory;
+    
     protected $table    = 'roster_employees';
+
     protected $fillable = [
         'roster_id',
         'employee_id',

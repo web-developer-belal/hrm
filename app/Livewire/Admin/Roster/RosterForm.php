@@ -30,10 +30,30 @@ class RosterForm extends Component
     public $weekly_off_days = [];
     public $employees       = [];
 
-    public $branches      = [];
-    public $departments   = [];
-    public $shifts        = [];
-    public $employeesData = [];
+    public $branches          = [];
+    public $departments       = [];
+    public $shifts            = [];
+    public $employees_options = [];
+    public $employees_search;
+
+    public $working_days_options = [
+                            'monday' => 'Monday',
+                            'tuesday' => 'Tuesday',
+                            'wednesday' => 'Wednesday',
+                            'thursday' => 'Thursday',
+                            'friday' => 'Friday',
+                            'saturday' => 'Saturday',
+                            'sunday' => 'Sunday',
+                        ];
+    public $weekly_off_days_options = [
+                            'monday' => 'Monday',
+                            'tuesday' => 'Tuesday',
+                            'wednesday' => 'Wednesday',
+                            'thursday' => 'Thursday',
+                            'friday' => 'Friday',
+                            'saturday' => 'Saturday',
+                            'sunday' => 'Sunday',
+                        ];
 
     public function mount($roster = null)
     {
@@ -43,7 +63,7 @@ class RosterForm extends Component
 
         $this->shifts = Shift::where('status', 'active')->pluck('name', 'id')->prepend('Select Shift', '')->toArray();
 
-        $this->employeesData = Employee::pluck('first_name', 'id')->prepend('Select Employee', '')->toArray();
+        $this->getEmployee();
 
         if ($roster) {
             $this->isEditMode = true;
@@ -61,6 +81,37 @@ class RosterForm extends Component
 
             $this->employees = $this->roster->employees()->pluck('employees.id')->toArray();
         }
+    }
+
+    public function updatedEmployeesSearch()
+    {
+        $this->getEmployee();
+    }
+
+    public function getEmployee()
+    {
+        $this->employees_options = Employee::query()
+            ->where('status', 'active')
+            ->when($this->employees_search, function ($query) {
+                $search = '%' . $this->employees_search . '%';
+
+                $query->where(function ($q) use ($search) {
+                    $q->where('first_name', 'like', $search)
+                        ->orWhere('last_name', 'like', $search)
+                        ->orWhere('contact_number', 'like', $search)
+                        ->orWhere('alternative_phone_number', 'like', $search);
+                });
+            })
+            ->latest()
+            ->take(5)
+            ->get()
+            ->mapWithKeys(function ($employee) {
+                return [
+                    $employee->id => $employee->first_name . ' ' . $employee->last_name,
+                ];
+            })
+            ->prepend('Select Employee', '')
+            ->toArray();
     }
 
     public function save()

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Roster extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'name',
         'branch_id',
@@ -21,10 +22,10 @@ class Roster extends Model
     ];
 
     protected $casts = [
-        'working_days' => 'array',
+        'working_days'    => 'array',
         'weekly_off_days' => 'array',
-        'start_date' => 'date',
-        'end_date' => 'date',
+        'start_date'      => 'date',
+        'end_date'        => 'date',
     ];
 
     public function branch()
@@ -74,13 +75,12 @@ class Roster extends Model
     //     );
     // }
 
-
     public function rosterEntries()
     {
         return $this->hasMany(RosterEmployee::class);
     }
 
-      public function employees()
+    public function employees()
     {
         return $this->belongsToMany(Employee::class, 'roster_employees')
             ->withPivot(['date', 'is_off_day', 'shift_id', 'notes'])

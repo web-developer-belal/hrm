@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('branch_id')->nullable()->constrained('branches')->nullOnDelete();
             $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('roster_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('roster_id')->nullable()->constrained()->cascadeOnDelete();
             $table->date('date');
             $table->time('shift_start_time');
             $table->time('shift_end_time');

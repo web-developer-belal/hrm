@@ -16,9 +16,6 @@ return new class extends Migration
             $table->foreignId('roster_id')->constrained('rosters')->cascadeOnDelete();
             $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
             $table->foreignId('shift_id')->constrained('shifts')->cascadeOnDelete();
-            // $table->date('date');
-            // $table->tinyInteger('is_off_day')->default(0);
-            // $table->mediumText('notes')->nullable();
             $table->timestamps();
         });
     }

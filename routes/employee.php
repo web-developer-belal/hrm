@@ -7,6 +7,7 @@ use App\Livewire\Employ\Leave;
 use App\Livewire\Employ\Notice;
 use App\Livewire\Employ\PaySlips;
 use App\Livewire\Employ\Profile;
+use App\Livewire\Employ\ViewNotice;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', Login::class)->name('login');
@@ -24,4 +25,6 @@ Route::middleware('employee')->prefix('employee')->name('employee.')->group(func
         ->name('payslips');
     Route::livewire('notices', Notice::class)
         ->name('notices');
+    Route::livewire('notices/{notice}', ViewNotice::class)
+        ->name('notices.view');
 });
