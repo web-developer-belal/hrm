@@ -1,22 +1,23 @@
 <?php
-
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class RosterEmployee extends Model
 {
-    protected $table = 'roster_employees';
-  protected $fillable = [
+    use HasFactory;
+    protected $table    = 'roster_employees';
+    protected $fillable = [
         'roster_id',
         'employee_id',
         'date',
         'is_off_day',
         'shift_id',
-        'notes'
+        'notes',
     ];
-       protected $casts = [
-        'date' => 'date',
+    protected $casts = [
+        'date'       => 'date',
         'is_off_day' => 'boolean',
     ];
     public function roster()
@@ -29,7 +30,7 @@ class RosterEmployee extends Model
         return $this->belongsTo(Employee::class);
     }
 
-      public function shift()
+    public function shift()
     {
         return $this->belongsTo(Shift::class);
     }

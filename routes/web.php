@@ -18,20 +18,22 @@ use App\Livewire\Admin\Leavemgt\LeaveType;
 use App\Livewire\Admin\Loan\LoanCreate;
 use App\Livewire\Admin\Loan\LoanDetails;
 use App\Livewire\Admin\Loan\LoanList;
-use App\Livewire\Admin\Payroll\PayrollEngine;
-use App\Livewire\Admin\Payroll\PayrollList;
 use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeduction;
 use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeductionNew;
+use App\Livewire\Admin\Payroll\PayrollEngine;
+use App\Livewire\Admin\Payroll\PayrollList;
 use App\Livewire\Admin\Roster\RosterForm;
 use App\Livewire\Admin\Roster\RosterManagement;
 use App\Livewire\Admin\Shift\ShiftForm;
 use App\Livewire\Admin\Shift\ShiftManagement;
 use App\Livewire\Admin\Transfer\TransferList;
 use App\Livewire\Admin\Transfer\TransferNew;
+use App\Livewire\Auth\AdminLogin;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/admin/login', AdminLogin::class)->name('admin.login');
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::livewire('dashboard', Dashboard::class)
         ->name('dashboard');
 
@@ -84,7 +86,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->name('edit');
     });
 
-  // Leave Management
+    // Leave Management
     Route::prefix('leavemgt')->name('leavemgt.')->group(function () {
         Route::livewire('/leave/typess', LeaveType::class)
             ->name('leave.types');
@@ -95,9 +97,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     });
 
-
-     // Employee Management
-     Route::prefix('employees')->name('employees.')->group(function () {
+    // Employee Management
+    Route::prefix('employees')->name('employees.')->group(function () {
         Route::livewire('/', EmployeeList::class)
             ->name('index');
         Route::livewire('/create', EmployeeAdd::class)
@@ -108,8 +109,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->name('details');
     });
 
-     // Attendance Management
-     Route::prefix('attendance')->name('attendance.')->group(function () {
+    // Attendance Management
+    Route::prefix('attendance')->name('attendance.')->group(function () {
         Route::livewire('/', AttendanceList::class)
             ->name('index');
         Route::livewire('/add/mannual', AddManualAttendance::class)
@@ -118,52 +119,51 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->name('edit');
     });
 
-         // Attendance Management
-     Route::prefix('transfer')->name('transfer.')->group(function () {
+    // Attendance Management
+    Route::prefix('transfer')->name('transfer.')->group(function () {
         Route::livewire('/', TransferList::class)
             ->name('index');
         Route::livewire('/new/transfer', TransferNew::class)
             ->name('new');
 
-         Route::livewire('/new/transfe/{transferid}', TransferNew::class)
+        Route::livewire('/new/transfe/{transferid}', TransferNew::class)
             ->name('edit');
 
     });
 
-           // Payroll Adjustment Management
-           Route::prefix('adjustment')->name('adjustment.')->group(function () {
-            Route::livewire('/', AdjustmentAdditionDeduction::class)
-                ->name('index');
-            Route::livewire('/adjustment/new', AdjustmentAdditionDeductionNew::class)
-                ->name('new');
+    // Payroll Adjustment Management
+    Route::prefix('adjustment')->name('adjustment.')->group(function () {
+        Route::livewire('/', AdjustmentAdditionDeduction::class)
+            ->name('index');
+        Route::livewire('/adjustment/new', AdjustmentAdditionDeductionNew::class)
+            ->name('new');
 
-             Route::livewire('/adjustment/edit/{adjustment}', AdjustmentAdditionDeductionNew::class)
-                ->name('edit');
+        Route::livewire('/adjustment/edit/{adjustment}', AdjustmentAdditionDeductionNew::class)
+            ->name('edit');
 
-        });
-           // Loan Management
-           Route::prefix('loan')->name('loan.')->group(function () {
-            Route::livewire('/', LoanList::class)
-                ->name('index');
-            Route::livewire('/create', LoanCreate::class)
-                ->name('new');
+    });
+    // Loan Management
+    Route::prefix('loan')->name('loan.')->group(function () {
+        Route::livewire('/', LoanList::class)
+            ->name('index');
+        Route::livewire('/create', LoanCreate::class)
+            ->name('new');
 
-             Route::livewire('/adjustment/details/{loan}', LoanDetails::class)
-                ->name('show');
+        Route::livewire('/adjustment/details/{loan}', LoanDetails::class)
+            ->name('show');
 
-        });
+    });
 
-           // Payroll Engine
-           Route::prefix('payroll')->name('payroll.')->group(function () {
-            Route::livewire('/', PayrollEngine::class)
-                ->name('index');
-            Route::livewire('/payroll/list', PayrollList::class)
-                ->name('payroll.list');
+    // Payroll Engine
+    Route::prefix('payroll')->name('payroll.')->group(function () {
+        Route::livewire('/', PayrollEngine::class)
+            ->name('index');
+        Route::livewire('/payroll/list', PayrollList::class)
+            ->name('payroll.list');
 
-             Route::livewire('/adjustment/details/{loan}', LoanDetails::class)
-                ->name('show');
+        Route::livewire('/adjustment/details/{loan}', LoanDetails::class)
+            ->name('show');
 
-        });
-
+    });
 
 });

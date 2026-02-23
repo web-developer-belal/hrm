@@ -1,11 +1,21 @@
 <?php
 namespace Database\Seeders;
 
+use App\Models\Attendance;
+use App\Models\Branch;
+use App\Models\Department;
+use App\Models\Designation;
+use App\Models\Employee;
+use App\Models\Leave;
+use App\Models\LeaveType;
+use App\Models\Notice;
+use App\Models\Roster;
+use App\Models\RosterEmployee;
+use App\Models\RosterWorkingDay;
+use App\Models\Shift;
 use App\Models\User;
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,158 +26,136 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $branches = [
-            [
-                'name' => 'Main Branch', 'address' => '123 Main St', 'contact' => '555-1234',
-            ],
-            [
-                'name' => 'East Branch', 'address' => '456 East St', 'contact' => '555-5678',
-            ],
-            [
-                'name' => 'West Branch', 'address' => '789 West St', 'contact' => '555-9012',
+        // 1️⃣ Admin User
+        $admin = User::factory()->admin()->active()->create([
+            'email' => 'admin@gmail.com',
+        ]);
 
-            ],
-        ];
+        // 2️⃣ Branches
+        $branches = Branch::factory()
+            ->count(3)
+            ->create();
+
+        // 3️⃣ Departments (linked to branches)
+        $departments = collect();
         foreach ($branches as $branch) {
-            \App\Models\Branch::create($branch);
+            $departments = $departments->merge(
+                Department::factory()
+                    ->count(3)
+                    ->create([
+                        'branch_id' => $branch->id,
+                    ])
+            );
         }
 
-        $departments = [
-            ['name' => 'Human Resources', 'branch_id' => 1],
-            ['name' => 'Finance', 'branch_id' => 1],
-            ['name' => 'IT', 'branch_id' => 2],
-            ['name' => 'Sales', 'branch_id' => 3],
-        ];
+        // 4️⃣ Designations (linked to departments)
+        $designations = collect();
         foreach ($departments as $department) {
-            \App\Models\Department::create($department);
+            $designations = $designations->merge(
+                Designation::factory()
+                    ->count(2)
+                    ->create([
+                        'department_id' => $department->id,
+                    ])
+            );
         }
 
-        $shifts = [
-            ['name' => 'Morning Shift', 'start_time' => '08:00:00', 'end_time' => '16:00:00'],
-            ['name' => 'Evening Shift', 'start_time' => '16:00:00', 'end_time' => '00:00:00'],
-            ['name' => 'Night Shift', 'start_time' => '00:00:00', 'end_time' => '08:00:00'],
-        ];
+        // 5️⃣ Shifts
+        $shifts = Shift::factory()
+            ->count(3)
+            ->create();
 
-        foreach ($shifts as $shift) {
-            \App\Models\Shift::create($shift);
-        }
+        // 6️⃣ Employees (properly linked)
+        $employees = Employee::factory()
+            ->count(15)
+            ->make()
+            ->each(function ($employee) use ($branches, $departments, $designations, $shifts) {
 
-        $designations = [
-            ['name' => 'Manager', 'department_id' => 1],
-            ['name' => 'Accountant', 'department_id' => 2],
-            ['name' => 'Developer', 'department_id' => 3],
-            ['name' => 'Sales Executive', 'department_id' => 4],
-        ];
+                $branch      = $branches->random();
+                $department  = $departments->where('branch_id', $branch->id)->random();
+                $designation = $designations->where('department_id', $department->id)->random();
 
-        foreach ($designations as $designation) {
-            \App\Models\Designation::create($designation);
-        }
+                $employee->branch_id      = $branch->id;
+                $employee->department_id  = $department->id;
+                $employee->designation_id = $designation->id;
+                $employee->shift_id       = $shifts->random()->id;
 
-        $employees = [
-            [
-                'first_name'     => 'John',
-                'last_name'      => 'Doe',
-                'date_of_birth'  => '1990-01-01',
-                'gender'         => 'male',
-                'contact_number' => '555-0001',
-                'employee_code'  => 'EMP001',
-                'branch_id'      => 1,
-                'department_id'  => 1,
-                'designation_id' => 1,
-                'shift_id'       => 1,
-                'joining_date'   => '2020-01-15',
-            ],
-            [
-                'first_name'     => 'Jane',
-                'last_name'      => 'Smith',
-                'date_of_birth'  => '1992-02-02',
-                'gender'         => 'female',
-                'contact_number' => '555-0002',
-                'employee_code'  => 'EMP002',
-                'branch_id'      => 1,
-                'department_id'  => 2,
-                'designation_id' => 2,
-                'shift_id'       => 2,
-                'joining_date'   => '2021-03-20',
-            ],
-        ];
-        foreach ($employees as $employee) {
-            \App\Models\Employee::create($employee);
-        }
+                $employee->save();
+            });
 
-        $rosters = [
-            [
-                'name'                => 'January Roster',
-                'branch_id'           => 1,
-                'department_id'       => 1,
-                'shift_id'            => 1,
-                'start_date'          => '2026-01-01',
-                'end_date'            => '2026-01-31',
-                'roster_employees'    => [1],
-                'roster_working_days' => [
-                    ['roster_id' => 1, 'type' => 'working', 'day' => 'sunday'],
-                    ['roster_id' => 1, 'type' => 'working', 'day' => 'monday'],
-                    ['roster_id' => 1, 'type' => 'working', 'day' => 'tuesday'],
-                    ['roster_id' => 1, 'type' => 'working', 'day' => 'wednesday'],
-                    ['roster_id' => 1, 'type' => 'working', 'day' => 'thursday'],
-                    ['roster_id' => 1, 'type' => 'off', 'day' => 'friday'],
-                    ['roster_id' => 1, 'type' => 'off', 'day' => 'saturday'],
-                    ['roster_id' => 1, 'type' => 'off', 'day' => 'sunday'],
-                ],
-            ],
-            [
-                'name'                => 'February Roster',
-                'branch_id'           => 1,
-                'department_id'       => 2,
-                'shift_id'            => 2,
-                'start_date'          => '2026-02-01',
-                'end_date'            => '2026-02-28',
-                'roster_employees'    => [2],
-                'roster_working_days' => [
-                    ['roster_id' => 2, 'type' => 'working', 'day' => 'monday'],
-                    ['roster_id' => 2, 'type' => 'working', 'day' => 'tuesday'],
-                    ['roster_id' => 2, 'type' => 'working', 'day' => 'wednesday'],
-                    ['roster_id' => 2, 'type' => 'working', 'day' => 'thursday'],
-                    ['roster_id' => 2, 'type' => 'working', 'day' => 'friday'],
-                    ['roster_id' => 2, 'type' => 'off', 'day' => 'saturday'],
-                    ['roster_id' => 2, 'type' => 'off', 'day' => 'sunday'],
-                ],
-            ],
-        ];
+        // 7️⃣ Rosters
+        $rosters = Roster::factory()
+            ->count(5)
+            ->make()
+            ->each(function ($roster) use ($branches, $departments, $shifts) {
+
+                $branch     = $branches->random();
+                $department = $departments->where('branch_id', $branch->id)->random();
+
+                $roster->branch_id     = $branch->id;
+                $roster->department_id = $department->id;
+                $roster->shift_id      = $shifts->random()->id;
+
+                $roster->save();
+            });
+
+        // 8️⃣ Roster Working Days
         foreach ($rosters as $roster) {
-            DB::transaction(function () use ($roster) {
-                $rosterEmployees = $roster['roster_employees'];
-                $rosterWorkingDays = $roster['roster_working_days'];
-                unset($roster['roster_employees'], $roster['roster_working_days']);
+            RosterWorkingDay::factory()
+                ->count(7)
+                ->create([
+                    'roster_id' => $roster->id,
+                ]);
+        }
 
-                $newRoster = \App\Models\Roster::create($roster);
-
-                // Attach employees to roster
-                foreach ($rosterEmployees as $employeeId) {
-                    \App\Models\RosterEmployee::create([
-                        'roster_id'   => $newRoster->id,
-                        'employee_id' => $employeeId,
-                        'date' => '2026-01-01',
-                        'shift_id' => 1,
-                    ]);
-                }
-
-                // Create working days
-                foreach ($rosterWorkingDays as $workingDay) {
-                    \App\Models\RosterWorkingDay::create($workingDay);
-                }
+        // 9️⃣ Roster Employees
+        foreach ($rosters as $roster) {
+            $employees->random(5)->each(function ($employee) use ($roster, $shifts) {
+                RosterEmployee::factory()->create([
+                    'roster_id'   => $roster->id,
+                    'employee_id' => $employee->id,
+                    'shift_id'    => $shifts->random()->id,
+                ]);
             });
         }
 
-         User::updateOrCreate([
-            'first_name'=> 'Akbar',
-            'last_name'=> 'Ali',
-            'role'=> 'admin',
-            'email' => 'admin@mail.com',
-            'password' => Hash::make('password'),
+        // 🔟 Attendance
+        foreach ($employees as $employee) {
+            Attendance::factory()
+                ->count(5)
+                ->create([
+                    'employee_id' => $employee->id,
+                    'branch_id'   => $employee->branch_id,
+                    'roster_id'   => $rosters->random()->id,
+                ]);
+        }
 
-        ]);
+        // 1️⃣1️⃣ Leave Types
+        $leaveTypes = LeaveType::factory()
+            ->count(3)
+            ->create();
 
+        // 1️⃣2️⃣ Leaves
+        foreach ($employees as $employee) {
+            Leave::factory()->create([
+                'employee_id'   => $employee->id,
+                'branch_id'     => $employee->branch_id,
+                'leave_type_id' => $leaveTypes->random()->id,
+            ]);
+        }
 
+        // 1️⃣3️⃣ Notices
+        $notices = Notice::factory()
+            ->count(5)
+            ->create();
+
+        // Mark some notices as read
+        foreach ($notices as $notice) {
+            $employees->random(5)->each(function ($employee) use ($notice) {
+                $notice->readers()->attach($employee->id, [
+                    'read_at' => now(),
+                ]);
+            });
+        }
     }
 }

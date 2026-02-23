@@ -108,7 +108,7 @@ class EmployeeAdd extends Component
     {
 
 
-        $data = $this->validate(new StoreEmployeeRequest()->rules(), new StoreEmployeeRequest()->messages());
+        $data = $this->validate((new StoreEmployeeRequest)->rules(), (new StoreEmployeeRequest)->messages());
 
         if ($this->isEditMode) {
         $emp = Employee::findOrFail($this->employee_id);
