@@ -37,23 +37,23 @@ class RosterForm extends Component
     public $employees_search;
 
     public $working_days_options = [
-                            'monday' => 'Monday',
-                            'tuesday' => 'Tuesday',
-                            'wednesday' => 'Wednesday',
-                            'thursday' => 'Thursday',
-                            'friday' => 'Friday',
-                            'saturday' => 'Saturday',
-                            'sunday' => 'Sunday',
-                        ];
+        'monday'    => 'Monday',
+        'tuesday'   => 'Tuesday',
+        'wednesday' => 'Wednesday',
+        'thursday'  => 'Thursday',
+        'friday'    => 'Friday',
+        'saturday'  => 'Saturday',
+        'sunday'    => 'Sunday',
+    ];
     public $weekly_off_days_options = [
-                            'monday' => 'Monday',
-                            'tuesday' => 'Tuesday',
-                            'wednesday' => 'Wednesday',
-                            'thursday' => 'Thursday',
-                            'friday' => 'Friday',
-                            'saturday' => 'Saturday',
-                            'sunday' => 'Sunday',
-                        ];
+        'monday'    => 'Monday',
+        'tuesday'   => 'Tuesday',
+        'wednesday' => 'Wednesday',
+        'thursday'  => 'Thursday',
+        'friday'    => 'Friday',
+        'saturday'  => 'Saturday',
+        'sunday'    => 'Sunday',
+    ];
 
     public function mount($roster = null)
     {
@@ -99,7 +99,8 @@ class RosterForm extends Component
                     $q->where('first_name', 'like', $search)
                         ->orWhere('last_name', 'like', $search)
                         ->orWhere('contact_number', 'like', $search)
-                        ->orWhere('alternative_phone_number', 'like', $search);
+                        ->orWhere('alternative_phone_number', 'like', $search)
+                        ->orWhere('employee_code', 'like', $search);
                 });
             })
             ->latest()
@@ -129,7 +130,15 @@ class RosterForm extends Component
             $this->roster->load('shift');
 
             // Attach employees
-            $this->roster->employees()->sync($this->employees);
+            $syncData = [];
+
+            foreach ($this->employees as $empId) {
+                $syncData[$empId] = [
+                    'shift_id' => $this->shift_id, // important
+                ];
+            }
+
+            $this->roster->employees()->sync($syncData);
 
             // Generate attendance
             $period = CarbonPeriod::create($this->start_date, $this->end_date);
@@ -141,7 +150,7 @@ class RosterForm extends Component
                 if (in_array($dayName, $this->weekly_off_days)) {
                     $status = 'offday';
                 } else {
-                    $status = 'absent';
+                    $status = null;
                 }
 
                 foreach ($this->employees as $empId) {

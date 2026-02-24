@@ -23,38 +23,83 @@ class Attendance extends Component
     public function loadTodayAttendance()
     {
         $this->todayAttendance = ModelsAttendance::where('employee_id', $this->employee->id)
-            ->whereDate('date', today())
+            ->whereDate('date', Carbon::today())
             ->first();
     }
 
-    /* =========================
-       PUNCH IN
-    ==========================*/
+    public function getAttendanceData()
+    {
+        $employeeId = $this->employee->id;
+
+        $present = ModelsAttendance::where('employee_id', $employeeId)
+            ->where('status', 'present')
+            ->count();
+
+        $absent = ModelsAttendance::where('employee_id', $employeeId)
+            ->where('status', 'absent')
+            ->count();
+
+        $late = ModelsAttendance::where('employee_id', $employeeId)
+            ->where('status', 'late')
+            ->count();
+
+        $onTime = ModelsAttendance::where('employee_id', $employeeId)
+            ->where('status', 'present')
+            ->where('late_minutes', 0)
+            ->count();
+
+        $totalOvertimeMinutes = ModelsAttendance::where('employee_id', $employeeId)
+            ->sum('overtime_minutes');
+
+        $totalWorkingMinutes = ModelsAttendance::where('employee_id', $employeeId)
+            ->whereNotNull('clock_in')
+            ->whereNotNull('clock_out')
+            ->get()
+            ->sum(function ($row) {
+                return Carbon::parse($row->clock_in)
+                    ->diffInMinutes(Carbon::parse($row->clock_out));
+            });
+
+        return [
+            'present'       => $present,
+            'absent'        => $absent,
+            'late'          => $late,
+            'on_time'       => $onTime,
+            'working_hours' => $this->formatMinutes($totalWorkingMinutes),
+            'overtime'      => $this->formatMinutes($totalOvertimeMinutes),
+        ];
+    }
+
+    private function formatMinutes($minutes)
+    {
+        $hours = floor($minutes / 60);
+        $mins  = $minutes % 60;
+        return "{$hours}h {$mins}m";
+    }
+
     public function punchIn()
     {
-        $attendance = ModelsAttendance::firstOrCreate(
-            [
-                'employee_id' => $this->employee->id,
-                'date'        => today(),
-            ],
-            [
-                'branch_id'        => $this->employee->branch_id,
-                'roster_id'        => $this->employee->rosters->first()->id,
-                'shift_start_time' => $this->employee->shift->start_time ?? '09:00:00',
-                'shift_end_time'   => $this->employee->shift->end_time ?? '17:00:00',
-                'status'           => 'present',
-            ]
-        );
+        $today = Carbon::today();
+        $now   = Carbon::now();
+
+        $attendance = ModelsAttendance::where('date', $today)->first();
+
+        if (! $attendance) {
+            flash()->error('Not found attendance');
+            return;
+        }
 
         if (! $attendance->clock_in) {
+            $attendance->clock_in = $now;
 
-            $attendance->clock_in = now();
-
-            $shiftStart = Carbon::parse(today()->format('Y-m-d') . ' ' . $attendance->shift_start_time);
-
-            if (now()->gt($shiftStart)) {
-                $attendance->late_minutes = $shiftStart->diffInMinutes(now());
+            // Late calculation
+            $shiftStart = Carbon::parse($attendance->date)
+                ->setTimeFromTimeString($attendance->shift_start_time);
+            if ($now->gt($shiftStart)) {
+                $attendance->late_minutes = $shiftStart->diffInMinutes($now);
                 $attendance->status       = 'late';
+            } else {
+                $attendance->status = 'present';
             }
 
             $attendance->save();
@@ -63,46 +108,27 @@ class Attendance extends Component
         $this->loadTodayAttendance();
     }
 
-    /* =========================
-       PUNCH OUT
-    ==========================*/
     public function punchOut()
     {
-        if (! $this->todayAttendance || ! $this->todayAttendance->clock_in) {
-            return;
-        }
+        $attendance = ModelsAttendance::where('employee_id', $this->employee->id)
+            ->whereDate('date', Carbon::today())
+            ->first();
 
-        if (! $this->todayAttendance->clock_out) {
+        if ($attendance && ! $attendance->clock_out) {
 
-            $this->todayAttendance->clock_out = now();
+            $attendance->clock_out = Carbon::now();
 
-            $shiftEnd = Carbon::parse(today()->format('Y-m-d') . ' ' . $this->todayAttendance->shift_end_time);
+            $shiftEnd = Carbon::parse($attendance->date . ' ' . $attendance->shift_end_time);
 
-            if (now()->gt($shiftEnd)) {
-                $this->todayAttendance->overtime_minutes =
-                $shiftEnd->diffInMinutes(now());
+            if ($attendance->clock_out->gt($shiftEnd)) {
+                $attendance->overtime_minutes =
+                $shiftEnd->diffInMinutes($attendance->clock_out);
             }
 
-            if (now()->lt($shiftEnd)) {
-                $this->todayAttendance->early_exit_minutes =
-                now()->diffInMinutes($shiftEnd);
-            }
-
-            $this->todayAttendance->save();
+            $attendance->save();
         }
 
         $this->loadTodayAttendance();
-    }
-
-    /* =========================
-       HELPER: Format Minutes
-    ==========================*/
-    private function formatMinutes($minutes)
-    {
-        $hours = floor($minutes / 60);
-        $mins  = $minutes % 60;
-
-        return "{$hours}h {$mins}m";
     }
 
     public function render()
@@ -113,61 +139,11 @@ class Attendance extends Component
             ->latest()
             ->paginate(10);
 
-        /* =========================
-           SUMMARY COUNTS
-        ==========================*/
-        $totalPresent = ModelsAttendance::where('employee_id', $employeeId)
-            ->whereIn('status', ['present', 'late'])
-            ->count();
-
-        $totalAbsent = ModelsAttendance::where('employee_id', $employeeId)
-            ->where('status', 'absent')
-            ->count();
-
-        $totalLate = ModelsAttendance::where('employee_id', $employeeId)
-            ->where('status', 'late')
-            ->count();
-
-        $totalOnTime = ModelsAttendance::where('employee_id', $employeeId)
-            ->where('status', 'present')
-            ->count();
-
-        $totalWorkingDays = ModelsAttendance::where('employee_id', $employeeId)
-            ->count();
-
-        /* =========================
-           TODAY WORK CALCULATION
-        ==========================*/
-        $totalWorkingMinutes = 0;
-        $overtimeMinutes     = 0;
-        $breakMinutes        = 0; // if you track breaks later
-
-        if ($this->todayAttendance && $this->todayAttendance->clock_in) {
-
-            $clockOut = $this->todayAttendance->clock_out ?? now();
-
-            $totalWorkingMinutes =
-            Carbon::parse($this->todayAttendance->clock_in)
-                ->diffInMinutes($clockOut);
-
-            $overtimeMinutes = $this->todayAttendance->overtime_minutes ?? 0;
-        }
-
         return view('livewire.employ.attendance', [
-            'employee'          => $this->employee,
-            'todayAttendance'   => $this->todayAttendance,
-            'attendances'       => $attendances,
-
-            'totalPresent'      => $totalPresent,
-            'totalAbsent'       => $totalAbsent,
-            'totalLate'         => $totalLate,
-            'totalOnTime'       => $totalOnTime,
-            'totalWorkingDays'  => $totalWorkingDays,
-
-            'totalWorkingHours' => $this->formatMinutes($totalWorkingMinutes),
-            'productivityHours' => $this->formatMinutes($totalWorkingMinutes - $overtimeMinutes),
-            'breakHours'        => $this->formatMinutes($breakMinutes),
-            'overtimeHours'     => $this->formatMinutes($overtimeMinutes),
+            'employee'        => $this->employee,
+            'todayAttendance' => $this->todayAttendance,
+            'attendances'     => $attendances,
+            'attendanceData'  => $this->getAttendanceData(),
         ]);
     }
 }

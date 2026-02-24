@@ -23,27 +23,7 @@
             </nav>
         </div>
         <div class="flex my-xl-auto right-content items-center flex-wrap ">
-            <div class="me-2 mb-2">
-                <div>
-                    <a href="javascript:void(0);"
-                        class="border rounded p-2 bg-white inline-flex items-center focus:bg-primary focus:border-primary focus:text-white text-gray-900"
-                        data-dropdown-toggle="export-dropdown">
-                        <i class="ti ti-file-export me-1"></i>Export<i class="ti ti-chevron-down ml-1"></i>
-                    </a>
-                    <ul id="export-dropdown" class="hidden p-4 border rounded bg-white shadow-lg">
-                        <li>
-                            <a href="javascript:void(0);"
-                                class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary text-gray-900"><i
-                                    class="ti ti-file-type-pdf me-1"></i>Export as PDF</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);"
-                                class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary text-gray-900"><i
-                                    class="ti ti-file-type-xls me-1"></i>Export as Excel </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+
             <div class="mb-2">
                 <div class="relative w-[120px]">
                     <div class="absolute inset-y-0 start-2 flex items-center pointer-events-none">
@@ -87,8 +67,8 @@
                                         <i class="ti ti-clock-stop text-white"></i>
                                     </span>
                                     <div class="mt-2">
-                                        <h2>8.36 <span class="text-lg text-gray-500">/ 9</span></h2>
-                                        <p class="font-medium truncate">Total Hours Today</p>
+                                        <h2>{{ $attendanceData['present'] }}</h2>
+                                        <p class="font-medium truncate">Total Present</p>
                                     </div>
                                 </div>
                                 <div class="mt-3">
@@ -110,8 +90,8 @@
                                         <i class="ti ti-clock-up text-white"></i>
                                     </span>
                                     <div class="mt-2">
-                                        <h2>10 <span class="text-lg text-gray-500">/ 40</span></h2>
-                                        <p class="font-medium truncate">Total Hours Week</p>
+                                        <h2>{{ $attendanceData['absent'] }}</h2>
+                                        <p class="font-medium truncate">Total Absent</p>
                                     </div>
                                 </div>
                                 <div class="mt-3">
@@ -133,8 +113,8 @@
                                         <i class="ti ti-calendar-up text-white"></i>
                                     </span>
                                     <div class="mt-2">
-                                        <h2>75 <span class="text-lg text-gray-500">/ 98</span></h2>
-                                        <p class="font-medium truncate">Total Hours Month</p>
+                                        <h2>{{ $attendanceData['on_time'] }}</h2>
+                                        <p class="font-medium truncate">Total On time</p>
                                     </div>
                                 </div>
                                 <div class="mt-3">
@@ -157,9 +137,9 @@
                                         <i class="ti ti-calendar-star text-white"></i>
                                     </span>
                                     <div class="mt-2">
-                                        <h2>16 <span class="text-lg text-gray-500">/ 28</span></h2>
-                                        <p class="font-medium overflow-hidden text-ellipsis whitespace-nowrap">Overtime
-                                            this Month</p>
+                                        <h2>{{ $attendanceData['late'] }}</h2>
+                                        <p class="font-medium overflow-hidden text-ellipsis whitespace-nowrap">Total
+                                            Late</p>
                                     </div>
                                 </div>
                                 <div class="mt-3">
@@ -180,7 +160,7 @@
                                 <div class="w-full">
                                     <span class="flex items-center mb-1"><i class="ti ti-point-filled me-1"></i>Total
                                         Working hours</span>
-                                    <h3>12h 36m</h3>
+                                    <h3>{{ $attendanceData['working_hours'] }}</h3>
                                 </div>
                                 <div class="w-full">
                                     <span class="flex items-center mb-1"><i
@@ -195,7 +175,7 @@
                                 <div class="w-full">
                                     <span class="flex items-center mb-1"><i
                                             class="ti ti-point-filled text-info me-1"></i>Overtime</span>
-                                    <h3>22m 15s</h3>
+                                    <h3>{{ $attendanceData['overtime'] }}</h3>
                                 </div>
                             </div>
                             <div class="flex item-center justify-center mb-3">
@@ -245,40 +225,96 @@
             <div
                 class="card border-borderColor border-primary bg-custom-gradient border rounded-[5px] bg-white shadow-xs w-full">
                 <div class="card-body p-5">
+
+                    {{-- Current Date Time --}}
                     <div class="text-center mb-4">
                         <h6 class="text-gray-500 mb-2 font-medium">Attendance</h6>
-                        <h4>08:35 AM, 11 Mar 2025</h4>
+                        <h4>{{ now()->format('h:i A, d M Y') }}</h4>
                     </div>
+
+                    {{-- Circular Total Hours --}}
+                    @php
+                        $workedSeconds = 0;
+
+                        if ($todayAttendance && $todayAttendance->clock_in) {
+                            $endTime = $todayAttendance->clock_out ?? now();
+                            $workedSeconds = \Carbon\Carbon::parse($todayAttendance->clock_in)->diffInSeconds(
+                                \Carbon\Carbon::parse($endTime),
+                            );
+                        }
+
+                        $hours = floor($workedSeconds / 3600);
+                        $minutes = floor(($workedSeconds % 3600) / 60);
+                        $seconds = $workedSeconds % 60;
+
+                        $formattedTime = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+
+                        // Shift duration for percentage (assuming 9 hours shift)
+                        $shiftSeconds = 9 * 3600;
+                        $percentage = min(100, ($workedSeconds / $shiftSeconds) * 100);
+                        $rotation = ($percentage / 100) * 180;
+                    @endphp
+
                     <div class="w-[130px] h-[130px] bg-white rounded-full leading-[38px] relative mx-auto mb-3"
-                        data-value='65'>
+                        data-value="{{ round($percentage) }}">
+
                         <span class="left-0 w-[50%] h-[100%] overflow-hidden absolute top-0 z-[1]">
-                            <span
-                                class="transform rotate-[54deg] left-[100%] rounded-tr-[80px] rounded-br-[80px] border-success border-l-0 origin-left
-										w-full h-full bg-transparent border-4 border-solid absolute top-0"></span>
+                            <span style="transform: rotate({{ $rotation }}deg);"
+                                class="left-[100%] rounded-tr-[80px] rounded-br-[80px] border-success border-l-0 origin-left
+                        w-full h-full bg-transparent border-4 border-solid absolute top-0">
+                            </span>
                         </span>
+
                         <span class="right-0 w-[50%] h-[100%] overflow-hidden absolute top-0 z-[1]">
                             <span
                                 class="transform rotate-[180deg] absolute left-[-100%] rounded-tl-[80px] rounded-bl-[80px] border-success border-r-0 origin-right
-										w-full h-full bg-transparent border-4 border-solid absolute top-0"></span>
+                        w-full h-full bg-transparent border-4 border-solid absolute top-0">
+                            </span>
                         </span>
+
                         <div
                             class="absolute left-[50%] top-[50%] transform -translate-x-1/2 -translate-y-1/2 leading-normal text-center w-100">
                             <span class="text-[13px] block mb-1">Total Hours</span>
-                            <h6>5:45:32</h6>
+                            <h6>{{ $formattedTime }}</h6>
                         </div>
                     </div>
+
                     <div class="text-center">
+
+                        {{-- Production Time --}}
                         <div
                             class="text-white font-medium inline-flex items-center py-1 px-2 rounded bg-dark leading-none mb-3">
-                            Production : 3.45 hrs</div>
-                        <h6 class="fw-medium flex items-center justify-center mb-4">
-                            <i class="ti ti-fingerprint text-primary me-1"></i>
-                            Punch In at 10.00 AM
-                        </h6>
-                        <div>
-                            <button type="button" class="btn btn-primary font-medium me-2 mt-2 w-full">Punch
-                                Out</button>
+                            Production : {{ $hours }}h {{ $minutes }}m
                         </div>
+
+                        {{-- Punch In Info --}}
+                        @if ($todayAttendance && $todayAttendance->clock_in)
+                            <h6 class="fw-medium flex items-center justify-center mb-4">
+                                <i class="ti ti-fingerprint text-primary me-1"></i>
+                                Punch In at {{ \Carbon\Carbon::parse($todayAttendance->clock_in)->format('h:i A') }}
+                            </h6>
+                        @endif
+
+                        {{-- Button Toggle --}}
+                        <div>
+                            @if (!$todayAttendance || !$todayAttendance->clock_in)
+                                <button wire:click="punchIn" type="button"
+                                    class="btn btn-primary font-medium me-2 mt-2 w-full">
+                                    Punch In
+                                </button>
+                            @elseif(!$todayAttendance->clock_out)
+                                <button wire:click="punchOut" type="button"
+                                    class="btn btn-primary font-medium me-2 mt-2 w-full">
+                                    Punch Out
+                                </button>
+                            @else
+                                <button type="button" class="btn btn-secondary font-medium me-2 mt-2 w-full"
+                                    disabled>
+                                    Completed
+                                </button>
+                            @endif
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -288,85 +324,64 @@
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 pb-5">
         <div class="xl:col-span-9 flex">
             <div class="card  border border-borderColor rounded-[5px] shadow-xs bg-white flex-1">
-                <div class="card-header py-4 px-5 flex items-center justify-between flex-wrap border-b border-borderColor gap-2">
-                    Notices
+                <div
+                    class="card-header py-4 px-5 flex items-center justify-between flex-wrap border-b border-borderColor gap-2">
+                    <h5>
+                        Notices
+                    </h5>
                 </div>
-                <div class="card-body p-5 overflow-x-auto">
-                    <table class="table w-full border-b border-borderColor">
-                        <thead class="thead-light">
-                            <tr>
-                                <th
-                                    class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                    Date</th>
-                                <th
-                                    class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                    Check In </th>
-                                <th
-                                    class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                    Status</th>
-                                <th
-                                    class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                    Check Out</th>
-                                <th
-                                    class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                    Break</th>
-                                <th
-                                    class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                    Late</th>
-                                <th
-                                    class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                    Overtime</th>
-                                <th
-                                    class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                    Production Hours</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-borderColor">
-                            <tr class="even:bg-white dark:even-bg-white">
+                <div class="card-body p-5">
+                    <div class="overflow-x-auto">
+                        <table class="table  w-full border-b border-borderColor">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th
+                                        class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                        SL</th>
+                                    <th
+                                        class="text-sm text-start leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                        Title</th>
+                                    <th
+                                        class="text-sm text-start leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                        Date</th>
 
-                                <td class="px-5 py-2.5 text-gray-500">14/01/2024</td>
-                                <td class="px-5 py-2.5 text-gray-500">09:00 AM</td>
-                                <td class="px-5 py-2.5 text-gray-500">
-                                    <span
-                                        class="bg-success-100 text-success rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs">
-                                        <i class="ti ti-point-filled me-1"></i>Present
-                                    </span>
-                                </td>
-                                <td class="px-5 py-2.5 text-gray-500">06:45 PM</td>
-                                <td class="px-5 py-2.5 text-gray-500">30 Min</td>
-                                <td class="px-5 py-2.5 text-gray-500">32 Min</td>
-                                <td class="px-5 py-2.5 text-gray-500">20 Min</td>
-                                <td class="px-5 py-2.5 text-gray-500">
-                                    <span
-                                        class="bg-success text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs">
-                                        <i class="ti ti-clock-hour-11 me-1"></i>8.55 Hrs
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr class="even:bg-white dark:even-bg-white">
+                                    <th
+                                        class="text-sm text-start leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                        Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-borderColor">
+                                @foreach ($notices as $item)
+                                    <tr class="even:bg-white dark:even:bg-white">
 
-                                <td class="px-5 py-2.5 text-gray-500">21/01/2024</td>
-                                <td class="px-5 py-2.5 text-gray-500">09:00 AM</td>
-                                <td class="px-5 py-2.5 text-gray-500">
-                                    <span
-                                        class="bg-success-100 text-success rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs">
-                                        <i class="ti ti-point-filled me-1"></i>Present
-                                    </span>
-                                </td>
-                                <td class="px-5 py-2.5 text-gray-500">06:12 PM</td>
-                                <td class="px-5 py-2.5 text-gray-500">20 Min</td>
-                                <td class="px-5 py-2.5 text-gray-500">-</td>
-                                <td class="px-5 py-2.5 text-gray-500">45 Min</td>
-                                <td class="px-5 py-2.5 text-gray-500">
-                                    <span
-                                        class="bg-danger text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs">
-                                        <i class="ti ti-clock-hour-11 me-1"></i>7.54 Hrs
-                                    </span>
-                                </td>
-                            </tr>
+                                        {{-- Sl --}}
+                                        <td class="px-5 py-2.5 text-gray-500">
+                                            {{ $loop->index + 1 }}
+                                        </td>
+                                        {{-- title --}}
+                                        <td class="px-5 py-2.5 text-gray-500">
+                                            {{ $item->title }}
+                                        </td>
 
-                        </tbody>
-                    </table>
+                                        {{-- Date --}}
+                                        <td class="px-5 py-2.5 text-gray-500">
+                                            {{ $item->created_at->format('d M Y') }}
+                                        </td>
+
+                                        <td class="px-5 py-2.5 text-gray-500">
+                                            <div class="action-icon inline-flex">
+
+                                                <a href="{{ route('employee.notices.view', ['notice' => $item->id]) }}"
+                                                    class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
+                                                        class="ti ti-eye"></i></a>
+                                            </div>
+                                        </td>
+
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -403,37 +418,37 @@
                         <div class="sm:col-span-6">
                             <div class="mb-6">
                                 <span class="block mb-1">Total Leaves</span>
-                                <h4>16</h4>
+                                <h4>{{ $leaveData['total'] }}</h4>
                             </div>
                         </div>
                         <div class="sm:col-span-6">
                             <div class="mb-6">
                                 <span class="block mb-1">Taken</span>
-                                <h4>10</h4>
+                                <h4>{{ $leaveData['taken'] }}</h4>
                             </div>
                         </div>
                         <div class="sm:col-span-6">
                             <div class="mb-6">
                                 <span class="block mb-1">Absent</span>
-                                <h4>2</h4>
+                                <h4>{{ $leaveData['absent'] }}</h4>
                             </div>
                         </div>
                         <div class="sm:col-span-6">
                             <div class="mb-6">
                                 <span class="block mb-1">Request</span>
-                                <h4>0</h4>
+                                <h4>{{ $leaveData['request'] }}</h4>
                             </div>
                         </div>
                         <div class="sm:col-span-6">
                             <div class="mb-6">
                                 <span class="block mb-1">Worked Days</span>
-                                <h4>240</h4>
+                                <h4>{{ $leaveData['workingDays'] }}</h4>
                             </div>
                         </div>
                         <div class="sm:col-span-6">
                             <div class="mb-6">
                                 <span class="block mb-1">Loss of Pay</span>
-                                <h4>2</h4>
+                                <h4>{{ $leaveData['lossOfPay'] }}</h4>
                             </div>
                         </div>
                         <div class="sm:col-span-12">
@@ -497,13 +512,14 @@
             <div class="flex-fill">
                 <div class="card bg-dark mb-3 relative">
                     <span class="absolute	w-full top-0 left-0 z-10 right-0">
-                        <img src="assets/img/bg/card-bg-05.png" alt="">
+                        <img src="{{ asset('assets/img/bg/card-bg-05.png') }}" alt="">
                     </span>
                     <div class="card-body p-5">
                         <div class="text-center">
                             <h5 class="text-white mb-4">Team Birthday</h5>
                             <span class="inline-flex items-center justify-center size-[57.6px] mb-2">
-                                <img src="assets/img/users/user-35.jpg" class="rounded-full" alt="Img">
+                                <img src="{{ asset('assets/img/users/user-35.jpg') }}" class="rounded-full"
+                                    alt="Img">
                             </span>
                             <div class="mb-4">
                                 <h6 class="text-white font-medium mb-1">Andrew Jermia</h6>
@@ -528,7 +544,7 @@
                             <h5 class="mb-1">Next Holiday</h5>
                             <p class="text-gray-900">Diwali, 15 Sep 2025</p>
                         </div>
-                        <a href="holidays.html" class="btn bg-white btn-sm px-3">View All</a>
+                        <a href="" class="btn bg-white btn-sm px-3">View All</a>
                     </div>
                 </div>
             </div>

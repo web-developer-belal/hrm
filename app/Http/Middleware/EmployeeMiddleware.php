@@ -19,6 +19,7 @@ class EmployeeMiddleware
         if(!Auth::guard('employee')->user()){
             return redirect()->route('login');
         }
+        config(['livewire.component_layout' => 'employee']);
         return $next($request);
     }
 }

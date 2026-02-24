@@ -3,10 +3,10 @@
     <div class="main-header h-[50px]">
 
         <div class="header-left hidden relative float-left text-center h-[50px] z-[1] media-max-md:flex">
-            <a href="{{ route('admin.dashboard') }}" class="logo">
+            <a href="{{ route('employee.dashboard') }}" class="logo">
                 <img src="{{ asset('assets/img/logo.svg') }}" alt="Logo">
             </a>
-            <a href="{{ route('admin.dashboard') }}" class="dark-logo">
+            <a href="{{ route('employee.dashboard') }}" class="dark-logo">
                 <img src="{{ asset('assets/img/logo-white.svg') }}" alt="Logo">
             </a>
         </div>
@@ -165,7 +165,7 @@
                         <button data-dropdown-toggle="profile-dropdown" class="flex items-center justify-center"
                             type="button">
                             <span class="relative">
-                                <img src="{{ customAsset(Auth::user()->photo,true,'user') }}" alt="Img"
+                                <img src="{{ customAsset(Auth::guard('employee')->user()->photo,true,'user') }}" alt="Img"
                                     class="size-6 rounded-full">
                                 <span
                                     class="right-0 bottom-0 absolute  w-2 h-2 bg-success border-2 border-white  rounded-full"></span>
@@ -176,12 +176,12 @@
                             <div class="px-[20px] py-4">
                                 <div class="flex items-center">
                                     <span class="size-[45px] me-2">
-                                        <img src="{{ customAsset(Auth::user()->photo,true,'user') }}" alt="img"
+                                        <img src="{{ customAsset(Auth::guard('employee')->user()->photo,true,'user') }}" alt="img"
                                             class="rounded-full border-2 border-gray-100">
                                     </span>
                                     <div>
-                                        <h5 class="mb-0">{{ Auth::user()->full_name }}</h5>
-                                        <p class="text-xs leading-normal text-gray-900 font-medium mb-0">{{ Auth::user()->email }}
+                                        <h5 class="mb-0">{{ Auth::guard('employee')->user()->full_name }}</h5>
+                                        <p class="text-xs leading-normal text-gray-900 font-medium mb-0">{{ Auth::guard('employee')->user()->email }}
                                         </p>
                                     </div>
                                 </div>
@@ -193,30 +193,7 @@
                                         <i class="ti ti-user-circle me-1"></i>My Profile
                                     </a>
                                 </li>
-                                <li>
-                                    <a class="inline-flex items-center text-gray-900 py-2 hover:text-primary"
-                                        href="bussiness-settings.html">
-                                        <i class="ti ti-settings me-1"></i>Settings
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="inline-flex items-center text-gray-900 py-2 hover:text-primary"
-                                        href="security-settings.html">
-                                        <i class="ti ti-status-change me-1"></i>Status
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="inline-flex items-center text-gray-900 py-2 hover:text-primary"
-                                        href="">
-                                        <i class="ti ti-circle-arrow-up me-1"></i>My Account
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="inline-flex items-center text-gray-900 py-2 hover:text-primary"
-                                        href="knowledgebase.html">
-                                        <i class="ti ti-question-mark me-1"></i>Knowledge Base
-                                    </a>
-                                </li>
+                               
                             </ul>
                             <div class="px-[20px] py-4">
                                 <a class="inline-flex items-center text-gray-900 py-2 hover:text-primary"

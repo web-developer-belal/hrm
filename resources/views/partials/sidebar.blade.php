@@ -16,59 +16,7 @@
 
     <div class="sidebar-inner slimscroll">
         <div id="sidebar-menu" class="sidebar-menu">
-            @if (Auth::guard('employee')->check() && !Auth::check())
-                <ul>
-                    
-                    <li>
-                        <ul class="mb-[19px]">
-
-                            <!-- Dashboard -->
-                            <li class="mb-[5px]">
-                                <a href="{{ route('employee.dashboard') }}"
-                                    class="relative flex item-center w-full p-2 text-sm leading-normal font-medium text-gray-900 group hover:bg-dark-transparent transition-all duration-500 ease-in-out rounded-[5px]">
-                                    <i class="ti ti-smart-home text-gray-500 group-hover:text-gray-900"></i>
-                                    <span class="ms-2">Dashboard</span>
-                                </a>
-                            </li>
-                            <li class="mb-[5px]">
-                                <a href="{{ route('employee.attendance') }}"
-                                    class="relative flex item-center w-full p-2 text-sm leading-normal font-medium text-gray-900 group hover:bg-dark-transparent transition-all duration-500 ease-in-out rounded-[5px]">
-                                    <i class="ti ti-smart-home text-gray-500 group-hover:text-gray-900"></i>
-                                    <span class="ms-2">Attendance</span>
-                                </a>
-                            </li>
-                            <li class="mb-[5px]">
-                                <a href="{{ route('employee.payslips') }}"
-                                    class="relative flex item-center w-full p-2 text-sm leading-normal font-medium text-gray-900 group hover:bg-dark-transparent transition-all duration-500 ease-in-out rounded-[5px]">
-                                    <i class="ti ti-smart-home text-gray-500 group-hover:text-gray-900"></i>
-                                    <span class="ms-2">Payslips</span>
-                                </a>
-                            </li>
-                            <li class="mb-[5px]">
-                                <a href="{{ route('employee.leave') }}"
-                                    class="relative flex item-center w-full p-2 text-sm leading-normal font-medium text-gray-900 group hover:bg-dark-transparent transition-all duration-500 ease-in-out rounded-[5px]">
-                                    <i class="ti ti-smart-home text-gray-500 group-hover:text-gray-900"></i>
-                                    <span class="ms-2">Leave</span>
-                                </a>
-                            </li>
-                            <li class="mb-[5px]">
-                                <a href="{{ route('employee.notices') }}"
-                                    class="relative flex item-center w-full p-2 text-sm leading-normal font-medium text-gray-900 group hover:bg-dark-transparent transition-all duration-500 ease-in-out rounded-[5px]">
-                                    <i class="ti ti-smart-home text-gray-500 group-hover:text-gray-900"></i>
-                                    <span class="ms-2">Notices</span>
-                                </a>
-                            </li>
-                            <li class="mb-[5px]">
-                                <a href="{{ route('employee.profile') }}"
-                                    class="relative flex item-center w-full p-2 text-sm leading-normal font-medium text-gray-900 group hover:bg-dark-transparent transition-all duration-500 ease-in-out rounded-[5px]">
-                                    <i class="ti ti-smart-home text-gray-500 group-hover:text-gray-900"></i>
-                                    <span class="ms-2">Profile</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            @else
+            
                 <ul>
                     <li class="menu-title text-[10px] font-semibold text-gray-400 mb-3">
                         <span>MAIN MENU</span>
@@ -212,7 +160,7 @@
                                     <li><a href="{{ route('admin.payroll.index') }}"
                                             class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Payroll
                                             Generate</a></li>
-                                    <li><a href="{{ route('admin.payroll.payroll.list') }}"
+                                    <li><a href="{{ route('admin.payroll.list') }}"
                                             class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Payroll
                                             List</a></li>
                                     <li><a href="payslips.html"
@@ -234,7 +182,7 @@
                                     class="relative flex item-center w-full p-2 text-sm font-medium text-gray-900 group hover:bg-dark-transparent rounded-[5px]"><i
                                         class="ti ti-wallet text-gray-500"></i><span class="ms-2">Loan
                                         Management</span></a></li>
-                            <li class="mb-[5px]"><a href="notice.html"
+                            <li class="mb-[5px]"><a href="{{ route('admin.notice.index') }}"
                                     class="relative flex item-center w-full p-2 text-sm font-medium text-gray-900 group hover:bg-dark-transparent rounded-[5px]"><i
                                         class="ti ti-speakerphone text-gray-500"></i><span class="ms-2">Notice
                                         Board</span></a></li>
@@ -255,7 +203,7 @@
                         </ul>
                     </li>
                 </ul>
-            @endif
+           
         </div>
     </div>
 </div>

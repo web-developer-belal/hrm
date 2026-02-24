@@ -120,15 +120,15 @@ class DatabaseSeeder extends Seeder
         }
 
         // 🔟 Attendance
-        foreach ($employees as $employee) {
-            Attendance::factory()
-                ->count(5)
-                ->create([
-                    'employee_id' => $employee->id,
-                    'branch_id'   => $employee->branch_id,
-                    'roster_id'   => $rosters->random()->id,
-                ]);
-        }
+        // foreach ($employees as $employee) {
+        //     Attendance::factory()
+        //         ->count(5)
+        //         ->create([
+        //             'employee_id' => $employee->id,
+        //             'branch_id'   => $employee->branch_id,
+        //             'roster_id'   => $rosters->random()->id,
+        //         ]);
+        // }
 
         // 1️⃣1️⃣ Leave Types
         $leaveTypes = LeaveType::factory()

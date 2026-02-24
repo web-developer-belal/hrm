@@ -18,6 +18,8 @@ use App\Livewire\Admin\Leavemgt\LeaveType;
 use App\Livewire\Admin\Loan\LoanCreate;
 use App\Livewire\Admin\Loan\LoanDetails;
 use App\Livewire\Admin\Loan\LoanList;
+use App\Livewire\Admin\Notice\ManageNotice;
+use App\Livewire\Admin\Notice\NoticeForm;
 use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeduction;
 use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeductionNew;
 use App\Livewire\Admin\Payroll\PayrollEngine;
@@ -159,10 +161,20 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::livewire('/', PayrollEngine::class)
             ->name('index');
         Route::livewire('/payroll/list', PayrollList::class)
-            ->name('payroll.list');
+            ->name('list');
 
         Route::livewire('/adjustment/details/{loan}', LoanDetails::class)
             ->name('show');
+
+    });
+    Route::prefix('notices')->name('notice.')->group(function () {
+        Route::livewire('/', ManageNotice::class)
+            ->name('index');
+        Route::livewire('/create', NoticeForm::class)
+            ->name('create');
+
+        Route::livewire('/edit/{notice}', NoticeForm::class)
+            ->name('edit');
 
     });
 

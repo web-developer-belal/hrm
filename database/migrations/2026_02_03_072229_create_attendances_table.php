@@ -25,7 +25,7 @@ return new class extends Migration
             $table->integer('overtime_minutes')->default(0);
             $table->integer('early_exit_minutes')->default(0);
 
-            $table->enum('status',['late','present','absent','leave','holiday','offday'])->default('absent');
+            $table->enum('status',['late','present','absent','leave','holiday','offday'])->nullable();
             $table->string('remarks')->nullable();
             $table->boolean('is_manually_edited')->default(false);
             $table->foreignId('edited_by')->nullable()->constrained('users');
