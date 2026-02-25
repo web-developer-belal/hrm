@@ -16,7 +16,3 @@ class PayrollList extends Component
         ]);
     }
 }
-
-
-
-

@@ -50,6 +50,9 @@
                                 <li><a href="{{ route('admin.attendance.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Attendance
                                         Reports</a></li>
+                                <li><a href="{{ route('admin.device.index') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Device</a>
+                                </li>
                                 <li><a href="overtime.html"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Overtime</a>
                                 </li>
@@ -91,7 +94,7 @@
                                 <li><a href="{{ route('admin.transfer.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Transfer List</a>
                                 </li>
-                                <li><a href="complain.html"
+                                <li><a href="{{ route('admin.complain.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Complain</a>
                                 </li>
                             </ul>

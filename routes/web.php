@@ -4,11 +4,14 @@ use App\Livewire\Admin\Attendance\AddManualAttendance;
 use App\Livewire\Admin\Attendance\AttendanceList;
 use App\Livewire\Admin\Branch\BranchForm;
 use App\Livewire\Admin\Branch\BranchManagement;
+use App\Livewire\Admin\Complain\ComplainAdd;
+use App\Livewire\Admin\Complain\ComplainList;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Department\DepartmentForm;
 use App\Livewire\Admin\Department\DepartmentManagement;
 use App\Livewire\Admin\Designation\DesignationForm;
 use App\Livewire\Admin\Designation\DesignationManagement;
+use App\Livewire\Admin\Device\DeviceSync;
 use App\Livewire\Admin\Employees\EmployeeAdd;
 use App\Livewire\Admin\Employees\EmployeeDetails;
 use App\Livewire\Admin\Employees\EmployeeList;
@@ -162,6 +165,25 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
              Route::livewire('/adjustment/details/{loan}', LoanDetails::class)
                 ->name('show');
+
+        });
+           // Complaint Management
+           Route::prefix('complain')->name('complain.')->group(function () {
+            Route::livewire('/', ComplainList::class)
+                ->name('index');
+            Route::livewire('/add', ComplainAdd::class)
+                ->name('new');
+            Route::livewire('/complain/edit/{complainId}', ComplainAdd::class)
+                ->name('edit');
+
+        });
+           // Device Management
+           Route::prefix('device')->name('device.')->group(function () {
+            Route::livewire('/', DeviceSync::class)
+                ->name('index');
+            Route::livewire('/add', ComplainAdd::class)
+                ->name('new');
+
 
         });
 

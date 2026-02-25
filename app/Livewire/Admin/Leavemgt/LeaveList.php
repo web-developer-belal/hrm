@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Leavemgt;
 
+use App\Models\Attendance;
 use App\Models\Leave;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -21,6 +22,14 @@ class LeaveList extends Component
                 // 'approved_by'=>Auth::user()->id,
             ]);
 
+            if ($status === 'approved') {
+                $this->updateAttendanceForLeave($leave);
+            }elseif (in_array($status, ['rejected', 'pending'])) {
+                $this->revertAttendanceForLeave($leave);
+            }
+
+
+
              flash()->success('Leave status change updated successfully.');
       }
 
@@ -39,4 +48,33 @@ public function deleteLeave($id)
             'leaves' => $query->paginate(10),
         ]);
     }
+
+
+
+
+/**
+ * Update attendance records to 'leave' status for the leave date range
+ */
+private function updateAttendanceForLeave($leave)
+{
+    Attendance::where('employee_id', $leave->employee_id)
+        ->whereBetween('date', [$leave->from_date, $leave->to_date])
+        ->update([
+            'status' => 'leave',
+            'updated_at' => now(),
+        ]);
+}
+
+/**
+ * Revert attendance status if leave is rejected/cancelled
+ */
+private function revertAttendanceForLeave($leave)
+{
+    Attendance::where('employee_id', $leave->employee_id)
+        ->whereBetween('date', [$leave->from_date, $leave->to_date])
+        ->update([
+            'status' => 'absent',
+            'updated_at' => now(),
+        ]);
+}
 }

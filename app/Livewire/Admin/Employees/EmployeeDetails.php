@@ -109,6 +109,8 @@ $this->totalSalary = $this->basic_salary
     public function addOrUpdateSalary()
     {
         $this->salaryModalshow = true;
+
+
     }
     public function addOrUpdateSalarySubmit()
     {

@@ -26,8 +26,6 @@ class Attendance extends Model
         'edited_at',
         'early_exit_minutes',
         'overtime_minutes',
-
-
     ];
 
 
