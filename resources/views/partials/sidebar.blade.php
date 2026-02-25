@@ -53,6 +53,9 @@
                                 <li><a href="{{ route('admin.device.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Device</a>
                                 </li>
+                                <li><a href="{{ route('admin.device.history') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Device Sync History</a>
+                                </li>
                                 <li><a href="overtime.html"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Overtime</a>
                                 </li>

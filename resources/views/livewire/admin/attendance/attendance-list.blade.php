@@ -22,6 +22,13 @@
         <div class="flex my-xl-auto right-content items-center flex-wrap ">
 
             <div class="mb-2">
+                <button wire:click="processRunningMonth"
+                    class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
+                        class="ti ti-circle-plus me-2"></i>Attendance Sync</button>
+
+            <span wire:loading>Processing...</span>
+            </div>
+            <div class="mb-2">
                 <a href="{{ route('admin.rosters.create') }}"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
                         class="ti ti-circle-plus me-2"></i>Attendance Admin</a>

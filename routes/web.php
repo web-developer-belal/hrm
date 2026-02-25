@@ -12,6 +12,7 @@ use App\Livewire\Admin\Department\DepartmentManagement;
 use App\Livewire\Admin\Designation\DesignationForm;
 use App\Livewire\Admin\Designation\DesignationManagement;
 use App\Livewire\Admin\Device\DeviceSync;
+use App\Livewire\Admin\Device\SyncHistory;
 use App\Livewire\Admin\Employees\EmployeeAdd;
 use App\Livewire\Admin\Employees\EmployeeDetails;
 use App\Livewire\Admin\Employees\EmployeeList;
@@ -181,8 +182,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
            Route::prefix('device')->name('device.')->group(function () {
             Route::livewire('/', DeviceSync::class)
                 ->name('index');
-            Route::livewire('/add', ComplainAdd::class)
-                ->name('new');
+            Route::livewire('/sync/history', SyncHistory::class)
+                ->name('history');
 
 
         });

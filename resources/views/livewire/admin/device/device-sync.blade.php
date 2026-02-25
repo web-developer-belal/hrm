@@ -78,7 +78,7 @@
                                 <td class="px-5 py-2.5 text-gray-500">
                                     <div class="action-icon inline-flex">
                                         <button href="" wire:click="sync({{ $device->id }})"
-                                            class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900 mt-2"><i
+                                            class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-eye"></i>Sync Now</button>
                                                 <div wire:loading>
                                                     Data Sync ..........
