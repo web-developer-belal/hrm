@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Admin\Payroll;
 
 use App\Models\Payroll;
@@ -9,10 +8,10 @@ class PayrollList extends Component
 {
     public function render()
     {
-         $query = Payroll::query();
+        $query = Payroll::query();
         $query->with(['employee']);
-        return view('livewire.admin.payroll.payroll-list',[
-            'payrolls'=> $query->paginate(10),
+        return view('livewire.admin.payroll.payroll-list', [
+            'payrolls' => $query->paginate(10),
         ]);
     }
 }

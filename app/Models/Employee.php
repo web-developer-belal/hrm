@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Employee extends Model
+class Employee extends Authenticatable
 {
     use HasFactory;
 
@@ -40,7 +39,8 @@ class Employee extends Model
         'joining_letter',
         'contract_agreement',
         'Id_proof',
-
+        'email',
+        'password',
 
     ];
 
@@ -72,9 +72,19 @@ class Employee extends Model
     {
         return $this->belongsTo(Shift::class);
     }
+    
     public function salaryData()
     {
         return $this->hasOne(Salary::class);
+    }
+
+    public function leaves()
+    {
+        return $this->hasMany(Leave::class);
+    }
+    public function attendance()
+    {
+        return $this->hasMany(Attendance::class);
     }
 
     // Supervisor (Manager)
@@ -89,20 +99,15 @@ class Employee extends Model
         return $this->hasMany(Employee::class, 'supervisor_id');
     }
 
-    // public function rosters()
-    // {
-    //     return $this->belongsToMany(Roster::class);
-    // }
 
     public function getFullNameAttribute()
     {
         return trim($this->first_name . ' ' . $this->last_name);
     }
 
-public function rosters()
-{
-    return $this->belongsToMany(Roster::class, 'roster_employee');
-}
-
+    public function rosters()
+    {
+        return $this->belongsToMany(Roster::class, 'roster_employee');
+    }
 
 }

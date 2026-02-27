@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="{{ asset('assets/plugins/icons/feather/feather.css') }}">
 
 <!-- Tabler Icon CSS -->
-<link rel="stylesheet" href="{{ asset('assets/plugins/tabler-icons/tabler-icons.min.css') }}">  
+<link rel="stylesheet" href="{{ asset('assets/plugins/tabler-icons/tabler-icons.min.css') }}">
 <!-- Select2 CSS -->
 <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2.min.css') }}">
 
@@ -40,3 +40,5 @@
 
 <!-- Main CSS -->
 <link rel="stylesheet" href="{{ asset('assets/dist/style.css') }}">
+
+{{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}

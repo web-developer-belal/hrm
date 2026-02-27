@@ -39,123 +39,86 @@
             </div>
 
             <div class="card-body p-5">
-                <form wire:submit.prevent="save"
-                    class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+                <form wire:submit.prevent="save" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
                     <!-- Roster Name -->
-                    <x-form.input
-                        label="Roster Name"
-                        name="name"
-                        :is_required="true"
-                        :error="true"
+                    <x-form.input label="Roster Name" name="name" :is_required="true" :error="true"
                         placeholder="Enter Roster Name" />
 
                     <!-- Branch -->
-                    <x-form.select
-                        label="Select Branch"
-                        name="branch_id"
-                        :is_required="true"
-                        :error="true"
+                    <x-form.select label="Select Branch" name="branch_id" :is_required="true" :error="true"
                         :options="$branches" />
 
                     <!-- Department (Optional) -->
-                    <x-form.select
-                        label="Select Department"
-                        name="department_id"
-                        :is_required="false"
-                        :error="true"
+                    <x-form.select label="Select Department" name="department_id" :is_required="false" :error="true"
                         :options="$departments" />
 
                     <!-- Shift -->
-                    <x-form.select
-                        label="Select Shift"
-                        name="shift_id"
-                        :is_required="true"
-                        :error="true"
+                    <x-form.select label="Select Shift" name="shift_id" :is_required="true" :error="true"
                         :options="$shifts" />
 
-                    @php
-                        $days = [
-                            'monday' => 'Monday',
-                            'tuesday' => 'Tuesday',
-                            'wednesday' => 'Wednesday',
-                            'thursday' => 'Thursday',
-                            'friday' => 'Friday',
-                            'saturday' => 'Saturday',
-                            'sunday' => 'Sunday',
-                        ];
-                    @endphp
+                 
 
                     <!-- Working Days -->
-                    {{-- <x-form.select
+                    <x-form.select
                         label="Working Days"
                         name="working_days"
                         :is_required="true"
                         :error="true"
-                        :options="$days"
-                        :is_multiple="true" /> --}}
+                        :options="$working_days_options"
+                        :isMultiple="true" />
 
-                           <select name="working_days[]" id="" wire:model="working_days" class="form-control" multiple>
-                            <option value="">Select working days</option>
-                               @foreach ($days as $key => $day)
-                                <option value="{{ $key }}">{{ $day }}</option>
-                                @endforeach
-                        </select>
+                    {{-- <select name="working_days[]" id="" wire:model="working_days" class="form-control"
+                        multiple>
+                        <option value="">Select working days</option>
+                        @foreach ($days as $key => $day)
+                            <option value="{{ $key }}">{{ $day }}</option>
+                        @endforeach
+                    </select> --}}
 
                     <!-- Weekly Off Days -->
-                    {{-- <x-form.select
+                    <x-form.select
                         label="Weekly Off Days"
                         name="weekly_off_days"
                         :is_required="false"
                         :error="true"
-                        :options="$days"
-                        :is_multiple="true" /> --}}
+                        :options="$working_days_options"
+                        :isMultiple="true" />
 
-                       <select name="weekly_off_days[]" wire:model="weekly_off_days" class="form-control" multiple>
-                            <option value="">Select weekly dayoffs</option>
+                    {{-- <select name="weekly_off_days[]" wire:model="weekly_off_days" class="form-control" multiple>
+                        <option value="">Select weekly dayoffs</option>
 
-                            @foreach ($days as $key => $day)
-                                <option value="{{ $key }}">{{ $day }}</option>
-                            @endforeach
-                        </select>
+                        @foreach ($days as $key => $day)
+                            <option value="{{ $key }}">{{ $day }}</option>
+                        @endforeach
+                    </select> --}}
 
                     <!-- Employees -->
-                    {{-- <x-form.select
+                    <x-form.select
                         label="Select Employee"
                         name="employees"
                         :is_required="true"
                         :error="true"
-                        :options="$employeesData"
-                        :is_multiple="true" /> --}}
+                        :search="true"
+                        :options="$employees_options"
+                        :isMultiple="true" />
 
-                       <select name="employees[]"  wire:model="employees" multiple class="form-control">
-                            @foreach($employeesData as $id => $name)
-                                <option value="{{ $id }}">{{ $name }}</option>
-                            @endforeach
-                        </select>
+                    {{-- <select name="employees[]" wire:model="employees" multiple class="form-control">
+                        @foreach ($employees_options as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </select> --}}
 
                     <!-- Start Date -->
-                    <x-form.input
-                        label="Start Date"
-                        name="start_date"
-                        :is_required="true"
-                        :error="true"
+                    <x-form.input label="Start Date" name="start_date" :is_required="true" :error="true"
                         type="date" />
 
                     <!-- End Date -->
-                    <x-form.input
-                        label="End Date"
-                        name="end_date"
-                        :is_required="true"
-                        :error="true"
+                    <x-form.input label="End Date" name="end_date" :is_required="true" :error="true"
                         type="date" />
 
                     <!-- Status -->
-                    <x-form.select
-                        label="Status"
-                        name="status"
-                        :is_required="true"
-                        :error="true"
+                    <x-form.select label="Status" name="status" :is_required="true" :error="true"
                         :options="['active' => 'Active', 'inactive' => 'Inactive']" />
 
                     <!-- Submit Button -->

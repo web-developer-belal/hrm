@@ -1,15 +1,14 @@
 <?php
-
 namespace App\Models;
 
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Attendance extends Model
 {
+    use HasFactory;
 
-
- protected $fillable = [
+    protected $fillable = [
         'branch_id',
         'employee_id',
         'roster_id',
@@ -29,10 +28,9 @@ class Attendance extends Model
         'overtime_minutes',
     ];
 
-
     protected $casts = [
-        'date' => 'date',
-        'clock_in' => 'datetime',
+        'date'      => 'date',
+        'clock_in'  => 'datetime',
         'clock_out' => 'datetime',
     ];
 
@@ -46,13 +44,9 @@ class Attendance extends Model
         return $this->belongsTo(Roster::class);
     }
 
-       public function branch()
+    public function branch()
     {
         return $this->belongsTo(Branch::class);
     }
-
-
-
-
 
 }

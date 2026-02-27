@@ -1,12 +1,12 @@
 <?php
-
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Loan extends Model
 {
-
+    use HasFactory;
 
     protected $fillable = [
         'branch_id',
@@ -16,11 +16,10 @@ class Loan extends Model
         'emi_amount',
         'remaining_amount',
         'status',
-        'start_month'
+        'start_month',
     ];
 
-    protected $with=['installments'];
-
+    protected $with = ['installments'];
 
     public function branch()
     {
@@ -32,11 +31,9 @@ class Loan extends Model
         return $this->belongsTo(Employee::class);
     }
 
-
     public function installments()
     {
         return $this->hasMany(LoanInstallment::class);
     }
-
 
 }

@@ -17,6 +17,9 @@
 <script src="{{ asset('assets/plugins/chartjs/chart.min.js') }}"></script>
 <script src="{{ asset('assets/plugins/chartjs/chart-data.js') }}"></script>
 
+{{-- DataTable --}}
+<script src="{{ asset('assets/js/dataTables.js') }}"></script>
+
 <!-- Datetimepicker JS -->
 <script src="{{ asset('assets/js/moment.min.js') }}"></script>
 <script src="{{ asset('assets/plugins/flatpickr/flatpickr.min.js') }}"></script>
