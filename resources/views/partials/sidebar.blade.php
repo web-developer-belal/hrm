@@ -34,6 +34,75 @@
                                 </a>
                             </li>
 
+                        <!-- Attendance -->
+                        <li class="submenu mb-[5px]">
+                            <a href="javascript:void(0);"
+                                class="relative flex item-center w-full p-2 text-sm leading-normal font-medium text-gray-900 group hover:bg-dark-transparent transition-all duration-500 ease-in-out rounded-[5px]">
+                                <i class="ti ti-calendar-check text-gray-500 group-hover:text-gray-900"></i>
+                                <span class="ms-2">Attendance</span>
+                                <span
+                                    class="menu-arrow absolute top-1/2 -translate-y-1/2 right-2.5 flex items-center w-4 h-4"></span>
+                            </a>
+                            <ul
+                                class="relative mt-2 before:absolute before:top-0 before:left-3.5 before:w-[1.5px] before:h-full before:bg-gray-100">
+                                <li><a href="{{ route('admin.attendance.add.mannual') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Add
+                                        Attendance</a></li>
+                                <li><a href="{{ route('admin.attendance.index') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Attendance
+                                        Reports</a></li>
+                                <li><a href="{{ route('admin.device.index') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Device</a>
+                                </li>
+                                <li><a href="{{ route('admin.device.history') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Device Sync History</a>
+                                </li>
+                                <li><a href="overtime.html"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Overtime</a>
+                                </li>
+                                <li><a href="attendance-policy.html"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Attendance
+                                        Policy</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- HR Management -->
+                        <li class="submenu mb-[5px]">
+                            <a href="javascript:void(0);"
+                                class="relative flex item-center w-full p-2 text-sm leading-normal font-medium text-gray-900 group hover:bg-dark-transparent transition-all duration-500 ease-in-out rounded-[5px]">
+                                <i class="ti ti-building text-gray-500 group-hover:text-gray-900"></i>
+                                <span class="ms-2">HR Management</span>
+                                <span
+                                    class="menu-arrow absolute top-1/2 -translate-y-1/2 right-2.5 flex items-center w-4 h-4"></span>
+                            </a>
+                            <ul
+                                class="relative mt-2 before:absolute before:top-0 before:left-3.5 before:w-[1.5px] before:h-full before:bg-gray-100">
+                                <li><a href="{{ route('admin.branches.index') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Branch</a>
+                                </li>
+                                <li><a href="{{ route('admin.departments.index') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Department</a>
+                                </li>
+                                <li><a href="{{ route('admin.shifts.index') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Shift</a>
+                                </li>
+                                <li><a href="{{ route('admin.rosters.index') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Roster</a>
+                                </li>
+                                <li><a href="{{ route('admin.designations.index') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Designation</a>
+                                </li>
+                                <li><a href="{{ route('admin.transfer.new') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Transfer New</a>
+                                </li>
+                                <li><a href="{{ route('admin.transfer.index') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Transfer List</a>
+                                </li>
+                                <li><a href="{{ route('admin.complain.index') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Complain</a>
+                                </li>
+                            </ul>
+                        </li>
                             <!-- Attendance -->
                             <li class="submenu mb-[5px]">
                                 <a href="javascript:void(0);"

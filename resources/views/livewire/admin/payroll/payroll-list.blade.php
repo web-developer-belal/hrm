@@ -20,12 +20,12 @@
             </nav>
         </div>
         <div class="flex my-xl-auto right-content items-center flex-wrap ">
-
+{{--
             <div class="mb-2">
                 <a href="{{ route('admin.employees.create') }}"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
-                        class="ti ti-circle-plus me-2"></i>Add emp Application</a>
-            </div>
+                        class="ti ti-circle-plus me-2"></i>Add Payroll Application</a>
+            </div> --}}
 
         </div>
     </div>
@@ -49,6 +49,7 @@
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Branch</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Year</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Month</th>
+<<<<<<< HEAD
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Total Days</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Working Days</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Present</th>
@@ -59,6 +60,26 @@
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Late Penalty Days</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Per Day Salary</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Basic Salary</th>
+=======
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Total Salary</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Basic</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">House Rent</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Medical Allowance</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Dear Allowance</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Transport Allowance</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Other Allowance</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Total Days</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Working Days</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Present</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Weekend</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Holidays</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">CL</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Absent</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Late Days</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Late Penalty Days</th>
+                            {{-- <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Per Day Salary</th> --}}
+                            {{-- <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Basic Salary</th> --}}
+>>>>>>> fd018f5 (salary update)
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Attendance Bonus</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Total OT</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">Late Deduction</th>
@@ -91,22 +112,49 @@
                                         <h6 class="font-medium"><a href="{{ route('admin.employees.details', ['emp' => $pay->id]) }}" class="text-gray-900 hover:text-primary">{{ $pay->employee->first_name.' '. $pay->employee->last_name }}</a>
                                         </h6>
                                         <span class="text-xs leading-normal">  {{ $pay->employee->designation->name }}</span>
+<<<<<<< HEAD
                                     </div>
+=======
+
+                                    </div>
+
+
+>>>>>>> fd018f5 (salary update)
                                 </div>
                             </td>
                             <td class="px-5 py-2.5 text-gray-500">{{ $pay->branch->name ?? $pay->employee->branch->name }}</td>
                             <td class="px-5 py-2.5 text-gray-500">{{ $pay->year }}</td>
                             <td class="px-5 py-2.5 text-gray-500">{{ \Carbon\Carbon::create()->month($pay->month)->format('F') }}</td>
+<<<<<<< HEAD
+=======
+                            <td class="px-5 py-2.5 text-gray-500">{{ $pay->employee->salaryData->basic_salary + $pay->employee->salaryData->house_rent + $pay->employee->salaryData->medical_allowance+ $pay->employee->salaryData->dear_allowance + $pay->employee->salaryData->transport_allowance + $pay->employee->salaryData->pf_employer_contribution +$pay->employee->salaryData->other_allowance - $pay->employee->salaryData->pf_employee_contribution - $pay->employee->salaryData->welfare_contribution-$pay->employee->salaryData->tax_deduction}}</td>
+                            <td class="px-5 py-2.5 text-gray-500">{{ $pay->employee->salaryData->basic_salary }}</td>
+                            <td class="px-5 py-2.5 text-gray-500">{{ $pay->employee->salaryData->house_rent }}</td>
+                            <td class="px-5 py-2.5 text-gray-500">{{ $pay->employee->salaryData->medical_allowance }}</td>
+                            <td class="px-5 py-2.5 text-gray-500">{{ $pay->employee->salaryData->dear_allowance }}</td>
+                            <td class="px-5 py-2.5 text-gray-500">{{ $pay->employee->salaryData->transport_allowance }}</td>
+                            <td class="px-5 py-2.5 text-gray-500">{{ $pay->employee->salaryData->pf_employer_contribution + $pay->employee->salaryData->other_allowance}} .</td>
+
+>>>>>>> fd018f5 (salary update)
                             <td class="px-5 py-2.5 text-gray-500">{{ $pay->total_days }}</td>
                             <td class="px-5 py-2.5 text-gray-500">{{ $pay->total_working_days }}</td>
                             <td class="px-5 py-2.5 text-gray-500">{{ $pay->present_days }}</td>
                             <td class="px-5 py-2.5 text-gray-500">{{ $pay->off_days }}</td>
                             <td class="px-5 py-2.5 text-gray-500">{{ $pay->holy_days }}</td>
+<<<<<<< HEAD
                             <td class="px-5 py-2.5 text-gray-500">{{ $pay->absent_days }}</td>
                             <td class="px-5 py-2.5 text-gray-500">{{ $pay->late_days }}</td>
                             <td class="px-5 py-2.5 text-gray-500">{{ $pay->late_penalty_days }}</td>
                             <td class="px-5 py-2.5 text-gray-500">{{ number_format($pay->per_day_salary, 2) }}</td>
                             <td class="px-5 py-2.5 text-gray-500">{{ number_format($pay->basic_salary, 2) }}</td>
+=======
+                            <td class="px-5 py-2.5 text-gray-500">{{ $pay->leave_days }}</td>
+                            <td class="px-5 py-2.5 text-gray-500">{{ $pay->absent_days }}</td>
+                            <td class="px-5 py-2.5 text-gray-500">{{ $pay->late_days }}</td>
+                            <td class="px-5 py-2.5 text-gray-500">{{ $pay->late_penalty_days }}</td>
+                            {{-- <td class="px-5 py-2.5 text-gray-500">{{ number_format($pay->per_day_salary, 2) }}</td> --}}
+                            {{-- <td class="px-5 py-2.5 text-gray-500">{{ number_format($pay->basic_salary, 2) }}</td> --}}
+>>>>>>> fd018f5 (salary update)
                             <td class="px-5 py-2.5 text-gray-500">{{ number_format($pay->attendance_bonus, 2) }}</td>
                             <td class="px-5 py-2.5 text-gray-500">{{ number_format($pay->total_ot, 2) }}</td>
                             <td class="px-5 py-2.5 text-gray-500">{{ number_format($pay->late_deduction, 2) }}</td>

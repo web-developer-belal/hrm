@@ -134,6 +134,7 @@ class PayrollService
                 'present_days' =>$presentDays,
                 'off_days'=>$offDays,
                 'holy_days'=>$holyDays,
+                'leave_days'=>$leaveDays,
                 'absent_days'=>$absentDays,
                 'late_days'=>$lateDays,
                 'late_penalty_days'=>$extraAbsent,

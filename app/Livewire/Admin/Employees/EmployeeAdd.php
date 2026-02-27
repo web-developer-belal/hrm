@@ -2,14 +2,16 @@
 
 namespace App\Livewire\Admin\Employees;
 
+use App\Http\Requests\StoreEmployeeRequest;
 use App\Models\Branch;
-use Livewire\Component;
 use App\Models\Department;
 use App\Models\Designation;
-use Livewire\WithFileUploads;
-use App\Http\Requests\StoreEmployeeRequest;
 use App\Models\Employee;
+use App\Models\SalaryTemplate;
 use Livewire\Attributes\Validate;
+use Livewire\Component;
+use Livewire\WithFileUploads;
+
 class EmployeeAdd extends Component
 {
     use WithFileUploads;
@@ -115,6 +117,24 @@ class EmployeeAdd extends Component
         $emp->update($data);
     } else {
         $emp = Employee::create($data);
+        $checkSalaryTeplate = SalaryTemplate::where('designation_id', $this->designation_id)->first();
+
+        if ($checkSalaryTeplate) {
+            $emp->salaryData()->create([
+                'branch_id' => $this->branch_id,
+                'basic_salary' => $checkSalaryTeplate->basic_salary,
+                'house_rent' => $checkSalaryTeplate->house_rent,
+                'medical_allowance' => $checkSalaryTeplate->medical_allowance,
+                'dear_allowance' => $checkSalaryTeplate->dear_allowance,
+                'transport_allowance' => $checkSalaryTeplate->transport_allowance,
+                'pf_employer_contribution' => $checkSalaryTeplate->pf_employer_contribution,
+                'other_allowance' => $checkSalaryTeplate->other_allowance,
+                'pf_employee_contribution' => $checkSalaryTeplate->pf_employee_contribution,
+                'welfare_contribution' => $checkSalaryTeplate->welfare_contribution,
+                'tax_deduction' => $checkSalaryTeplate->tax_deduction,
+            ]);
+
+        }
     }
 
       // Handle file uploads

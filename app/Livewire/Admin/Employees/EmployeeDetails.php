@@ -107,6 +107,8 @@ class EmployeeDetails extends Component
     public function addOrUpdateSalary()
     {
         $this->salaryModalshow = true;
+
+
     }
     public function addOrUpdateSalarySubmit()
     {

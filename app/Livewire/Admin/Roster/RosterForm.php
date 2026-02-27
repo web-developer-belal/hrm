@@ -153,6 +153,19 @@ class RosterForm extends Component
                     $status = null;
                 }
 
+                    foreach ($this->employees as $empId) {
+                       $emp= Employee::findorfail($empId);
+                        Attendance::create([
+                            'branch_id' => $this->branch_id,
+                            'employee_id' => $empId,
+                            'employee_card_no' => $emp->employee_code,
+                            'roster_id' => $this->roster->id,
+                            'date' => $date->toDateString(),
+                            'shift_start_time' => $this->roster->shift->start_time,
+                            'shift_end_time' => $this->roster->shift->end_time,
+                            'status' => $status,
+                        ]);
+                    }
                 foreach ($this->employees as $empId) {
                     Attendance::create([
                         'branch_id'        => $this->branch_id,
