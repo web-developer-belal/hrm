@@ -16,7 +16,7 @@ class LeaveList extends Component
       {
             // dd($leaveId);
 
-            $leave= Leave::findorfail($leaveId);
+            $leave= Leave::findOrFail($leaveId);
             $leave->update([
                 'status'=>$status,
                 // 'approved_by'=>Auth::user()->id,

@@ -1,22 +1,18 @@
 <?php
-namespace App\Livewire\Admin\Leavemgt;
+namespace App\Livewire\Employ\Leave;
 
-use App\Models\Branch;
-use App\Models\Employee;
 use App\Models\Leave;
 use App\Models\LeaveType;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
-class LeaveApplication extends Component
+class LeaveForm extends Component
 {
-
-    public $isEditMode = false;
-
-    public $employees;
+    public $employee;
+   
     public $leaveTypes;
 
-    public $employee_id;
     public $leave_type_id;
 
     public $leave_balance = 0;
@@ -25,26 +21,11 @@ class LeaveApplication extends Component
     public $total_days = 0;
     public $description;
 
-    public $branches      = [];
-    public $departments   = [];
-    public $shifts        = [];
-    public $employeesData = [];
-    
-    public function mount($roster = null)
+    public function mount()
     {
-        $this->branches = Branch::where('status', 'active')->pluck('name', 'id')->prepend('Select Branch', '')->toArray();
-
-        $this->employees  = Employee::all();
+        $this->employee   = Auth::guard('employee')->user();
         $this->leaveTypes = LeaveType::all();
 
-        $this->employeesData = Employee::pluck('first_name', 'id')->prepend('Select Employee', '')->toArray();
-
-    }
-
-    public function setEmployee($id)
-    {
-        $this->employee_id = $id;
-        $this->recalculateBalance();
     }
 
     public function setLeaveType($id)
@@ -72,7 +53,7 @@ class LeaveApplication extends Component
 
     public function recalculateBalance()
     {
-        if (! $this->employee_id || ! $this->leave_type_id) {
+        if (! $this->employee->id || ! $this->leave_type_id) {
             $this->leave_balance = 0;
             return;
         }
@@ -82,7 +63,7 @@ class LeaveApplication extends Component
         $leaveType   = LeaveType::find($this->leave_type_id);
         $annualLimit = $leaveType?->annual_limit ?? 0;
 
-        $used = Leave::where('employee_id', $this->employee_id)
+        $used = Leave::where('employee_id', $this->employee->id)
             ->where('leave_type_id', $this->leave_type_id)
             ->where('status', 'approved')
             ->whereYear('from_date', $year)
@@ -111,12 +92,12 @@ class LeaveApplication extends Component
     public function submitApplication()
     {
 
-        $validated = $this->validate([
+        $this->validate([
             'from_date' => 'required|date',
             'to_date'   => 'required|date|after_or_equal:from_date',
         ]);
 
-        if (! $this->employee_id || ! $this->leave_type_id) {
+        if (! $this->leave_type_id) {
             $this->addError('employee_id', 'Employee and leave type required.');
             return;
         }
@@ -127,7 +108,7 @@ class LeaveApplication extends Component
         }
 
         Leave::create([
-            'employee_id'   => $this->employee_id,
+            'employee_id'   => $this->employee->id,
             'leave_type_id' => $this->leave_type_id,
             'from_date'     => $this->from_date,
             'to_date'       => $this->to_date,
@@ -139,7 +120,6 @@ class LeaveApplication extends Component
         session()->flash('success', 'Leave application submitted.');
 
         $this->reset([
-            'employee_id',
             'leave_type_id',
             'leave_balance',
             'from_date',
@@ -147,11 +127,11 @@ class LeaveApplication extends Component
             'total_days',
             'description',
         ]);
-        return redirect()->route('admin.leavemgt.leave.list');
+        return redirect()->route('employee.leave.create');
     }
 
     public function render()
     {
-        return view('livewire.admin.leavemgt.leave-application');
+        return view('livewire.employ.leave.leave-form');
     }
 }

@@ -3,13 +3,13 @@
     <!-- Logo -->
     <div class="sidebar-logo fixed h-[50px] w-sidebar pt-3 px-3">
         <a href="{{ route('employee.dashboard') }}" class="logo logo-normal">
-            <img src="{{ asset('assets/img/logo.svg') }}" alt="Logo">
+            <img src="{{ asset('assets/img/Logo-Babyshop.png') }}" class="my-logo" alt="Logo">
         </a>
         <a href="{{ route('employee.dashboard') }}" class="logo-small hidden">
-            <img src="{{ asset('assets/img/logo-small.svg') }}" alt="Logo">
+            <img src="{{ asset('assets/img/Logo-Babyshop.png') }}" class="my-logo" alt="Logo">
         </a>
         <a href="{{ route('employee.dashboard') }}" class="dark-logo hidden">
-            <img src="{{ asset('assets/img/logo-white.svg') }}" alt="Logo">
+            <img src="{{ asset('assets/img/Logo-Babyshop.png') }}" class="my-logo" alt="Logo">
         </a>
     </div>
     <!-- /Logo -->
@@ -83,6 +83,33 @@
                                     class="ti ti-bell 
                        {{ request()->routeIs('employee.notices') ? 'text-gray-900' : 'text-gray-500 group-hover:text-gray-900' }}"></i>
                                 <span class="ms-2">Notices</span>
+                            </a>
+                        </li>
+                        <!-- Complain -->
+                        <li class="mb-[5px]">
+                            <a href="{{ route('employee.complain') }}"
+                                class="relative flex items-center w-full p-2 text-sm font-medium rounded-[5px] transition-all duration-300
+        {{ request()->routeIs('employee.complain') ? 'bg-dark-transparent text-gray-900 active' : 'text-gray-900 hover:bg-dark-transparent' }}">
+
+                                <i
+                                    class="ti ti-message-report
+            {{ request()->routeIs('employee.complain') ? 'text-gray-900' : 'text-gray-500 group-hover:text-gray-900' }}">
+                                </i>
+                                <span class="ms-2">Complain</span>
+                            </a>
+                        </li>
+
+                        <!-- Loan -->
+                        <li class="mb-[5px]">
+                            <a href="{{ route('employee.loan') }}"
+                                class="relative flex items-center w-full p-2 text-sm font-medium rounded-[5px] transition-all duration-300
+        {{ request()->routeIs('employee.loan') ? 'bg-dark-transparent text-gray-900 active' : 'text-gray-900 hover:bg-dark-transparent' }}">
+
+                                <i
+                                    class="ti ti-cash
+            {{ request()->routeIs('employee.loan') ? 'text-gray-900' : 'text-gray-500 group-hover:text-gray-900' }}">
+                                </i>
+                                <span class="ms-2">Loan</span>
                             </a>
                         </li>
 

@@ -19,7 +19,7 @@ class Loan extends Model
         'start_month',
     ];
 
-    protected $with = ['installments'];
+    protected $with = ['installments_data'];
 
     public function branch()
     {
@@ -31,7 +31,7 @@ class Loan extends Model
         return $this->belongsTo(Employee::class);
     }
 
-    public function installments()
+    public function installments_data()
     {
         return $this->hasMany(LoanInstallment::class);
     }

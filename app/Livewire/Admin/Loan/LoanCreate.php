@@ -16,6 +16,7 @@ class LoanCreate extends Component
 
     public $isEditMode = false;
 
+    public $employee_id;
     public $employeesData = [];
     public $branches = [];
     public $departments = [];
@@ -38,7 +39,7 @@ class LoanCreate extends Component
     #[Validate('required|date')]
     public $startMonth;
     #[Validate('string|nullable')]
-    public $note;
+    public $note,$date;
     public $adjustmentId;
     public $isSettled=0;
 
@@ -72,7 +73,7 @@ class LoanCreate extends Component
         $this->departments = Department::where('branch_id', $this->selectedBranch)->where('status', 'active')->pluck('name', 'id')->prepend('Select Department', '')->toArray();
     }
 
-    public function updatedselectedDepartment()
+    public function updatedSelectedDepartment()
     {
         // dd($this->selectedDepartment);
         $this->employeesData = Employee::where('department_id', $this->selectedDepartment)->where('status', 1)->pluck('first_name', 'id')->prepend('Select Employee', '')->toArray();
@@ -113,33 +114,6 @@ class LoanCreate extends Component
                 'amount' => $this->emiAmount,
             ]);
         }
-
-
-        // if($this->isEditMode==true)
-        // {
-        //     $this->adjustmentId->update([
-        //         'branch_id' => $this->selectedBranch,
-        //         'employee_id' => $this->selectedEmployee,
-
-        //         'amount' => $this->amount,
-        //         'note' => $this->note,
-        //         'year' => $year,
-        //         'month' => $month,
-        //         'date' => $this->date,
-        //     ]);
-        // }else{
-        //     Loan::create([
-        //         'branch_id' => $this->selectedBranch,
-        //         'employee_id' => $this->selectedEmployee,
-
-        //         'amount' => $this->amount,
-        //         'note' => $this->note,
-        //         'year' => $year,
-        //         'month' => $month,
-        //         'date' => $this->date,
-        //     ]);
-        // }
-
 
 
         flash()->success($this->isEditMode ? 'Loan  updated successfully.' : 'Loan created successfully.');

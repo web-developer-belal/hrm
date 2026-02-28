@@ -1,7 +1,7 @@
 <form wire:submit.prevent="login">
     <div class="h-screen flex flex-col justify-between p-6 pb-0">
         <div class=" mx-auto mb-8 text-center">
-            <img src="assets/img/logo.svg" class="img-fluid mx-auto" alt="Logo">
+            <img src="{{ asset('assets/img/Logo-Babyshop.png') }}" width="200" class="img-fluid mx-auto" alt="Logo">
         </div>
         <div class="">
             <div class="text-center mb-3">

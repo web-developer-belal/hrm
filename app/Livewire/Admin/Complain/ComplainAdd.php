@@ -1,114 +1,125 @@
 <?php
-
 namespace App\Livewire\Admin\Complain;
 
 use App\Models\Branch;
 use App\Models\Complain;
-use App\Models\Department;
 use App\Models\Employee;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Livewire\Attributes\Validate;
 
 class ComplainAdd extends Component
 {
     use WithFileUploads;
+
     public $isEditMode = false;
-    public $branches = [];
-    public $departments = [];
+
+    public $branches      = [];
+    public $departments   = [];
     public $employeesData = [];
 
-    #[Validate('required')]
     public $branch_id;
-    #[Validate('required')]
     public $employee_id;
-    #[Validate('required')]
-    public $against_employee_id;
-    #[Validate('required')]
+    public $against_employee_id; // nullable
     public $subject;
-    #[Validate('required')]
     public $date;
-    #[Validate('nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048')]
-    public $document;
-    #[Validate('nullable|string')]
     public $description;
-    #[Validate('required')]
-    public $status;
+    public $status    = 0;
+    public $documents = [];
 
-    public $remarks;
-    public $complainId;
-    public $oldDocument;
+    public $oldDocument = [];
 
-
-
+    protected $rules = [
+        'branch_id'           => 'required|exists:branches,id',
+        'employee_id'         => 'required|exists:employees,id',
+        'against_employee_id' => 'nullable|exists:employees,id',
+        'subject'             => 'required|string',
+        'date'                => 'required|date',
+        'description'         => 'nullable|string',
+        'status'              => 'required|in:0,1,2',
+        'documents'           => 'nullable|array',
+        'documents.*'         => 'file|mimes:jpeg,png,jpg,gif,svg,pdf,doc,docx|max:2048',
+    ];
 
     public function mount($complainId = null)
     {
-        $this->branches = Branch::where('status', 'active')->pluck('name', 'id')->prepend('Select Branch', '')->toArray();
+        $this->branches = Branch::where('status', 'active')
+            ->whereHas('employees', function ($query) {
+                $query->where('status', 'active'); // only active employees
+            })
+            ->pluck('name', 'id')
+            ->prepend('Select Branch', '')
+            ->toArray();
 
-        $this->departments = Department::where('status', 'active')->pluck('name', 'id')->prepend('Select Department', '')->toArray();
-        $this->employeesData = Employee::pluck('first_name', 'id')->prepend('Select Employee', '')->toArray();
+        $this->employeesData = []; // default empty until branch selected
 
         if ($complainId) {
             $this->isEditMode = true;
-            $this->complainId = Complain::findOrFail($complainId);
-            $this->branch_id = $this->complainId->branch_id;
-            $this->employee_id = $this->complainId->employee_id;
-            $this->against_employee_id = $this->complainId->against_employee_id;
-            $this->subject = $this->complainId->subject;
-            $this->date = $this->complainId->date;
-            $this->description = $this->complainId->description;
-            $this->status = $this->complainId->status;
-            $this->remarks = $this->complainId->remarks;
-            $this->oldDocument = $this->complainId->document;
+            $complain         = Complain::findOrFail($complainId);
 
+            $this->branch_id           = $complain->branch_id;
+            $this->employee_id         = $complain->employee_id;
+            $this->against_employee_id = $complain->against_employee_id ?? null;
+            $this->subject             = $complain->subject;
+            $this->date                = $complain->date;
+            $this->description         = $complain->description;
+            $this->status              = $complain->status;
+            $this->oldDocument         = $complain->documents ?? [];
+
+            $this->loadEmployeesByBranch();
+        }
+    }
+
+    // Load employees for selected branch
+    public function updatedBranchId()
+    {
+        $this->employee_id         = null;
+        $this->against_employee_id = null;
+        $this->loadEmployeesByBranch();
+    }
+
+    private function loadEmployeesByBranch()
+    {
+        if ($this->branch_id) {
+            $this->employeesData = Employee::where('branch_id', $this->branch_id)
+                ->where('status', 1)
+                ->get()
+                ->mapWithKeys(fn($employee) => [$employee->id => $employee->full_name])
+                ->prepend('Select Employee', '')
+                ->toArray();
+        } else {
+            $this->employeesData = [];
         }
     }
 
     public function submitComplain()
     {
-        $this->validate();
+        $validated = $this->validate();
 
-        if ($this->isEditMode) {
-            $complain = Complain::findOrFail($this->complainId->id);
-            $complain->update($this->validate());
-            if($this->document){
-                $this->handleFileUploads($complain);
+        // Handle multiple files
+        $storedDocuments = [];
+        if (! empty($this->documents)) {
+            foreach ($this->documents as $file) {
+                $storedDocuments[] = $file->store('complains', 'public');
             }
-        }else{
-           $complain=Complain::Create($this->validate());
-           $this->handleFileUploads($complain);
         }
 
+        $validated['against_employee_id'] = $this->against_employee_id ?? null;
 
+        $validated['documents'] = ! empty($storedDocuments) ? $storedDocuments : ($this->oldDocument ?? null);
 
+        if ($this->isEditMode) {
+            $complain = Complain::findOrFail($this->branch_id);
+            $complain->update($validated);
+        } else {
+            Complain::create($validated);
+        }
 
-        flash()->success($this->isEditMode ? 'Employee Complain updated successfully.' : 'Employee Complain created successfully.');
+        flash()->success($this->isEditMode ? 'Complain updated successfully.' : 'Complain created successfully.');
         return redirect()->route('admin.complain.index');
     }
-
 
     public function render()
     {
         return view('livewire.admin.complain.complain-add');
-    }
-
-
-    private function handleFileUploads(Complain $complain)
-    {
-        $fileUpdates = [];
-
-        // Handle photo
-        if ($this->document) {
-            if ($this->isEditMode && $complain->document) {
-                deleteImage($complain->document);
-            }
-            $fileUpdates['document'] = storeImage($this->document, 'employees/complain', 300, 300, 'webp');
-        }
-
-
-        if (!empty($fileUpdates)) {
-            $complain->update($fileUpdates);
-        }
     }
 }

@@ -16,6 +16,8 @@ use App\Livewire\Admin\Device\SyncHistory;
 use App\Livewire\Admin\Employees\EmployeeAdd;
 use App\Livewire\Admin\Employees\EmployeeDetails;
 use App\Livewire\Admin\Employees\EmployeeList;
+use App\Livewire\Admin\Expense\ExpenseManagement;
+use App\Livewire\Admin\Expense\ExpenseTypeManagement;
 use App\Livewire\Admin\Leavemgt\LeaveApplication;
 use App\Livewire\Admin\Leavemgt\LeaveList;
 use App\Livewire\Admin\Leavemgt\LeaveType;
@@ -170,27 +172,26 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::livewire('/adjustment/details/{loan}', LoanDetails::class)
             ->name('show');
 
-        });
-           // Complaint Management
-           Route::prefix('complain')->name('complain.')->group(function () {
-            Route::livewire('/', ComplainList::class)
-                ->name('index');
-            Route::livewire('/add', ComplainAdd::class)
-                ->name('new');
-            Route::livewire('/complain/edit/{complainId}', ComplainAdd::class)
-                ->name('edit');
-
-        });
-           // Device Management
-           Route::prefix('device')->name('device.')->group(function () {
-            Route::livewire('/', DeviceSync::class)
-                ->name('index');
-            Route::livewire('/sync/history', SyncHistory::class)
-                ->name('history');
-
-
-        });
     });
+    // Complaint Management
+    Route::prefix('complain')->name('complain.')->group(function () {
+        Route::livewire('/', ComplainList::class)
+            ->name('index');
+        Route::livewire('/add', ComplainAdd::class)
+            ->name('new');
+        Route::livewire('/complain/edit/{complainId}', ComplainAdd::class)
+            ->name('edit');
+
+    });
+    // Device Management
+    Route::prefix('device')->name('device.')->group(function () {
+        Route::livewire('/', DeviceSync::class)
+            ->name('index');
+        Route::livewire('/sync/history', SyncHistory::class)
+            ->name('history');
+
+    });
+
     Route::prefix('notices')->name('notice.')->group(function () {
         Route::livewire('/', ManageNotice::class)
             ->name('index');
@@ -200,6 +201,12 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::livewire('/edit/{notice}', NoticeForm::class)
             ->name('edit');
 
+    });
+    Route::prefix('expenses')->name('expenses.')->group(function () {
+        Route::livewire('/type', ExpenseTypeManagement::class)
+            ->name('type');
+        Route::livewire('/management', ExpenseManagement::class)
+            ->name('index');
     });
 
 });
