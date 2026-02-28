@@ -13,14 +13,25 @@ return new class extends Migration
     {
         Schema::create('complains', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('branch_id');
-            $table->foreignId('employee_id');
-            $table->foreignId('against_employee_id');
+
+            $table->foreignId('branch_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('against_employee_id')
+                ->nullable()
+                ->constrained('employees')
+                ->nullOnDelete();
+
             $table->string('subject');
             $table->date('date');
-            $table->string('document')->nullable();
+
+            // ✅ multiple documents
+            $table->json('documents')->nullable();
+
             $table->text('description')->nullable();
-            $table->tinyInteger('status')->default(0)->comment('0: pending, 1: resolved, 2: rejected');
+            $table->tinyInteger('status')
+                ->default(0)
+                ->comment('0: pending, 1: resolved, 2: rejected');
+
             $table->text('remarks')->nullable();
             $table->timestamps();
         });

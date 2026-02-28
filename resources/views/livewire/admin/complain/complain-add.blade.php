@@ -1,109 +1,88 @@
 <div>
-    <!-- Breadcrumb -->
-    <div class="md:flex block items-center justify-between page-breadcrumb mb-4">
-        <div class="my-auto mb-2">
-            <h2 class="mb-1">{{ $isEditMode ? 'Edit Complain' : 'Create Complain' }}</h2>
-            <nav class="flex" aria-label="Breadcrumb">
-                <ol class="inline-flex items-center space-x-1 md:space-x-2">
-                    <li class="inline-flex items-center">
-                        <a href="{{ route('admin.dashboard') }}"
-                            class="inline-flex items-center text-xs text-gray-500 hover:text-primary">
-                            <i class="ti ti-smart-home"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <span class="text-default">/</span>
-                    </li>
-                    <li class="text-xs text-default">
-                        {{ $isEditMode ? 'Edit Complain' : 'Create Complain' }}
-                    </li>
-                </ol>
-            </nav>
+    <div class="card bg-white border rounded shadow-sm mb-6">
+        <div class="card-header p-5 border-b">
+            <h5 class="text-lg font-semibold">{{ $isEditMode ? 'Edit Complain' : 'Create Complain' }}</h5>
         </div>
 
-        <div class="flex my-xl-auto right-content items-center flex-wrap ">
-            <div class="mb-2">
-                <a href="{{ route('admin.complain.index') }}"
-                    class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">
-                    <i class="ti ti-circle-plus me-2"></i>Complain
-                </a>
-            </div>
-        </div>
-    </div>
-    <!-- /Breadcrumb -->
+        <div class="card-body p-5">
+            <form wire:submit.prevent="submitComplain" class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-    <div class="">
-        <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white mb-6">
-            <div class="card-header p-5 border-b border-borderColor">
-                <h5 class="card-title">{{ $isEditMode ? 'Edit Complain' : 'Create Complain' }}</h5>
+                <!-- Branch -->
+                <x-form.select 
+                    label="Select Branch" 
+                    name="branch_id" 
+                    :options="$branches" 
+                    :is_required="true"
+                    :live="true" />
 
+                <!-- Employees -->
+                <x-form.select 
+                    label="Complainant Employee" 
+                    name="employee_id" 
+                    :options="$employeesData" 
+                    :is_required="true" />
 
- @if ($errors->any())
-     @foreach ($errors->all() as $error)
-         <div>{{$error}}</div>
-     @endforeach
- @endif
+                <!-- Against Employee (nullable) -->
+                <x-form.select 
+                    label="Against Employee" 
+                    name="against_employee_id" 
+                    :options="$employeesData" 
+                    :is_required="false" />
 
-            </div>
+                <!-- Subject -->
+                <x-form.input 
+                    label="Complain Subject" 
+                    name="subject" 
+                    placeholder="Enter complain subject" 
+                    :is_required="true" />
 
-            <div class="card-body p-5">
-                <form wire:submit.prevent="submitComplain" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+                <!-- Date -->
+                <x-form.input 
+                    label="Date" 
+                    name="date" 
+                    type="date" 
+                    :is_required="true" />
 
-                    <!-- Branch -->
-                    <x-form.select label="Select Branch" name="branch_id" :is_required="true" :error="true"
-                        :options="$branches" />
+                <!-- Description -->
+                <x-form.textarea 
+                    label="Describe your Complain" 
+                    name="description" 
+                    placeholder="Describe your complain" 
+                    :is_required="false" />
 
-                    <!-- Employees -->
-                    <x-form.select label="Complainant Employee" name="employee_id" :is_required="true" :error="true"
-                        :options="$employeesData" :is_multiple="false" :live="false"/>
+                <!-- Documents -->
+                <x-form.file-upload 
+                    title="Documents" 
+                    label="Upload Files" 
+                    name="documents" 
+                    multiple 
+                    accept=".pdf,.doc,.docx,.jpg,.png" />
 
-                        <!-- Employees -->
-                    <x-form.select label="Against Employee" name="against_employee_id" :is_required="true" :error="true"
-                        :options="$employeesData" :is_multiple="false" :live="false"/>
-
-                    <x-form.input label="Complain Subject" name="subject" :is_required="true" :error="true"
-                        placeholder="Enter complain Subject" />
-                    <x-form.input
-                        label="Date"
-                        name="date"
-                        :is_required="true"
-                        :error="true"
-                        type="date" />
-
-
-                     <x-form.textarea
-                        label="Describe your Complain"
-                        name="description"
-                        :is_required="false"
-                        :error="true"
-                        placeholder="Describe your complain" />
-
-                        <x-form.input
-                        label="Document"
-                        name="document"
-                        :error="true"
-
-                        type="file"
-                        />
-                        @if ($oldDocument)
-                            <img src="{{ customAsset($oldDocument) }}" height="200" width="200">
-                        @endif
-                        @if ($document)
-                            <img src="{{ $document->temporaryUrl()}}" height="200" width="200">
-                        @endif
-
-
-                    <!-- Status -->
-                    <x-form.select label="Status" name="status" :is_required="true" :error="true"
-                        :options="['0' => 'Pending', '1' => 'Resolve', '2'=> 'Rejected']" />
-
-                    <!-- Submit Button -->
-                    <div class="text-end md:col-span-2">
-                        <x-form.button type="submit" />
+                <!-- Show old documents -->
+                @if(!empty($oldDocument))
+                    <div class="col-span-2 mt-2 space-y-1">
+                        <label class="text-sm font-semibold">Existing Documents:</label>
+                        <ul>
+                            @foreach($oldDocument as $doc)
+                                <li><a href="{{ asset('storage/'.$doc) }}" target="_blank">{{ basename($doc) }}</a></li>
+                            @endforeach
+                        </ul>
                     </div>
+                @endif
 
-                </form>
-            </div>
+                <!-- Status -->
+                <x-form.select 
+                    label="Status" 
+                    name="status" 
+                    :options="['0'=>'Pending','1'=>'Resolved','2'=>'Rejected']" 
+                    :is_required="true" />
+
+                <!-- Submit -->
+                <div class="md:col-span-2 text-end">
+                    <x-form.button type="submit" :label="$isEditMode ? 'Update' : 'Create'" />
+                </div>
+
+            </form>
         </div>
     </div>
 </div>
