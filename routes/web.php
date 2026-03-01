@@ -37,9 +37,15 @@ use App\Livewire\Admin\Shift\ShiftManagement;
 use App\Livewire\Admin\Transfer\TransferList;
 use App\Livewire\Admin\Transfer\TransferNew;
 use App\Livewire\Auth\AdminLogin;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/admin/login', AdminLogin::class)->name('admin.login');
+
+Route::get('/create/storage',function(){
+    Artisan::call('storage:link');
+});
+
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::livewire('dashboard', Dashboard::class)
