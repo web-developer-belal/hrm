@@ -18,6 +18,8 @@ use App\Livewire\Admin\Employees\EmployeeDetails;
 use App\Livewire\Admin\Employees\EmployeeList;
 use App\Livewire\Admin\Expense\ExpenseManagement;
 use App\Livewire\Admin\Expense\ExpenseTypeManagement;
+use App\Livewire\Admin\Holiday\HolidayAdd;
+use App\Livewire\Admin\Holiday\HolidayList;
 use App\Livewire\Admin\Leavemgt\LeaveApplication;
 use App\Livewire\Admin\Leavemgt\LeaveList;
 use App\Livewire\Admin\Leavemgt\LeaveType;
@@ -208,5 +210,15 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::livewire('/management', ExpenseManagement::class)
             ->name('index');
     });
+
+       // Holiday Management
+        Route::prefix('holiday')->name('holiday.')->group(function () {
+            Route::livewire('/', HolidayList::class)
+                ->name('index');
+            Route::livewire('/add/holiday', HolidayAdd::class)
+                ->name('add');
+
+
+        });
 
 });
