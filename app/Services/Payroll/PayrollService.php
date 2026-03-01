@@ -150,7 +150,7 @@ class PayrollService
                 'total_deduction' =>$totalDeduction,
                 'gross_salary' => $grossSalary,
                 'net_salary' =>$netSalary,
-                 'is_generated'     => true,
+                'is_generated'     => true,
                 'approval_stage'   => 'branch_hr',
         ]);
     }
