@@ -26,11 +26,7 @@
 
             <div class="mb-2">
                 <div class="relative w-[120px]">
-                    <div class="absolute inset-y-0 start-2 flex items-center pointer-events-none">
-                        <i class="ti ti-calendar text-gray-900 text-base leading-normal"></i>
-                    </div>
-                    <input type="text"
-                        class="flatpickr-input flat-monthpickr bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 ps-6 px-2.5 h-[38px] placeholder:text-gray-400">
+                    <x-form.date-range-picker/>
                 </div>
             </div>
             <div class="head-icons ml-2 mb-2">

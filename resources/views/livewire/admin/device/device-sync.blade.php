@@ -124,7 +124,7 @@
 											<x-form.input
                                             label="Device Name"
                                             name="name"
-                                            :is_required="false"
+                                            :isRequired="false"
                                             :error="true"
                                             placeholder="Enter Device Name" />
                                         </div>
@@ -135,7 +135,7 @@
 											<x-form.input
                                             label="Ip Address"
                                             name="ip_address"
-                                            :is_required="true"
+                                            :isRequired="true"
                                             :error="true"
                                             placeholder="192.168.0.143" />
                                         </div>
@@ -145,7 +145,7 @@
 											<x-form.input
                                             label="Port"
                                             name="port"
-                                            :is_required="false"
+                                            :isRequired="false"
                                             :error="true"
                                             placeholder="473" />
                                         </div>
@@ -154,7 +154,7 @@
 										<div class="md:col-span-6">
                                             <div class="mb-3">
                                                  <!-- Status -->
-                                                 <x-form.select label="Status" name="status" :is_required="true" :error="true"
+                                                 <x-form.select label="Status" name="status" :isRequired="true" :error="true"
                                                  :options="[' ' => 'Select Status', '0' => 'Inactive', '1'=> 'Active']" />
 
 

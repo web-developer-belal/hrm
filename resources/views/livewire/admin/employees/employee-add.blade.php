@@ -62,7 +62,7 @@
                     <x-form.select
                     label="Select Branch"
                     name="branch_id"
-                    :is_required="true"
+                    :isRequired="true"
                     :error="true"
                     :options="$branches" />
 
@@ -70,28 +70,28 @@
                 <x-form.select
                     label="Select Department"
                     name="department_id"
-                    :is_required="false"
+                    :isRequired="false"
                     :error="true"
                     :options="$departments" />
 
                     <x-form.input
                         label="First Name"
                         name="first_name"
-                        :is_required="true"
+                        :isRequired="true"
                         :error="true"
                         placeholder="Enter First Name" />
 
                     <x-form.input
                         label="Last Name"
                         name="last_name"
-                        :is_required="false"
+                        :isRequired="false"
                         :error="true"
                         placeholder="Enter Last Name" />
 
                     <x-form.input
                         label="Employee ID"
                         name="employee_code"
-                        :is_required="false"
+                        :isRequired="false"
                         :error="true"
                         placeholder="Enter Employee ID or Code" />
 
@@ -99,28 +99,28 @@
                         <x-form.input
                         label="Joinging Date"
                         name="joining_date"
-                        :is_required="true"
+                        :isRequired="true"
                         :error="true"
                         type="date" />
 
                         <x-form.select
                         label="Select Designation"
                         name="designation_id"
-                        :is_required="true"
+                        :isRequired="true"
                         :error="true"
                         :options="$designations" />
 
                         <x-form.input
                         label="Contact No"
                         name="contact_number"
-                        :is_required="true"
+                        :isRequired="true"
                         :error="true"
                         placeholder="Enter Contact No" />
 
                         <x-form.input
                         label="Alternative Contact No"
                         name="alternative_phone_number"
-                        :is_required="false"
+                        :isRequired="false"
                         :error="true"
                         placeholder="Enter Alternative Contact no" />
 
@@ -128,21 +128,21 @@
                             <x-form.select
                             label="Select Gender"
                             name="gender"
-                            :is_required="true"
+                            :isRequired="true"
                             :error="true"
                             :options="['male' => 'Male', 'female' => 'Female','other'=>' Other']" />
 
                             <x-form.input
                             label="Present Address"
                             name="local_address"
-                            :is_required="true"
+                            :isRequired="true"
                             :error="true"
                             type="text" />
 
                             <x-form.input
                             label="Permanent Address"
                             name="permanent_address"
-                            :is_required="true"
+                            :isRequired="true"
                             :error="true"
                             type="text" />
 
@@ -150,28 +150,28 @@
                             <x-form.input
                             label="Banks Name"
                             name="bank_name"
-                            :is_required="true"
+                            :isRequired="true"
                             :error="true"
                             type="text" />
 
                             <x-form.input
                             label="Account Holder Name"
                             name="account_holder_name"
-                            :is_required="true"
+                            :isRequired="true"
                             :error="true"
                             type="text" />
 
                             <x-form.input
                             label="Account Number"
                             name="account_number"
-                            :is_required="true"
+                            :isRequired="true"
                             :error="true"
                             type="text" />
 
                             <x-form.input
                             label="Banke Routing Number"
                             name="routing_number"
-                            :is_required="false"
+                            :isRequired="false"
                             :error="true"
                             type="text" />
 
@@ -179,7 +179,7 @@
                     <x-form.textarea
                         label="About Employee"
                         name="description"
-                        :is_required="false"
+                        :isRequired="false"
                         :error="true"
                        />
 
@@ -187,7 +187,7 @@
                     {{-- <x-form.input
                         label="Start Date"
                         name="start_date"
-                        :is_required="true"
+                        :isRequired="true"
                         :error="true"
                         type="date" /> --}}
 
@@ -229,7 +229,7 @@
                     <x-form.select
                         label="Status"
                         name="status"
-                        :is_required="true"
+                        :isRequired="true"
                         :error="true"
                         :options="['1' => 'Active', '0' => 'Inactive']" />
 

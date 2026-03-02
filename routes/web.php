@@ -44,10 +44,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/admin/login', AdminLogin::class)->name('admin.login');
 
-Route::get('/create/storage',function(){
+Route::get('/create/storage', function () {
     Artisan::call('storage:link');
 });
-
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::livewire('dashboard', Dashboard::class)
@@ -217,14 +216,14 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('index');
     });
 
-       // Holiday Management
-        Route::prefix('holiday')->name('holiday.')->group(function () {
-            Route::livewire('/', HolidayList::class)
-                ->name('index');
-            Route::livewire('/add/holiday', HolidayAdd::class)
-                ->name('add');
+    // Holiday Management
+    Route::prefix('holiday')->name('holiday.')->group(function () {
+        Route::livewire('/', HolidayList::class)
+            ->name('index');
+        Route::livewire('/add/holiday', HolidayAdd::class)
+            ->name('add');
+            
 
-
-        });
+    });
 
 });

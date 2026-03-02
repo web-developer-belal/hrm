@@ -136,7 +136,7 @@
 									<div class="md:col-span-6">
 										<div class="mb-3">
                                              <!-- Status -->
-                                             <x-form.select label="Status" name="status" :is_required="true" :error="true"
+                                             <x-form.select label="Status" name="status" :isRequired="true" :error="true"
                                              :options="['0' => 'Pending', '1' => 'Resolve', '2'=> 'Rejected']" />
 
 
@@ -147,7 +147,7 @@
 											<x-form.textarea
                                             label="Note your Complain"
                                             name="remarks"
-                                            :is_required="false"
+                                            :isRequired="false"
                                             :error="true"
                                             placeholder="Note your complain" />
                                         </div>

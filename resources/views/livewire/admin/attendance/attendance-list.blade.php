@@ -2,7 +2,7 @@
     <!-- Breadcrumb -->
     <div class="md:flex block items-center justify-between page-breadcrumb mb-4">
         <div class="my-auto mb-2">
-            <h2 class="mb-1">Attendance Admin</h2>
+            <h2 class="mb-1">Attendance Reports</h2>
             <nav class="flex" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-2">
                     <li class="inline-flex items-center">
@@ -14,24 +14,24 @@
                     <li>
                         <span class="text-default">/</span>
                     </li>
-                    <li class="text-xs text-default">Attendance Admin</li>
+                    <li class="text-xs text-default">Attendance Reports</li>
 
                 </ol>
             </nav>
         </div>
-        <div class="flex my-xl-auto right-content items-center flex-wrap ">
+        <div class="flex my-xl-auto right-content items-center flex-wrap gap-2">
 
             <div class="mb-2">
                 <button wire:click="processRunningMonth"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
-                        class="ti ti-circle-plus me-2"></i>Attendance Sync</button>
+                        class="ti ti-refresh me-2"></i>Attendance Sync</button>
 
             <span wire:loading>Processing...</span>
             </div>
             <div class="mb-2">
                 <a href="{{ route('admin.rosters.create') }}"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
-                        class="ti ti-circle-plus me-2"></i>Attendance Admin</a>
+                        class="ti ti-circle-plus me-2"></i>Add Attendance</a>
             </div>
 
         </div>

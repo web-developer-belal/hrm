@@ -127,20 +127,20 @@
                     <x-form.select
                         label="Select Branch"
                         name="branch_id"
-                        :is_required="true"
+                        :isRequired="true"
                         :error="true"
                         :options="$branches" />
 
                                   <x-form.input
                         label="Name"
                         name="name"
-                        :is_required="true"
+                        :isRequired="true"
                         :error="true"
                         type="text" />
                                   <x-form.input
                         label="Annual Limit"
                         name="annual_limit"
-                        :is_required="true"
+                        :isRequired="true"
                         :error="true"
                         type="text" />
 
@@ -148,7 +148,7 @@
                     <x-form.select
                         label="Status"
                         name="is_paid"
-                        :is_required="true"
+                        :isRequired="true"
                         :error="true"
                         :options="['0' => 'Unpaid', '1' => 'Paid']" />
 
@@ -196,7 +196,7 @@
                         <x-form.select
                             label="Select Branch"
                             name="branch_id"
-                            :is_required="true"
+                            :isRequired="true"
                             :error="true"
                             :options="$branches"
                             wire:model="branch_id" />
@@ -205,7 +205,7 @@
                         <x-form.input
                             label="Name"
                             name="name"
-                            :is_required="true"
+                            :isRequired="true"
                             :error="true"
                             type="text"
                             wire:model="name"
@@ -215,7 +215,7 @@
                         <x-form.input
                             label="Annual Limit (Days)"
                             name="annual_limit"
-                            :is_required="true"
+                            :isRequired="true"
                             :error="true"
                             type="number"
                             min="0"
@@ -227,7 +227,7 @@
                         <x-form.select
                             label="Type"
                             name="is_paid"
-                            :is_required="true"
+                            :isRequired="true"
                             :error="true"
                             :options="['0' => 'Unpaid', '1' => 'Paid']"
                             wire:model="is_paid" />

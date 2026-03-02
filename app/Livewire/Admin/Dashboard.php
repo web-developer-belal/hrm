@@ -2,33 +2,152 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Attendance;
+use App\Models\Branch;
 use App\Models\Employee;
 use App\Models\Leave;
 use App\Models\Notice;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class Dashboard extends Component
 {
+    public $startDate;
+    public $endDate;
+
+    public $branch;
+    public $branch_search;
+    public $branch_options = [];
+
+    public function mount()
+    {
+        $this->startDate = now()->format('Y-m-d');
+        $this->endDate   = now()->format('Y-m-d');
+        $this->loadBranch();
+    }
+
+    public function updatedBranchSearch()
+    {
+        $this->loadBranch();
+    }
+
+    protected function loadBranch(): void
+    {
+        $this->branch_options = Branch::where('status', 'active')
+            ->when($this->branch_search, fn($q) =>
+                $q->where('name', 'like', "%{$this->branch_search}%")
+            )
+            ->limit(5)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    #[On('date-range-update')]
+    public function dateRangeUpdate($start, $end)
+    {
+        $this->startDate = $start;
+        $this->endDate   = $end;
+    }
+
     public function render()
     {
+        $dateFilter = fn($q, $column = 'date') =>
+        $q->when($this->startDate && $this->endDate,
+            fn($qq) => $qq->whereBetween($column, [$this->startDate, $this->endDate])
+        );
+
+        $branchFilter = fn($q)                 =>
+        $q->when($this->branch, fn($qq) => $qq->where('branch_id', $this->branch));
+
+        // --- Total employees with expected attendance in the date range
+        $totalEmployee = $branchFilter(Employee::query())->count();
+
+        // Attendance stats
+        $presentRecords = $dateFilter(
+            $branchFilter(Attendance::where('status', 'present'))
+        );
+
+        $lateRecords = $dateFilter(
+            $branchFilter(Attendance::where('status', 'late'))
+        );
+
+        $onTimeRecords = $dateFilter(
+            $branchFilter(
+                Attendance::where('status', 'present')->where('late_minutes', '<=', 0)
+            )
+        );
+
+        $absentRecords = $dateFilter(
+            $branchFilter(
+                Attendance::where('status', 'absent')
+            )
+        );
+        $totalAttendance = $dateFilter(
+            $branchFilter(
+                Attendance::query()
+            )
+        )->count();
+
+        // --- State for overall stats ---
         $state = [
-            'total_employee'          => Employee::count(),
-            'total_present'           => Attendance::where('status', 'present')->whereDate('date', today())->count(),
-            'total_absent'            => Attendance::where('status', 'absent')->where('date', today())->count(),
-            'total_leave'             => Leave::where('status', 'approved')
-                ->where(function ($q) {
-                    $q->whereDate('from_date', '<=', today())
-                        ->orWhereDate('to_date', '>=', today());
-                })
-                ->count(),
-            'total_on_time'           => Attendance::where('status', 'present')->where('late_minutes', '<=', 0)->where('date', today())->count(),
-            'total_late'              => Attendance::where('status', 'late')->where('date', today())->count(),
-            'total_notice'            => Notice::where('created_at', today())->count(),
-            'total_leave_application' => Leave::where('status', 'pending')->count(),
+            'total_employee'          => $totalEmployee,
+            'total_present'           => $presentRecords->count(),
+            'total_absent'            => $absentRecords->count(),
+            'total_on_time'           => $onTimeRecords->count(),
+            'total_late'              => $lateRecords->count(),
+            'total_leave'             => $branchFilter(
+                Leave::where('status', 'approved')
+            )->where(fn($q) =>
+                $q->whereDate('from_date', '<=', now())
+                    ->whereDate('to_date', '>=', now())
+            )->count(),
+            'total_notice'            => $dateFilter(
+                $branchFilter(Notice::query()),
+                'created_at'
+            )->count(),
+            'total_leave_application' => $branchFilter(Leave::where('status', 'pending'))->count(),
         ];
 
-        $leaves=Leave::latest()->take(5)->get();
-        $notices=Notice::latest()->take(5)->get();
-        return view('livewire.admin.dashboard', compact('state','leaves','notices'));
+        // Attendance array for Doughnut chart
+        $attendance = [
+            'total_attendance' => $totalAttendance,
+            'present' => $state['total_present'],
+            'late'    => $state['total_late'],
+            'on_time' => $state['total_on_time'],
+            'absent'  => $state['total_absent']
+        ];
+        // Month-wise Leave chart
+        $months        = collect(range(1, 12));
+        $approvedLeave = $months->map(fn($m) =>
+            Leave::whereStatus('approved')
+                ->when($this->branch, fn($q) => $q->where('branch_id', $this->branch))
+                ->whereMonth('from_date', '<=', $m)
+                ->whereMonth('to_date', '>=', $m)
+                ->count()
+        )->toArray();
+
+        $pendingLeave = $months->map(fn($m) =>
+            Leave::whereStatus('pending')
+                ->when($this->branch, fn($q) => $q->where('branch_id', $this->branch))
+                ->whereMonth('from_date', '<=', $m)
+                ->whereMonth('to_date', '>=', $m)
+                ->count()
+        )->toArray();
+
+        $leaveMonths = $months->map(fn($m) => \Carbon\Carbon::create()->month($m)->format('M'))->toArray();
+
+        // Latest 5 Leaves & Notices
+        $leaves  = $branchFilter(Leave::latest())->take(5)->get();
+        $notices = $branchFilter(Notice::latest())->take(5)->get();
+
+        return view('livewire.admin.dashboard', compact(
+            'state',
+            'attendance',
+            'totalEmployee',
+            'approvedLeave',
+            'pendingLeave',
+            'leaveMonths',
+            'leaves',
+            'notices'
+        ));
     }
 }

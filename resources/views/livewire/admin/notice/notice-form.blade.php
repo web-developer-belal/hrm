@@ -43,24 +43,24 @@
                 <form wire:submit.prevent="save" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
                     {{-- Notice Title --}}
-                    <x-form.input label="Notice Title" name="title" :is_required="true" :error="true"
+                    <x-form.input label="Notice Title" name="title" :isRequired="true" :error="true"
                         placeholder="Enter Notice Title" />
 
                     {{-- Branch --}}
-                    <x-form.select label="Select Branch" name="branch_id" live="true" :is_required="true"
+                    <x-form.select label="Select Branch" name="branch_id" live="true" :isRequired="true"
                         :error="true" :options="$branches" />
 
                     {{-- Department --}}
-                    <x-form.select label="Select Department" name="department_id" :is_required="false" :error="true"
+                    <x-form.select label="Select Department" name="department_id" :isRequired="false" :error="true"
                         :options="$departments" />
 
                     {{-- Status --}}
-                    <x-form.select label="Status" name="status" :is_required="true" :error="true"
+                    <x-form.select label="Status" name="status" :isRequired="true" :error="true"
                         :options="['1' => 'Active', '0' => 'Inactive']" />
 
                     {{-- Description --}}
                     <div class="md:col-span-2">
-                        <x-form.textarea label="Notice Description" name="description" :is_required="true"
+                        <x-form.textarea label="Notice Description" name="description" :isRequired="true"
                             :error="true" placeholder="Enter Notice Details..." />
                     </div>
 

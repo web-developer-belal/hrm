@@ -39,13 +39,13 @@
             </div>
             <div class="card-body p-5">
                 <form wire:submit.prevent="save" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-                    <x-form.input label="Shift Name" name="name" :is_required="true" :error="true"
+                    <x-form.input label="Shift Name" name="name" :isRequired="true" :error="true"
                         placeholder="Enter Shift Name" />
-                    <x-form.input label="Start Time" type="time" name="start_time" :is_required="true"
+                    <x-form.input label="Start Time" type="time" name="start_time" :isRequired="true"
                         :error="true" placeholder="Enter Start Time" live="true" />
-                    <x-form.input label="End Time" type="time" name="end_time" :is_required="true" :error="true"
+                    <x-form.input label="End Time" type="time" name="end_time" :isRequired="true" :error="true"
                         placeholder="Enter End Time" live="true" />
-                    <x-form.select label="Status" name="status" :is_required="true" :error="true"
+                    <x-form.select label="Status" name="status" :isRequired="true" :error="true"
                         :options="['active' => 'Active', 'inactive' => 'Inactive']" />
                     <div class="md:col-span-2">
                         {{ $workingText }}

@@ -42,19 +42,19 @@
                 <form wire:submit.prevent="save" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
                     <!-- Roster Name -->
-                    <x-form.input label="Roster Name" name="name" :is_required="true" :error="true"
+                    <x-form.input label="Roster Name" name="name" :isRequired="true" :error="true"
                         placeholder="Enter Roster Name" />
 
                     <!-- Branch -->
-                    <x-form.select label="Select Branch" name="branch_id" :is_required="true" :error="true"
+                    <x-form.select label="Select Branch" name="branch_id" :isRequired="true" :error="true"
                         :options="$branches" />
 
                     <!-- Department (Optional) -->
-                    <x-form.select label="Select Department" name="department_id" :is_required="false" :error="true"
+                    <x-form.select label="Select Department" name="department_id" :isRequired="false" :error="true"
                         :options="$departments" />
 
                     <!-- Shift -->
-                    <x-form.select label="Select Shift" name="shift_id" :is_required="true" :error="true"
+                    <x-form.select label="Select Shift" name="shift_id" :isRequired="true" :error="true"
                         :options="$shifts" />
 
                  
@@ -63,7 +63,7 @@
                     <x-form.select
                         label="Working Days"
                         name="working_days"
-                        :is_required="true"
+                        :isRequired="true"
                         :error="true"
                         :options="$working_days_options"
                         :isMultiple="true" />
@@ -80,7 +80,7 @@
                     <x-form.select
                         label="Weekly Off Days"
                         name="weekly_off_days"
-                        :is_required="false"
+                        :isRequired="false"
                         :error="true"
                         :options="$working_days_options"
                         :isMultiple="true" />
@@ -97,7 +97,7 @@
                     <x-form.select
                         label="Select Employee"
                         name="employees"
-                        :is_required="true"
+                        :isRequired="true"
                         :error="true"
                         :search="true"
                         :options="$employees_options"
@@ -110,15 +110,15 @@
                     </select> --}}
 
                     <!-- Start Date -->
-                    <x-form.input label="Start Date" name="start_date" :is_required="true" :error="true"
+                    <x-form.input label="Start Date" name="start_date" :isRequired="true" :error="true"
                         type="date" />
 
                     <!-- End Date -->
-                    <x-form.input label="End Date" name="end_date" :is_required="true" :error="true"
+                    <x-form.input label="End Date" name="end_date" :isRequired="true" :error="true"
                         type="date" />
 
                     <!-- Status -->
-                    <x-form.select label="Status" name="status" :is_required="true" :error="true"
+                    <x-form.select label="Status" name="status" :isRequired="true" :error="true"
                         :options="['active' => 'Active', 'inactive' => 'Inactive']" />
 
                     <!-- Submit Button -->

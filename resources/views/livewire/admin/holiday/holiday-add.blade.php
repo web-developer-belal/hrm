@@ -40,12 +40,12 @@
             <div class="card-body p-5">
                 <form wire:submit.prevent="saveHoliday" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
-                    <x-form.input label="Holy Day Name" name="name" :is_required="true" :error="true"
+                    <x-form.input label="Holy Day Name" name="name" :isRequired="true" :error="true"
                         placeholder="Enter Department Name" />
-                    <x-form.input label="Holi Day Date" name="date" :is_required="true" :error="true"
+                    <x-form.input label="Holi Day Date" name="date" :isRequired="true" :error="true"
                         type="date"/>
 
-                    <x-form.select label="Select Branch" name="branch_id" :is_required="false" :error="true"
+                    <x-form.select label="Select Branch" name="branch_id" :isRequired="false" :error="true"
                         :options="$branches" />
 
 

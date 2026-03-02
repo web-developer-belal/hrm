@@ -48,7 +48,7 @@
                 <x-form.select
                     label="Select Branch"
                     name="selectedBranch"
-                    :is_required="true"
+                    :isRequired="true"
                     :error="true"
                     :live="true"
                     :options="$branches" />
@@ -57,7 +57,7 @@
                 <x-form.select
                     label="Select Department"
                     name="selectedDepartment"
-                    :is_required="false"
+                    :isRequired="false"
                     :error="true"
                     :live="true"
                     :options="$departments" />
@@ -66,7 +66,7 @@
                 <x-form.select
                     label="Select Employee"
                     name="selectedEmployee"
-                    :is_required="true"
+                    :isRequired="true"
                     :error="true"
                     :options="$employeesData"
                     :is_multiple="false" />
@@ -76,7 +76,7 @@
                 <x-form.input
                 label="Amount"
                 name="amount"
-                :is_required="true"
+                :isRequired="true"
                 :live="true"
                 :error="true"
                 type="text" />
@@ -84,7 +84,7 @@
                 <x-form.input
                 label="Installment"
                 name="installment"
-                :is_required="true"
+                :isRequired="true"
                 :live="true"
                 :error="true"
                 type="number" />
@@ -92,7 +92,7 @@
                 <x-form.input
                 label="Emi Amount"
                 name="emiAmount"
-                :is_required="true"
+                :isRequired="true"
 
                 :error="true"
                 type="text" />
@@ -101,7 +101,7 @@
                 <x-form.input
                 label="Start Month"
                 name="startMonth"
-                :is_required="true"
+                :isRequired="true"
                 :error="true"
                 type="date" />
 
@@ -109,7 +109,7 @@
                 <x-form.textarea
                     label="Note"
                     name="note"
-                    :is_required="false"
+                    :isRequired="false"
                     :error="true"
                      />
 

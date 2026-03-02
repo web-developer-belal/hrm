@@ -50,7 +50,7 @@
                 <form wire:submit.prevent="submitTransfer" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
                     <!-- Employees -->
-                    <x-form.select label="Select Employee" name="selectedEmployee" :is_required="true" :error="true"
+                    <x-form.select label="Select Employee" name="selectedEmployee" :isRequired="true" :error="true"
                         :options="$employeesData" :is_multiple="false" :live="true"/>
 
 
@@ -79,7 +79,7 @@
                     @endif
 
                     <!-- Branch -->
-                    <x-form.select label="Transfer To Branch" name="to_branch_id" :is_required="true" :error="true"
+                    <x-form.select label="Transfer To Branch" name="to_branch_id" :isRequired="true" :error="true"
                         :options="$branches" />
 
 
@@ -89,19 +89,19 @@
 
 
                     <!-- Department (Optional) -->
-                    <x-form.select label="Transfer To Department" name="to_department_id" :is_required="true"
+                    <x-form.select label="Transfer To Department" name="to_department_id" :isRequired="true"
                         :error="true" :options="$departments" />
 
 
                      <x-form.textarea
                         label="Note"
                         name="note"
-                        :is_required="false"
+                        :isRequired="false"
                         :error="true"
                         placeholder="Describe note" />
 
                     <!-- Status -->
-                    <x-form.select label="Status" name="status" :is_required="true" :error="true"
+                    <x-form.select label="Status" name="status" :isRequired="true" :error="true"
                         :options="['0' => 'Unapproved', '1' => 'Approved']" />
 
                     <!-- Submit Button -->

@@ -48,7 +48,7 @@
                 <x-form.select
                     label="Select Branch"
                     name="selectedBranch"
-                    :is_required="true"
+                    :isRequired="true"
                     :error="true"
                     :live="true"
                     :options="$branches" />
@@ -57,7 +57,7 @@
                 <x-form.select
                     label="Select Department"
                     name="selectedDepartment"
-                    :is_required="false"
+                    :isRequired="false"
                     :error="true"
                     :live="true"
                     :options="$departments" />
@@ -66,7 +66,7 @@
                 <x-form.select
                     label="Select Employee"
                     name="selectedEmployee"
-                    :is_required="true"
+                    :isRequired="true"
                     :error="true"
                     :options="$employeesData"
                     :is_multiple="false" />
@@ -74,7 +74,7 @@
                 <x-form.select
                     label="Adjustment Type"
                     name="selectedType"
-                    :is_required="true"
+                    :isRequired="true"
                     :error="true"
                     :options="[''=>'Select Type','advance' => 'Advance', 'Addition' => 'addition','deduction' => 'Deduction']" />
 
@@ -82,7 +82,7 @@
                 <x-form.input
                 label="Amount"
                 name="amount"
-                :is_required="true"
+                :isRequired="true"
                 :error="true"
                 type="text" />
 
@@ -90,7 +90,7 @@
                 <x-form.input
                 label="Date"
                 name="date"
-                :is_required="true"
+                :isRequired="true"
                 :error="true"
                 type="date" />
 
@@ -98,7 +98,7 @@
                 <x-form.textarea
                     label="Note"
                     name="note"
-                    :is_required="false"
+                    :isRequired="false"
                     :error="true"
                      />
 

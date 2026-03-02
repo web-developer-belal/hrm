@@ -4,28 +4,32 @@ namespace App\Livewire\Admin\Attendance;
 
 use App\Models\Attendance;
 use App\Models\Branch;
-use Livewire\Component;
-use App\Models\Employee;
 use App\Models\Department;
+use App\Models\Employee;
 use Carbon\Carbon;
+use Livewire\Component;
 use Livewire\Attributes\Validate;
 
 class AddManualAttendance extends Component
 {
-    public $employees = [];
+    /* ===============================
+        Dropdown Options
+    =============================== */
+    public array $selectedBranch_options = [];
+    public array $selectedDepartment_options = ['' => 'Select Department'];
+    public array $selectedEmployee_options = ['' => 'Select Employee'];
 
-    public $branches = [];
-    public $departments = [];
-    public $employeesData = [];
-
+    /* ===============================
+        Selected Values
+    =============================== */
     #[Validate('required|exists:branches,id')]
-    public ?int $selectedBranch;
+    public ?int $selectedBranch = null;
 
-    #[Validate('required|exists:branches,id')]
-    public ?int $selectedDepartment;
+    #[Validate('nullable|exists:departments,id')]
+    public ?int $selectedDepartment = null;
 
-    #[Validate('required')]
-    public $selectedEmployee;
+    #[Validate('required|exists:employees,id')]
+    public ?int $selectedEmployee = null;
 
     #[Validate('required')]
     public $attandenceTime;
@@ -33,86 +37,138 @@ class AddManualAttendance extends Component
     #[Validate('required')]
     public $clockInOut;
 
-    public function mount($roster = null)
+    /* ===============================
+        Search Inputs (KEEP _search)
+    =============================== */
+    public ?string $selectedBranch_search = null;
+    public ?string $selectedDepartment_search = null;
+    public ?string $selectedEmployee_search = null;
+
+    public function mount()
     {
-        $this->branches = Branch::where('status', 'active')->pluck('name', 'id')->prepend('Select Branch', '')->toArray();
-        $this->departments = Department::where('status', 'active')->pluck('name', 'id')->prepend('Select Department', '')->toArray();
-        $this->employeesData = Employee::pluck('first_name', 'id')->prepend('Select Employee', '')->toArray();
+        $this->loadBranches();
     }
 
-    public function updatedSelectedBranch()
+    /* ===============================
+        Loaders
+    =============================== */
+
+    protected function loadBranches(): void
     {
-        $this->departments = Department::where('branch_id', $this->selectedBranch)->where('status', 'active')->pluck('name', 'id')->prepend('Select Department', '')->toArray();
+        $this->selectedBranch_options = Branch::query()
+            ->where('status', 'active')
+            ->limit(5)
+            ->pluck('name', 'id')
+            ->toArray();
     }
 
-    public function updatedselectedDepartment()
+    protected function loadDepartments(): void
     {
-        // dd($this->selectedDepartment);
-        $this->employeesData = Employee::where('department_id', $this->selectedDepartment)->where('status', 1)->pluck('first_name', 'id')->prepend('Select Employee', '')->toArray();
-    }
-
-    public function saveManualAttendance()
-    {
-        // $this->validate();
-
-        // dd($this->attandenceTime);
-        $validated = $this->validate([
-            'attandenceTime' => 'required|date_format:Y-m-d\TH:i',
-        ]);
-
-        $manualTime = Carbon::parse($this->attandenceTime);
-        $dateString = $manualTime->format('Y-m-d');
-
-        $checkRosterEmp = Attendance::where('employee_id', $this->selectedEmployee)->where('date', $dateString)->first();
-
-        if (!$checkRosterEmp) {
-            flash()->error("Roster not found for $dateString. Please create a roster first.");
+        if (! $this->selectedBranch) {
+            $this->selectedDepartment_options = ['' => 'Select Department'];
             return;
         }
 
-        $cleanDate = Carbon::parse($checkRosterEmp->date)->format('Y-m-d');
-        $shiftStart = Carbon::parse($cleanDate . ' ' . $checkRosterEmp->shift_start_time);
-        $shiftEnd = Carbon::parse($cleanDate . ' ' . $checkRosterEmp->shift_end_time);
+        $this->selectedDepartment_options = Department::query()
+            ->where('branch_id', $this->selectedBranch)
+            ->where('status', 'active')
+            ->limit(5)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
 
-        $checkRosterEmp->remarks = 'Manual';
-
-        if ($this->clockInOut === 'clockIn') {
-            $lateTime = '00:00:00';
-
-            if ($manualTime->greaterThan($shiftStart)) {
-
-                $secondsLate = $shiftStart->diffInSeconds($manualTime);
-                $lateTime = gmdate('H:i:s', $secondsLate);
-            }
-
-            $checkRosterEmp->clock_in = $manualTime->format('H:i:s');
-            $checkRosterEmp->late_minutes = $lateTime;
-            $checkRosterEmp->status = 'late';
-        } else {
-            $overTime = '00:00:00';
-            $earlyExit = '00:00:00';
-
-            if ($manualTime->greaterThan($shiftEnd)) {
-                $secondsOver = $shiftEnd->diffInSeconds($manualTime);
-                $overTime = gmdate('H:i:s', $secondsOver);
-
-            } elseif ($manualTime->lessThan($shiftEnd)) {
-
-                $secondsEarly = $manualTime->diffInSeconds($shiftEnd);
-                $earlyExit = gmdate('H:i:s', $secondsEarly);
-                $checkRosterEmp->status = 'early exit';
-
-            }
-
-            $checkRosterEmp->clock_out = $manualTime->format('H:i:s');
-            $checkRosterEmp->overtime_minutes = $overTime;
-            $checkRosterEmp->early_exit_minutes = $earlyExit;
+    protected function loadEmployees(): void
+    {
+        if (! $this->selectedBranch && ! $this->selectedEmployee_search) {
+            $this->selectedEmployee_options = ['' => 'Select Employee'];
+            return;
         }
 
-        $checkRosterEmp->save();
-        flash()->success('Attendance updated successfully.');
-        return redirect()->route('admin.attendance.index');
+        $this->selectedEmployee_options = Employee::query()
+            ->when($this->selectedBranch, fn ($q) =>
+                $q->where('branch_id', $this->selectedBranch)
+            )
+            ->when($this->selectedDepartment, fn ($q) =>
+                $q->where('department_id', $this->selectedDepartment)
+            )
+            ->where('status', 1)
+            ->when($this->selectedEmployee_search, function ($q) {
+                $q->where(function ($sub) {
+                    $sub->where('first_name', 'like', '%' . $this->selectedEmployee_search . '%')
+                        ->orWhere('last_name', 'like', '%' . $this->selectedEmployee_search . '%')
+                        ->orWhere('employee_code', 'like', '%' . $this->selectedEmployee_search . '%');
+                });
+            })
+            ->limit(5)
+            ->get()
+            ->mapWithKeys(fn ($employee) => [
+                $employee->id => $employee->full_name . ' (' . $employee->employee_code . ')'
+            ])
+            ->toArray();
     }
+
+    /* ===============================
+        Search Handlers (NO resets!)
+    =============================== */
+
+    public function updatedSelectedBranchSearch(): void
+    {
+        $this->selectedBranch_options = Branch::query()
+            ->where('status', 'active')
+            ->when($this->selectedBranch_search, fn ($q) =>
+                $q->where('name', 'like', '%' . $this->selectedBranch_search . '%')
+            )
+            ->limit(5)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    public function updatedSelectedDepartmentSearch(): void
+    {
+        if (! $this->selectedBranch) {
+            $this->selectedDepartment_options = ['' => 'Select Department'];
+            return;
+        }
+
+        $this->selectedDepartment_options = Department::query()
+            ->where('branch_id', $this->selectedBranch)
+            ->where('status', 'active')
+            ->when($this->selectedDepartment_search, fn ($q) =>
+                $q->where('name', 'like', '%' . $this->selectedDepartment_search . '%')
+            )
+            ->limit(5)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    public function updatedSelectedEmployeeSearch(): void
+    {
+        $this->loadEmployees();
+    }
+
+    /* ===============================
+        Selection Handlers (SAFE resets)
+    =============================== */
+
+    public function updatedSelectedBranch(): void
+    {
+        $this->selectedDepartment = null;
+        $this->selectedEmployee = null;
+
+        $this->selectedDepartment_search = null;
+        $this->selectedEmployee_search = null;
+
+        $this->loadDepartments();
+    }
+
+    public function updatedSelectedDepartment(): void
+    {
+        $this->selectedEmployee = null;
+        $this->selectedEmployee_search = null;
+
+        $this->loadEmployees();
+    }
+
 
     public function render()
     {

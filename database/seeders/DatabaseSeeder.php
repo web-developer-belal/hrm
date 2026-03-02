@@ -120,15 +120,24 @@ class DatabaseSeeder extends Seeder
         }
 
         // 🔟 Attendance
-        // foreach ($employees as $employee) {
-        //     Attendance::factory()
-        //         ->count(5)
-        //         ->create([
-        //             'employee_id' => $employee->id,
-        //             'branch_id'   => $employee->branch_id,
-        //             'roster_id'   => $rosters->random()->id,
-        //         ]);
-        // }
+        foreach ($employees as $employee) {
+
+            // Pick 5 unique random days in the current year
+            $uniqueDates = collect(range(1, now()->daysInYear()))
+                ->shuffle()
+                ->take(5);
+
+            foreach ($uniqueDates as $dayOfYear) {
+                $date = now()->startOfYear()->addDays($dayOfYear - 1)->format('Y-m-d');
+
+                Attendance::factory()->create([
+                    'employee_id' => $employee->id,
+                    'branch_id'   => $employee->branch_id,
+                    'roster_id'   => $rosters->random()->id,
+                    'date'        => $date,
+                ]);
+            }
+        }
 
         // 1️⃣1️⃣ Leave Types
         $leaveTypes = LeaveType::factory()

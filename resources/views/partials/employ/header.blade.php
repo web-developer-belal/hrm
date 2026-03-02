@@ -20,9 +20,9 @@
         </a>
 
         <div class="header-user px-[15px] py-4">
-            <div class="nav user-menu nav-list flex items-center justify-center h-full px-6 'media-max-md:hidden">
+            <div class="nav user-menu nav-list flex items-center justify-end h-full px-6 'media-max-md:hidden">
 
-                <div class="me-auto flex items-center" id="header-search">
+                {{-- <div class="me-auto flex items-center" id="header-search">
                     <a id="toggle_btn" href="javascript:void(0);"
                         class="btn btn-menubar size-[30px] flex items-center justify-center text-gray-500 text-lg leading-normal rounded-[5px] hover:text-gray-900 hover:bg-dark-transparent me-1">
                         <i class="ti ti-arrow-bar-to-left"></i>
@@ -42,7 +42,7 @@
                     <!-- /Search -->
 
                   
-                </div>
+                </div> --}}
 
                 <div class="flex items-center">
                     

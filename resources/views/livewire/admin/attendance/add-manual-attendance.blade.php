@@ -21,14 +21,7 @@
             </nav>
         </div>
 
-        <div class="flex my-xl-auto right-content items-center flex-wrap ">
-            <div class="mb-2">
-                <a href="{{ route('admin.attendance.index') }}"
-                    class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">
-                    <i class="ti ti-circle-plus me-2"></i>Manual Attendace
-                </a>
-            </div>
-        </div>
+        
     </div>
     <!-- /Breadcrumb -->
 
@@ -42,53 +35,49 @@
                 <form wire:submit.prevent="saveManualAttendance"
                     class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
-                                  <!-- Branch -->
+                     <!-- Branch -->
                     <x-form.select
                         label="Select Branch"
                         name="selectedBranch"
-                        :is_required="true"
-                        :error="true"
+                        :isRequired="true"
                         :live="true"
-                        :options="$branches" />
+                        :search="true"
+                        :options="$selectedBranch_options"
+                        placeholder="Select Branch" />
 
                     <!-- Department (Optional) -->
                     <x-form.select
                         label="Select Department"
                         name="selectedDepartment"
-                        :is_required="false"
-                        :error="true"
+                        :isRequired="false"
+                        :search="true"
                         :live="true"
-                        :options="$departments" />
-
-
-
-
-
-
+                        placeholder="Select Department"
+                        :options="$selectedDepartment_options" />
 
 
                     <!-- Employees -->
                     <x-form.select
                         label="Select Employee"
                         name="selectedEmployee"
-                        :is_required="true"
-                        :error="true"
-                        :options="$employeesData"
+                        :isRequired="true"
+                        :search="true"
+                        placeholder="Select Employee"
+                        :options="$selectedEmployee_options"
                         :is_multiple="false" />
 
                     <x-form.select
-                        label="Punch Status"
+                        label="Attendance Status"
                         name="clockInOut"
-                        :is_required="true"
-                        :error="true"
-                        :options="[''=>'Select Punch Status','clockIn' => 'Clock In', 'clockout' => 'Clock Out']" />
+                        :isRequired="true"
+                        
+                        :options="[''=>'Select Attendance Status','clockIn' => 'Clock In', 'clockout' => 'Clock Out']" />
 
                     <!-- Start Date -->
                     <x-form.input
                         label="Attendance Time"
                         name="attandenceTime"
-                        :is_required="true"
-                        :error="true"
+                        :isRequired="true"
                         type="datetime-local" />
 
 

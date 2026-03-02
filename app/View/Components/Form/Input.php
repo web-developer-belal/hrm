@@ -16,7 +16,7 @@ class Input extends Component
         public string $type = 'text',
         public ?string $name = null,
         public ?string $placeholder = null,
-        public bool $is_required = false,
+        public bool $isRequired = false,
         public bool $error = true,
         public bool $live = false,
     )

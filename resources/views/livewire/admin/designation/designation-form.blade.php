@@ -39,15 +39,15 @@
             </div>
             <div class="card-body p-5">
                 <form wire:submit.prevent="save" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-                    <x-form.input label="Designation Name" name="name" :is_required="true" :error="true"
+                    <x-form.input label="Designation Name" name="name" :isRequired="true" :error="true"
                         placeholder="Enter Designation Name" />
-                    <x-form.select label="Select department" name="department_id" :is_required="true" :error="true"
+                    <x-form.select label="Select department" name="department_id" :isRequired="true" :error="true"
                         :options="$departments" />
                     <div class="md:col-span-2">
                         <x-form.textarea label="Description" name="description" :error="true" />
                     </div>
 
-                    <x-form.select label="Status" name="status" :is_required="true" :error="true"
+                    <x-form.select label="Status" name="status" :isRequired="true" :error="true"
                         :options="['active' => 'Active', 'inactive' => 'Inactive']" />
 
                     <div class="text-end md:col-span-2">

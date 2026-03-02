@@ -39,32 +39,32 @@
             </div>
             <div class="card-body p-5">
                 <form wire:submit.prevent="save" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-                    <x-form.input label="Roster Name" name="name" :is_required="true" :error="true"
+                    <x-form.input label="Roster Name" name="name" :isRequired="true" :error="true"
                         placeholder="Enter Roster Name" />
-                    <x-form.select label="Select Branch" name="branch_id" :is_required="true" :error="true"
+                    <x-form.select label="Select Branch" name="branch_id" :isRequired="true" :error="true"
                         :options="$branches" />
-                    <x-form.select label="Select Department" name="department_id" :is_required="true" :error="true"
+                    <x-form.select label="Select Department" name="department_id" :isRequired="true" :error="true"
                         :options="$departments" />
-                    <x-form.select label="Select Shift" name="shift_id" :is_required="true" :error="true"
+                    <x-form.select label="Select Shift" name="shift_id" :isRequired="true" :error="true"
                         :options="$shifts" />
 
         @php
             $days = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
         @endphp
-                    <x-form.select label="Day Off" name="day_off" :is_required="true" :error="true"
+                    <x-form.select label="Day Off" name="day_off" :isRequired="true" :error="true"
                         :options="$days" multiple/>
 
 
 
-                    <x-form.select label="Select Employee" name="employees" :is_required="true" :error="true"
+                    <x-form.select label="Select Employee" name="employees" :isRequired="true" :error="true"
                         :options="$employeesData" is_multiple="true" />
 
-                    <x-form.input label="Start Date" name="start_date" :is_required="true" :error="true"
+                    <x-form.input label="Start Date" name="start_date" :isRequired="true" :error="true"
                         type="date" />
-                    <x-form.input label="End Date" name="end_date" :is_required="true" :error="true"
+                    <x-form.input label="End Date" name="end_date" :isRequired="true" :error="true"
                         type="date" />
 
-                    <x-form.select label="Status" name="status" :is_required="true" :error="true"
+                    <x-form.select label="Status" name="status" :isRequired="true" :error="true"
                         :options="['active' => 'Active', 'inactive' => 'Inactive']" />
 
                     <div class="text-end md:col-span-2">

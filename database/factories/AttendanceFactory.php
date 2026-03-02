@@ -18,48 +18,38 @@ class AttendanceFactory extends Factory
      */
     public function definition(): array
     {
-        $date       = $this->faker->date();
+        $yearStart = now()->startOfYear()->format('Y-m-d');
+        $yearEnd   = now()->endOfYear()->format('Y-m-d');
+
+        // Pick or create a single employee
+        $employee = Employee::inRandomOrder()->first() ?? Employee::factory()->create();
+
+        // Pick a unique date for this employee
+        $date = $this->faker->unique()->dateTimeBetween($yearStart, $yearEnd)->format('Y-m-d');
+
         $shiftStart = '09:00:00';
         $shiftEnd   = '17:00:00';
 
-        $status = $this->faker->randomElement([
-            'present',
-            'late',
-            'absent',
-            'leave',
-            'holiday',
-            'offday',
-        ]);
+        $status = $this->faker->randomElement(['present', 'late', 'absent', 'leave', 'holiday', 'offday']);
 
-        $clockIn          = null;
-        $clockOut         = null;
-        $lateMinutes      = 0;
-        $overtimeMinutes  = 0;
-        $earlyExitMinutes = 0;
+        $clockIn     = $clockOut     = null;
+        $lateMinutes = $overtimeMinutes = $earlyExitMinutes = 0;
 
         if (in_array($status, ['present', 'late'])) {
-
-            // Base shift times
             $shiftStartTime = \Carbon\Carbon::parse($date . ' ' . $shiftStart);
             $shiftEndTime   = \Carbon\Carbon::parse($date . ' ' . $shiftEnd);
 
-            // Late arrival
             if ($status === 'late') {
                 $lateMinutes = $this->faker->numberBetween(5, 45);
                 $clockIn     = $shiftStartTime->copy()->addMinutes($lateMinutes);
             } else {
-                $clockIn = $shiftStartTime->copy()->subMinutes(
-                    $this->faker->numberBetween(0, 5)
-                );
+                $clockIn = $shiftStartTime->copy()->subMinutes($this->faker->numberBetween(0, 5));
             }
 
-            // Random early exit or overtime
             if ($this->faker->boolean(30)) {
-                // Early exit
                 $earlyExitMinutes = $this->faker->numberBetween(5, 40);
                 $clockOut         = $shiftEndTime->copy()->subMinutes($earlyExitMinutes);
             } else {
-                // Overtime
                 $overtimeMinutes = $this->faker->numberBetween(0, 90);
                 $clockOut        = $shiftEndTime->copy()->addMinutes($overtimeMinutes);
             }
@@ -67,7 +57,7 @@ class AttendanceFactory extends Factory
 
         return [
             'branch_id'          => Branch::factory(),
-            'employee_id'        => Employee::factory(),
+            'employee_id'        => $employee->id,
             'roster_id'          => Roster::factory(),
             'date'               => $date,
             'shift_start_time'   => $shiftStart,

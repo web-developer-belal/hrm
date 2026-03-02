@@ -50,15 +50,15 @@
                 <form wire:submit.prevent="submitComplain" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
                     <!-- Employees -->
-                    <x-form.select label="Against Employee" name="against_employee_id" :is_required="true"
+                    <x-form.select label="Against Employee" name="against_employee_id" :isRequired="true"
                         :options="$employeesData" />
 
-                    <x-form.input label="Complain Subject" name="subject" :is_required="true" :error="true"
+                    <x-form.input label="Complain Subject" name="subject" :isRequired="true" :error="true"
                         placeholder="Enter complain Subject" />
-                    <x-form.input label="Date" name="date" :is_required="true" :error="true" type="date" />
+                    <x-form.input label="Date" name="date" :isRequired="true" :error="true" type="date" />
 
 
-                    <x-form.textarea label="Describe your Complain" name="description" :is_required="false"
+                    <x-form.textarea label="Describe your Complain" name="description" :isRequired="false"
                         :error="true" placeholder="Describe your complain" />
 
                     <x-form.file-upload title="Documents" label="Upload Files" multiple accept=".pdf,.doc,.docx,.jpg,.png" name="documents" />

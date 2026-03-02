@@ -7,7 +7,7 @@
         name="{{ $is_multiple ? $name.'[]' : $name }}"
         class="form-control {{ $class ?? '' }}"
         @if ($live) wire:model.live="{{ $name }}" @else wire:model="{{ $name }}" @endif
-        @if ($is_required) required @endif
+        @if ($isRequired) required @endif
         @if ($is_multiple) multiple @endif
     >
         @foreach ($options as $index => $item)

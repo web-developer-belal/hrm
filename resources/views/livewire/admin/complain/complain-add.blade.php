@@ -12,7 +12,7 @@
                     label="Select Branch" 
                     name="branch_id" 
                     :options="$branches" 
-                    :is_required="true"
+                    :isRequired="true"
                     :live="true" />
 
                 <!-- Employees -->
@@ -20,35 +20,35 @@
                     label="Complainant Employee" 
                     name="employee_id" 
                     :options="$employeesData" 
-                    :is_required="true" />
+                    :isRequired="true" />
 
                 <!-- Against Employee (nullable) -->
                 <x-form.select 
                     label="Against Employee" 
                     name="against_employee_id" 
                     :options="$employeesData" 
-                    :is_required="false" />
+                    :isRequired="false" />
 
                 <!-- Subject -->
                 <x-form.input 
                     label="Complain Subject" 
                     name="subject" 
                     placeholder="Enter complain subject" 
-                    :is_required="true" />
+                    :isRequired="true" />
 
                 <!-- Date -->
                 <x-form.input 
                     label="Date" 
                     name="date" 
                     type="date" 
-                    :is_required="true" />
+                    :isRequired="true" />
 
                 <!-- Description -->
                 <x-form.textarea 
                     label="Describe your Complain" 
                     name="description" 
                     placeholder="Describe your complain" 
-                    :is_required="false" />
+                    :isRequired="false" />
 
                 <!-- Documents -->
                 <x-form.file-upload 
@@ -75,7 +75,7 @@
                     label="Status" 
                     name="status" 
                     :options="['0'=>'Pending','1'=>'Resolved','2'=>'Rejected']" 
-                    :is_required="true" />
+                    :isRequired="true" />
 
                 <!-- Submit -->
                 <div class="md:col-span-2 text-end">

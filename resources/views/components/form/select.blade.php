@@ -2,7 +2,7 @@
     @if ($label)
         <label class="block mb-1 text-sm font-medium text-gray-700">
             {{ $label }}
-            @if ($is_required)
+            @if ($isRequired)
                 <span class="text-red-500">*</span>
             @endif
         </label>
@@ -19,7 +19,7 @@
             @else
                 wire:model="{{ $name }}"
             @endif
-            @if ($is_required) required @endif
+            @if ($isRequired) required @endif
         >
             @if($placeholder ?? false)
                 <option value="">{{ $placeholder }}</option>

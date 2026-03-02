@@ -146,8 +146,7 @@
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Leave
                                         Management</a></li>
                                 <li><a href="{{ route('admin.holiday.index') }}"
-                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Leave
-                                        Management</a></li>
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Holiday Management</a></li>
                             </ul>
                         </li>
 

@@ -43,21 +43,21 @@
             <div class="card-body p-5">
                 <form wire:submit.prevent="saveLoan" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
-                    <x-form.input label="Amount" name="amount" :is_required="true" :live="true" :error="true"
+                    <x-form.input label="Amount" name="amount" :isRequired="true" :live="true" :error="true"
                         type="text" />
 
-                    <x-form.input label="Installment" name="installment" :is_required="true" :live="true"
+                    <x-form.input label="Installment" name="installment" :isRequired="true" :live="true"
                         :error="true" type="number" />
 
-                    <x-form.input label="Emi Amount" name="emiAmount" :is_required="true" :error="true"
+                    <x-form.input label="Emi Amount" name="emiAmount" :isRequired="true" :error="true"
                         type="text" />
 
 
-                    <x-form.input label="Start Month" name="startMonth" :is_required="true" :error="true"
+                    <x-form.input label="Start Month" name="startMonth" :isRequired="true" :error="true"
                         type="date" />
 
 
-                    <x-form.textarea label="Note" name="note" :is_required="false" :error="true" />
+                    <x-form.textarea label="Note" name="note" :isRequired="false" :error="true" />
 
 
 
