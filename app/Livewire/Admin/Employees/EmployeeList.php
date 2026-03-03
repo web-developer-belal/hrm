@@ -32,6 +32,7 @@ class EmployeeList extends Component
             )
             ->limit(5)
             ->pluck('name', 'id')
+            ->prepend('Select Branch','')
             ->toArray();
 
         $this->loadDepartments();

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,15 +8,14 @@ class LeaveType extends Model
 {
     use HasFactory;
 
-   protected $fillable = [
+    protected $fillable = [
         'branch_id',
         'name',
         'annual_limit',
         'is_paid',
     ];
 
-
-     public function branch()
+    public function branch()
     {
         return $this->belongsTo(Branch::class);
     }

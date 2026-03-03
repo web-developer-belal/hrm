@@ -36,7 +36,15 @@
         <div
             class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3">
             <h5>Leave List</h5>
-
+            <div class="flex my-xl-auto right-content items-center flex-wrap gap-3">
+                <div class="me-3">
+                    <x-form.input name="search" placeholder="Search employee" :live="true" />
+                </div>
+                <div class="me-3">
+                    <x-form.select name="branches" placeholder="Select branch" :live="true" :option="$branches_options"
+                        :isMultiple="true" :search="true" />
+                </div>
+            </div>
         </div>
         <div class="card-body p-0">
             <div class="overflow-x-auto">
@@ -47,24 +55,24 @@
                                 class="no-sort text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor hover:outline-none">
                                 SL
                             </th>
-                          <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-											Name</th>
-                          <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-											Leave Type </th>
-										<th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-											From</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Name</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Leave Type </th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                From</th>
 
-										<th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-											To</th>
-										<th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-											No of Days</th>
-										<th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-											Status</th>
-                                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                                Approved By </th>
-										<th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                            Action
-										</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                To</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                              Days</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Status</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Approved By </th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Action
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-borderColor">
@@ -73,54 +81,51 @@
                                 <td class="px-5 py-2.5 text-gray-500">
                                     {{ $loop->iteration }}
                                 </td>
-                                <td class="px-5 py-2.5 text-gray-900">{{ $leave->employee->first_name }}</td>
+                                <td class="px-5 py-2.5 text-gray-900">{{ $leave->employee->full_name }}</td>
                                 <td class="px-5 py-2.5 text-gray-900">{{ $leave->type->name }}</td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $leave->from_date }}</td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $leave->to_date }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $leave->from_date->format('d-M-Y') }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $leave->to_date->format('d-M-Y') }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $leave->total_days }}</td>
 
+                                <td class="px-5 py-2.5 text-gray-500 p-3">
+                                    <div>
+                                        <a href="javascript:void(0);"
+                                            class="border rounded p-2 bg-white inline-flex items-center focus:bg-primary focus:border-primary focus:text-white text-gray-900"
+                                            data-dropdown-toggle="designation-dropdown-{{ $leave->id }}">
+                                            <span
+                                                class="rounded-full bg-transparent-success flex justify-center items-center me-2"><i
+                                                    class="ti ti-point-filled bg-success-100 rounded-full text-success me-1"></i>
+                                                {{ ucfirst($leave->status) }}<i class="ti ti-chevron-down ml-1"></i>
+                                            </span></a>
+                                        <ul id="designation-dropdown-{{ $leave->id }}"
+                                            class="hidden p-4 border rounded bg-white shadow-lg w-40 z-[1]"
+                                            data-popper-placement="bottom"
+                                            style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1597px, 398px);">
+                                            <li>
+                                                <a href="javascript:void(0);"
+                                                    wire:click="statusChange({{ $leave->id }}, 'approved')"
+                                                    class="rounded p-2 flex items-center hover:bg-primary-100 hover:text-primary">Approved</a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:void(0);"
+                                                    wire:click="statusChange({{ $leave->id }},'rejected')"
+                                                    class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">Declined</a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:void(0);"
+                                                    wire:click="statusChange({{ $leave->id }},'pending')"
+                                                    class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">Pending</a>
+                                            </li>
 
-
-
-                                {{-- <td class="px-5 py-2.5 text-gray-500">
-
-                                    <span"
-                                        class="bg-{{ $leave->status === 'approved' ? 'success' : 'warning' }} text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs cursor-pointer">
-                                        <i class="ti ti-point-filled me-1"></i>{{ ucfirst($leave->status) }}
-                                    </span>
-
-                                </td> --}}
-                               <td class="px-5 py-2.5 text-gray-500 p-3">
-											<div>
-												<a href="javascript:void(0);" class="border rounded p-2 bg-white inline-flex items-center focus:bg-primary focus:border-primary focus:text-white text-gray-900" data-dropdown-toggle="designation-dropdown-{{ $leave->id }}">
-													<span class="rounded-full bg-transparent-success flex justify-center items-center me-2"><i class="ti ti-point-filled bg-success-100 rounded-full text-success me-1"></i>
-													{{ucfirst($leave->status)}}<i class="ti ti-chevron-down ml-1"></i>
-												</span></a>
-												<ul id="designation-dropdown-{{ $leave->id }}" class="hidden p-4 border rounded bg-white shadow-lg w-40 z-[1]" data-popper-placement="bottom" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1597px, 398px);">
-												<li>
-													<a href="javascript:void(0);"  wire:click="statusChange({{ $leave->id }}, 'approved')"  class="rounded p-2 flex items-center hover:bg-primary-100 hover:text-primary">Approved</a>
-												</li>
-												<li>
-													<a href="javascript:void(0);" wire:click="statusChange({{ $leave->id }},'rejected')" class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">Declined</a>
-												</li>
-												<li>
-													<a href="javascript:void(0);" wire:click="statusChange({{ $leave->id }},'pending')"  class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">Pending</a>
-												</li>
-
-											</ul>
-											</div>
-										</td>
-                                        <td class="px-5 py-2.5 text-gray-500">{{ $leave->approved_by }}</td>
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $leave->approved_by??'--' }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">
                                     <div class="action-icon inline-flex">
-                                        {{-- <a href=""
-                                            class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
-                                                class="ti ti-edit"></i></a> --}}
-                                        <button type="button"
-    wire:click="deleteLeave({{ $leave->id }})"
-    wire:confirm="Are you sure you want to delete this leave?"
-                                            class="size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"
-                                            ><i
+                                        <button type="button" wire:click="deleteLeave({{ $leave->id }})"
+                                            wire:confirm="Are you sure you want to delete this leave?"
+                                            class="size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-trash"></i></button>
                                     </div>
                                 </td>

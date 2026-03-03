@@ -12,21 +12,27 @@ class ComplainAdd extends Component
     use WithFileUploads;
 
     public $isEditMode = false;
-
-    public $branches      = [];
-    public $departments   = [];
-    public $employeesData = [];
+    public $complainId;
 
     public $branch_id;
     public $employee_id;
-    public $against_employee_id; // nullable
+    public $against_employee_id;
     public $subject;
     public $date;
     public $description;
-    public $status    = 0;
-    public $documents = [];
-
+    public $status      = 0;
+    public $documents   = [];
     public $oldDocument = [];
+
+    // Searchable Selects
+    public $branch_id_options = [];
+    public $branch_id_search;
+
+    public $employee_id_options = [];
+    public $employee_id_search;
+
+    public $against_employee_id_options = [];
+    public $against_employee_id_search;
 
     protected $rules = [
         'branch_id'           => 'required|exists:branches,id',
@@ -42,61 +48,104 @@ class ComplainAdd extends Component
 
     public function mount($complainId = null)
     {
-        $this->branches = Branch::where('status', 'active')
-            ->whereHas('employees', function ($query) {
-                $query->where('status', 'active'); // only active employees
-            })
-            ->pluck('name', 'id')
-            ->prepend('Select Branch', '')
-            ->toArray();
-
-        $this->employeesData = []; // default empty until branch selected
+        $this->loadBranchOptions();
 
         if ($complainId) {
             $this->isEditMode = true;
-            $complain         = Complain::findOrFail($complainId);
+            $this->complainId = Complain::findOrFail($complainId);
 
-            $this->branch_id           = $complain->branch_id;
-            $this->employee_id         = $complain->employee_id;
-            $this->against_employee_id = $complain->against_employee_id ?? null;
-            $this->subject             = $complain->subject;
-            $this->date                = $complain->date;
-            $this->description         = $complain->description;
-            $this->status              = $complain->status;
-            $this->oldDocument         = $complain->documents ?? [];
+            $this->branch_id           = $this->complainId->branch_id;
+            $this->employee_id         = $this->complainId->employee_id;
+            $this->against_employee_id = $this->complainId->against_employee_id;
+            $this->subject             = $this->complainId->subject;
+            $this->date                = $this->complainId->date->format('Y-m-d');
+            $this->description         = $this->complainId->description;
+            $this->status              = $this->complainId->status;
+            $this->oldDocument         = $this->complainId->documents ?? [];
 
-            $this->loadEmployeesByBranch();
+            $this->loadEmployeeOptions();
         }
     }
 
-    // Load employees for selected branch
+    /* ---------------- Branch ---------------- */
+
+    protected function loadBranchOptions()
+    {
+        $this->branch_id_options = Branch::with('employee')->whereHas('employees')->where('status', 'active')
+            ->when($this->branch_id_search, fn($q) =>
+                $q->where('name', 'like', '%' . $this->branch_id_search . '%')
+            )
+            ->limit(5)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    public function documentsRemoveFile($path){
+        deleteImage($path);
+        flash()->success('File removed successfully.');
+    }
+
+    public function updatedBranchIdSearch()
+    {
+        $this->loadBranchOptions();
+    }
+
     public function updatedBranchId()
     {
         $this->employee_id         = null;
         $this->against_employee_id = null;
-        $this->loadEmployeesByBranch();
+
+        $this->employee_id_options         = [];
+        $this->against_employee_id_options = [];
+
+        $this->loadEmployeeOptions();
     }
 
-    private function loadEmployeesByBranch()
+    /* ---------------- Employees ---------------- */
+
+    protected function loadEmployeeOptions()
     {
-        if ($this->branch_id) {
-            $this->employeesData = Employee::where('branch_id', $this->branch_id)
-                ->where('status', 1)
-                ->get()
-                ->mapWithKeys(fn($employee) => [$employee->id => $employee->full_name])
-                ->prepend('Select Employee', '')
-                ->toArray();
-        } else {
-            $this->employeesData = [];
+        if (! $this->branch_id) {
+            return;
         }
+
+        $employees = Employee::where('branch_id', $this->branch_id)
+            ->where('status', 1)
+            ->when($this->employee_id_search || $this->against_employee_id_search, function ($q) {
+                $search = $this->employee_id_search ?: $this->against_employee_id_search;
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('first_name', 'like', '%' . $search . '%')
+                        ->orWhere('last_name', 'like', '%' . $search . '%')
+                        ->orWhere('employee_code', 'like', '%' . $search . '%');
+                });
+            })
+            ->limit(5)
+            ->get()
+            ->mapWithKeys(fn($emp) => [$emp->id => $emp->full_name])
+            ->toArray();
+
+        $this->employee_id_options         = $employees;
+        $this->against_employee_id_options = $employees;
     }
+
+    public function updatedEmployeeIdSearch()
+    {
+        $this->loadEmployeeOptions();
+    }
+
+    public function updatedAgainstEmployeeIdSearch()
+    {
+        $this->loadEmployeeOptions();
+    }
+
+    /* ---------------- Submit ---------------- */
 
     public function submitComplain()
     {
         $validated = $this->validate();
 
-        // Handle multiple files
         $storedDocuments = [];
+
         if (! empty($this->documents)) {
             foreach ($this->documents as $file) {
                 $storedDocuments[] = $file->store('complains', 'public');
@@ -105,16 +154,25 @@ class ComplainAdd extends Component
 
         $validated['against_employee_id'] = $this->against_employee_id ?? null;
 
-        $validated['documents'] = ! empty($storedDocuments) ? $storedDocuments : ($this->oldDocument ?? null);
+        $validated['documents'] = ! empty($storedDocuments)
+            ? $storedDocuments
+            : ($this->oldDocument ?? null);
 
         if ($this->isEditMode) {
-            $complain = Complain::findOrFail($this->branch_id);
-            $complain->update($validated);
+
+            $this->complainId->update($validated);
+
         } else {
+
             Complain::create($validated);
         }
 
-        flash()->success($this->isEditMode ? 'Complain updated successfully.' : 'Complain created successfully.');
+        flash()->success(
+            $this->isEditMode
+                ? 'Complain updated successfully.'
+                : 'Complain created successfully.'
+        );
+
         return redirect()->route('admin.complain.index');
     }
 

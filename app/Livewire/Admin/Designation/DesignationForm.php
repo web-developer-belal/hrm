@@ -10,15 +10,15 @@ class DesignationForm extends Component
 {
     public $designation;
     public $isEditMode  = false;
-    public $departments = [];
+    public $department_id_options = [];
+    public $department_id_search;
     public $name;
     public $department_id;
     public $description;
     public $status = 'active';
     public function mount($designation = null)
     {
-        // Load departments for the select dropdown
-        $this->departments = Department::where('status', 'active')->pluck('name', 'id')->prepend('Select Department', '')->toArray();
+        $this->loadDepartmentIdOptions();
 
         if ($designation) {
             $this->isEditMode    = true;
@@ -29,6 +29,22 @@ class DesignationForm extends Component
             $this->status        = $this->designation->status;
         }
     }
+     protected function loadDepartmentIdOptions()
+    {
+        $this->department_id_options = Department::where('status', 'active')
+            ->when($this->department_id_search, fn($q) =>
+                $q->where('name', 'like', '%' . $this->department_id_search . '%')
+            )
+            ->limit(5)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    public function updatedDepartmentIdSearch()
+    {
+        $this->loadDepartmentIdOptions();
+    }
+
     public function save()
     {
         $data = $this->validate((new DesignationRequest())->rules(), (new DesignationRequest())->messages());

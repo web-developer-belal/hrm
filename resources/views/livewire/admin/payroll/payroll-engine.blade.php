@@ -1,5 +1,3 @@
-
-
 <div>
     <!-- Breadcrumb -->
     <div class="md:flex block items-center justify-between page-breadcrumb mb-4">
@@ -17,20 +15,12 @@
                         <span class="text-default">/</span>
                     </li>
                     <li class="text-xs text-default">
-                      Run Payrool
+                        Run Payrool
                     </li>
                 </ol>
             </nav>
         </div>
 
-        <div class="flex my-xl-auto right-content items-center flex-wrap ">
-            <div class="mb-2">
-                <a href="#"
-                    class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">
-                    <i class="ti ti-circle-plus me-2"></i>Last Month Payroll
-                </a>
-            </div>
-        </div>
     </div>
     <!-- /Breadcrumb -->
 
@@ -41,56 +31,40 @@
             </div>
 
             <div class="card-body p-5">
-                <form wire:submit.prevent="generateBranch"
-                    class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+                <form wire:submit.prevent="generateBranch" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
-                      <div class="w-full">
-                      <label>Branch</label>
-                       <select wire:model="branch_id" class="form-control" required>
-                            <option value="" selected  >Select</option>
-                      @foreach($branches as $branch)
-                            <option value="{{ $branch->id }}">
-                                {{ $branch->name }}
-                            </option>
-                        @endforeach
+                    <x-form.select label="Select Branch" name="branch_id" :search="true" :isRequired="false"
+                        :error="true" :options="$branch_id_options" placeholder="Select Branch" />
 
-                    </select>
-              @error($branch_id)
+                    <div class="w-full">
+                        <label>Year</label>
+                        <select wire:model="year" class="form-control" required>
+                            @for ($y = now()->year; $y >= 2020; $y--)
+                                <option value="{{ $y }}">{{ $y }}</option>
+                            @endfor
+                        </select>
+                        @error($year)
                             <small class="text-danger">
-                 {{$message}}
-            </small>
-                    @enderror
-                </div>
-
-                      <div class="w-full">
-                      <label>Year</label>
-                       <select wire:model="year" class="form-control" required>
-                        @for($y = now()->year; $y >= 2020; $y--)
-                            <option value="{{ $y }}">{{ $y }}</option>
-                        @endfor
-                    </select>
-               @error($year)
+                                {{ $message }}
+                            </small>
+                        @enderror
+                    </div>
+                    <div class="w-full">
+                        <label>Month</label>
+                        <select wire:model="month" class="form-control" required>
+                            @for ($m = 1; $m <= 12; $m++)
+                                <option value="{{ $m }}">
+                                    {{ \Carbon\Carbon::create()->month($m)->format('F') }}
+                                </option>
+                            @endfor
+                        </select>
+                        @error($month)
                             <small class="text-danger">
-                 {{$message}}
-            </small>
-                    @enderror
-                </div>
-                      <div class="w-full">
-                      <label>Month</label>
-                       <select wire:model="month" class="form-control" required>
-                        @for($m = 1; $m <= 12; $m++)
-                            <option value="{{ $m }}">
-                                {{ \Carbon\Carbon::create()->month($m)->format('F') }}
-                            </option>
-                        @endfor
-                    </select>
-                    @error($month)
-                            <small class="text-danger">
-                 {{$message}}
-            </small>
-                    @enderror
+                                {{ $message }}
+                            </small>
+                        @enderror
 
-                </div>
+                    </div>
 
 
                     <!-- Submit Button -->
@@ -104,46 +78,45 @@
             </div>
         </div>
     </div>
-      <div class="">
+    <div class="">
         <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white mb-6">
             <div class="card-header p-5 border-b border-borderColor">
                 <h5 class="card-title">Run Payrool Engine All Employee</h5>
             </div>
 
             <div class="card-body p-5">
-                <form wire:submit.prevent="generateAll"
-                    class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+                <form wire:submit.prevent="generateAll" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
 
 
-                      <div class="w-full">
-                      <label>Year</label>
-                       <select wire:model="year" class="form-control" required>
-                        @for($y = now()->year; $y >= 2020; $y--)
-                            <option value="{{ $y }}">{{ $y }}</option>
-                        @endfor
-                    </select>
-                     @error($year)
+                    <div class="w-full">
+                        <label>Year</label>
+                        <select wire:model="year" class="form-control" required>
+                            @for ($y = now()->year; $y >= 2020; $y--)
+                                <option value="{{ $y }}">{{ $y }}</option>
+                            @endfor
+                        </select>
+                        @error($year)
                             <small class="text-danger">
-                 {{$message}}
-            </small>
-                    @enderror
-                </div>
-                      <div class="w-full">
-                      <label>Month</label>
-                       <select wire:model="month" class="form-control" required>
-                        @for($m = 1; $m <= 12; $m++)
-                            <option value="{{ $m }}">
-                                {{ \Carbon\Carbon::create()->month($m)->format('F') }}
-                            </option>
-                        @endfor
-                    </select>
-                     @error($month)
+                                {{ $message }}
+                            </small>
+                        @enderror
+                    </div>
+                    <div class="w-full">
+                        <label>Month</label>
+                        <select wire:model="month" class="form-control" required>
+                            @for ($m = 1; $m <= 12; $m++)
+                                <option value="{{ $m }}">
+                                    {{ \Carbon\Carbon::create()->month($m)->format('F') }}
+                                </option>
+                            @endfor
+                        </select>
+                        @error($month)
                             <small class="text-danger">
-                 {{$message}}
-            </small>
-                    @enderror
-                </div>
+                                {{ $message }}
+                            </small>
+                        @enderror
+                    </div>
 
 
                     <!-- Submit Button -->
@@ -158,10 +131,10 @@
 
 
 
-            <div class="">
+    <div class="">
         <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white mb-6">
             <div class="card-header p-5 border-b border-borderColor">
-                 <strong>Important:</strong>
+                <strong>Important:</strong>
                 <ul class="mb-0">
                     <li>Make sure attendance sync is completed.</li>
                     <li>Payroll cannot be regenerated if already exists.</li>
@@ -169,8 +142,4 @@
                 </ul>
             </div>
         </div>
-</div>
-
-
-
-
+    </div>

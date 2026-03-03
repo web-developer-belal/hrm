@@ -18,34 +18,33 @@ class RosterForm extends Component
     public $roster;
 
     public $name;
-    public $department_id;
     public $branch_id;
+    public $department_id;
     public $shift_id;
     public $start_date;
     public $end_date;
-
     public $status = 'active';
 
     public $working_days    = [];
     public $weekly_off_days = [];
     public $employees       = [];
 
-    public $branches          = [];
-    public $departments       = [];
-    public $shifts            = [];
+    // Branch
+    public $branch_id_options = [];
+    public $branch_id_search;
+
+    // Department
+    public $department_id_options = [];
+    public $department_id_search;
+
+    // Employees
     public $employees_options = [];
     public $employees_search;
 
+    // Shift (normal select)
+    public $shift_id_options = [];
+
     public $working_days_options = [
-        'monday'    => 'Monday',
-        'tuesday'   => 'Tuesday',
-        'wednesday' => 'Wednesday',
-        'thursday'  => 'Thursday',
-        'friday'    => 'Friday',
-        'saturday'  => 'Saturday',
-        'sunday'    => 'Sunday',
-    ];
-    public $weekly_off_days_options = [
         'monday'    => 'Monday',
         'tuesday'   => 'Tuesday',
         'wednesday' => 'Wednesday',
@@ -57,41 +56,102 @@ class RosterForm extends Component
 
     public function mount($roster = null)
     {
-        $this->branches = Branch::where('status', 'active')->pluck('name', 'id')->prepend('Select Branch', '')->toArray();
+        $this->loadBranchIdOptions();
 
-        $this->departments = Department::where('status', 'active')->pluck('name', 'id')->prepend('Select Department', '')->toArray();
-
-        $this->shifts = Shift::where('status', 'active')->pluck('name', 'id')->prepend('Select Shift', '')->toArray();
-
-        $this->getEmployee();
+        $this->shift_id_options = Shift::where('status', 'active')
+            ->pluck('name', 'id')
+            ->toArray();
 
         if ($roster) {
             $this->isEditMode = true;
             $this->roster     = Roster::findOrFail($roster);
 
-            $this->name            = $this->roster->name;
-            $this->department_id   = $this->roster->department_id;
-            $this->branch_id       = $this->roster->branch_id;
-            $this->shift_id        = $this->roster->shift_id;
-            $this->start_date      = $this->roster->start_date->format('Y-m-d');
-            $this->end_date        = $this->roster->end_date->format('Y-m-d');
-            $this->working_days    = $this->roster->working_days ?? [];
-            $this->weekly_off_days = $this->roster->weekly_off_days ?? [];
-            $this->status          = $this->roster->status;
+            $this->name          = $this->roster->name;
+            $this->branch_id     = $this->roster->branch_id;
+            $this->department_id = $this->roster->department_id;
+            $this->shift_id      = $this->roster->shift_id;
+            $this->start_date    = $this->roster->start_date->format('Y-m-d');
+            $this->end_date      = $this->roster->end_date->format('Y-m-d');
+            $this->working_days  = $this->roster->working_days ?? [];
+            $this->status        = $this->roster->status;
 
-            $this->employees = $this->roster->employees()->pluck('employees.id')->toArray();
+            $this->employees = $this->roster
+                ->employees()
+                ->pluck('employees.id')
+                ->toArray();
+
+            // Load dependent dropdowns
+            $this->loadDepartmentIdOptions();
+            $this->loadEmployeesOptions();
         }
     }
 
-    public function updatedEmployeesSearch()
+    protected function loadBranchIdOptions()
     {
-        $this->getEmployee();
+        $this->branch_id_options = Branch::where('status', 'active')
+            ->when($this->branch_id_search, fn($q) =>
+                $q->where('name', 'like', '%' . $this->branch_id_search . '%')
+            )
+            ->limit(5)
+            ->pluck('name', 'id')
+            ->toArray();
     }
 
-    public function getEmployee()
+    public function updatedBranchIdSearch()
     {
-        $this->employees_options = Employee::query()
-            ->where('status', 'active')
+        $this->loadBranchIdOptions();
+    }
+
+    public function updatedBranchId()
+    {
+        $this->department_id         = null;
+        $this->employees             = [];
+        $this->department_id_options = [];
+        $this->employees_options     = [];
+
+        $this->loadDepartmentIdOptions();
+    }
+
+    protected function loadDepartmentIdOptions()
+    {
+        if (! $this->branch_id) {
+            $this->department_id_options = [];
+            return;
+        }
+
+        $this->department_id_options = Department::where('status', 'active')
+            ->where('branch_id', $this->branch_id)
+            ->when($this->department_id_search, fn($q) =>
+                $q->where('name', 'like', '%' . $this->department_id_search . '%')
+            )
+            ->limit(5)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    public function updatedDepartmentIdSearch()
+    {
+        $this->loadDepartmentIdOptions();
+    }
+
+    public function updatedDepartmentId()
+    {
+        $this->employees         = [];
+        $this->employees_options = [];
+
+        $this->loadEmployeesOptions();
+    }
+
+    protected function loadEmployeesOptions()
+    {
+        if (! $this->department_id) {
+            $this->employees_options = [];
+            return;
+        }
+
+        $this->employees_options = Employee::where('status', 'active')
+            ->where('branch_id', $this->branch_id)
+            ->where('department_id', $this->department_id)
             ->when($this->employees_search, function ($query) {
                 $search = '%' . $this->employees_search . '%';
 
@@ -99,37 +159,45 @@ class RosterForm extends Component
                     $q->where('first_name', 'like', $search)
                         ->orWhere('last_name', 'like', $search)
                         ->orWhere('contact_number', 'like', $search)
-                        ->orWhere('alternative_phone_number', 'like', $search)
                         ->orWhere('employee_code', 'like', $search);
                 });
             })
             ->latest()
-            ->take(5)
+            ->limit(5)
             ->get()
-            ->mapWithKeys(function ($employee) {
-                return [
-                    $employee->id => $employee->first_name . ' ' . $employee->last_name,
-                ];
-            })
-            ->prepend('Select Employee', '')
+            ->mapWithKeys(fn($emp) => [
+                $emp->id => $emp->full_name, // using accessor
+            ])
             ->toArray();
+    }
+
+    public function updatedEmployeesSearch()
+    {
+        $this->loadEmployeesOptions();
     }
 
     public function save()
     {
-        $data = $this->validate((new RosterRequest())->rules(), (new RosterRequest())->messages());
+        $allDays = array_keys($this->working_days_options);
+
+        $this->weekly_off_days = array_values(
+            array_diff($allDays, $this->working_days ?? [])
+        );
+        $data = $this->validate(
+            (new RosterRequest())->rules(),
+            (new RosterRequest())->messages()
+        );
 
         DB::transaction(function () use ($data) {
+
             if ($this->isEditMode) {
                 $this->roster->update($data);
                 return;
             }
-            // Create roster
+
             $this->roster = Roster::create($data);
-            // load shift relation
             $this->roster->load('shift');
 
-            // Attach employees
             $syncData = [];
 
             foreach ($this->employees as $empId) {
@@ -140,25 +208,20 @@ class RosterForm extends Component
 
             $this->roster->employees()->sync($syncData);
 
-            // Generate attendance
             $period = CarbonPeriod::create($this->start_date, $this->end_date);
 
             foreach ($period as $date) {
+
                 $dayName = strtolower($date->format('l'));
 
-                // weekly off
-                if (in_array($dayName, $this->weekly_off_days)) {
-                    $status = 'offday';
-                } else {
-                    $status = null;
-                }
+                $status = in_array($dayName, $this->working_days)
+                    ? null
+                    : 'offday';
 
                 foreach ($this->employees as $empId) {
-                    $emp = Employee::findOrFail($empId);
                     Attendance::create([
                         'branch_id'        => $this->branch_id,
                         'employee_id'      => $empId,
-                        'employee_card_no' => $emp->employee_code,
                         'roster_id'        => $this->roster->id,
                         'date'             => $date->toDateString(),
                         'shift_start_time' => $this->roster->shift->start_time,
@@ -168,9 +231,14 @@ class RosterForm extends Component
                 }
             }
         });
-        flash()->success($this->isEditMode ? 'Roster updated successfully.' : 'Roster created successfully.');
-        return redirect()->route('admin.rosters.index');
 
+        flash()->success(
+            $this->isEditMode
+                ? 'Roster updated successfully.'
+                : 'Roster created successfully.'
+        );
+
+        return redirect()->route('admin.rosters.index');
     }
 
     public function render()

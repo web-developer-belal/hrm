@@ -1,80 +1,105 @@
 <?php
-
 namespace App\Livewire\Admin\Leavemgt;
 
 use App\Models\Attendance;
+use App\Models\Branch;
 use App\Models\Leave;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
 
 class LeaveList extends Component
 {
-      use WithPagination;
+    use WithPagination;
+    public $branches         = [];
+    public $branches_options = [];
+    public $branches_search;
+    public $search;
 
-      public function statusChange($leaveId, $status)
-      {
-            // dd($leaveId);
+    public function mount()
+    {
+        $this->loadBranches();
+    }
 
-            $leave= Leave::findOrFail($leaveId);
-            $leave->update([
-                'status'=>$status,
-                // 'approved_by'=>Auth::user()->id,
-            ]);
+    protected function loadBranches(): void
+    {
+        $this->branches_options = Branch::query()
+            ->where('status', 'active')
+            ->when($this->branches_search, fn($q) =>
+                $q->where('name', 'like', '%' . $this->branches_search . '%')
+            )
+            ->limit(5)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
 
-            if ($status === 'approved') {
-                $this->updateAttendanceForLeave($leave);
-            }elseif (in_array($status, ['rejected', 'pending'])) {
-                $this->revertAttendanceForLeave($leave);
-            }
+    public function updatedBranchesSearch(): void
+    {
+        $this->loadBranches();
+    }
 
+    public function statusChange($leaveId, $status)
+    {
+        // dd($leaveId);
 
+        $leave = Leave::findOrFail($leaveId);
+        $leave->update([
+            'status' => $status,
+            // 'approved_by'=>Auth::user()->id,
+        ]);
 
-             flash()->success('Leave status change updated successfully.');
-      }
+        if ($status === 'approved') {
+            $this->updateAttendanceForLeave($leave);
+        } elseif (in_array($status, ['rejected', 'pending'])) {
+            $this->revertAttendanceForLeave($leave);
+        }
 
-public function deleteLeave($id)
-{
+        flash()->success('Leave status change updated successfully.');
+    }
 
-    $leave= Leave::findOrFail($id)->delete();
-    // $leave->delete();
-  flash()->success('Leave status change updated successfully.');
-}
+    public function deleteLeave($id)
+    {
+
+        $leave = Leave::findOrFail($id)->delete();
+        // $leave->delete();
+        flash()->success('Leave status change updated successfully.');
+    }
 
     public function render()
     {
-        $query = Leave::query();
-        return view('livewire.admin.leavemgt.leave-list',[
-            'leaves' => $query->paginate(10),
+        $query = Leave::with('employee')
+            ->when($this->search, function ($q) {
+                $q->whereHas('employee', function ($empQuery) {
+                    $empQuery->where('first_name', 'like', '%' . $this->search . '%')
+                        ->orWhere('last_name', 'like', '%' . $this->search . '%')
+                        ->orWhere('employee_code', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->when($this->branches, function ($q) {
+                $q->whereIn('branch_id', (array) $this->branches);
+            })->latest()->paginate(10);
+            
+        return view('livewire.admin.leavemgt.leave-list', [
+            'leaves' => $query,
         ]);
     }
 
+    private function updateAttendanceForLeave($leave)
+    {
+        Attendance::where('employee_id', $leave->employee_id)
+            ->whereBetween('date', [$leave->from_date, $leave->to_date])
+            ->update([
+                'status'     => 'leave',
+                'updated_at' => now(),
+            ]);
+    }
 
-
-
-/**
- * Update attendance records to 'leave' status for the leave date range
- */
-private function updateAttendanceForLeave($leave)
-{
-    Attendance::where('employee_id', $leave->employee_id)
-        ->whereBetween('date', [$leave->from_date, $leave->to_date])
-        ->update([
-            'status' => 'leave',
-            'updated_at' => now(),
-        ]);
-}
-
-/**
- * Revert attendance status if leave is rejected/cancelled
- */
-private function revertAttendanceForLeave($leave)
-{
-    Attendance::where('employee_id', $leave->employee_id)
-        ->whereBetween('date', [$leave->from_date, $leave->to_date])
-        ->update([
-            'status' => 'absent',
-            'updated_at' => now(),
-        ]);
-}
+    private function revertAttendanceForLeave($leave)
+    {
+        Attendance::where('employee_id', $leave->employee_id)
+            ->whereBetween('date', [$leave->from_date, $leave->to_date])
+            ->update([
+                'status'     => 'absent',
+                'updated_at' => now(),
+            ]);
+    }
 }

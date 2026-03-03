@@ -68,8 +68,7 @@
                                 Date</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Status</th>
-                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Document</th>
+                            
 
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Action
@@ -88,13 +87,7 @@
                                 <td class="px-5 py-2.5 text-gray-900">{{ $complain->subject }}</td>
                                 <td class="px-5 py-2.5 text-gray-900">{{ $complain->date->format('d M Y') }}</td>
                                 <td class="px-5 py-2.5 text-gray-900">{{ $complain->status_label }}</td>
-                                <td class="px-5 py-2.5 text-gray-900">
-                                    <img src="{{ customAsset($complain->document) }}" height="50" width="50">
-                                </td>
-
-
-
-
+                               
                                 <td class="px-5 py-2.5 text-gray-500">
                                     <div class="action-icon inline-flex">
 

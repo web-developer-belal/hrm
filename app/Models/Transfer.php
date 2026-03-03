@@ -28,20 +28,20 @@ class Transfer extends Model
     {
         return $this->belongsTo(Branch::class);
     }
-    public function frombranch()
+    public function fromBranch()
     {
         return $this->belongsTo(Branch::class, 'form_branch_id');
     }
-    public function tobranch()
+    public function toBranch()
     {
         return $this->belongsTo(Branch::class, 'to_branch_id');
     }
 
-    public function todepartment()
+    public function toDepartment()
     {
         return $this->belongsTo(Department::class, 'to_department_id');
     }
-    public function formdepartment()
+    public function fromDepartment()
     {
         return $this->belongsTo(Department::class, 'form_department_id');
     }

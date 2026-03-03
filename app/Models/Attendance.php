@@ -12,7 +12,6 @@ class Attendance extends Model
         'branch_id',
         'employee_id',
         'roster_id',
-        'employee_card_no',
         'date',
         'shift_start_time',
         'shift_end_time',

@@ -12,7 +12,7 @@ class TransferList extends Component
 
     public function render()
     {
-        $query = Transfer::with('employee', 'frombranch', 'tobranch', 'fromdepartment', 'todepartment')
+        $query = Transfer::with('employee', 'fromBranch', 'toBranch', 'fromdepartment', 'toDepartment')
             ->when($this->search, function ($q) {
                 $q->where(function ($query) {
                     $query->WhereHas('employee', function ($emp) {

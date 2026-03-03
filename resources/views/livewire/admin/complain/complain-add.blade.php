@@ -8,74 +8,35 @@
             <form wire:submit.prevent="submitComplain" class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                 <!-- Branch -->
-                <x-form.select 
-                    label="Select Branch" 
-                    name="branch_id" 
-                    :options="$branches" 
-                    :isRequired="true"
-                    :live="true" />
+                <x-form.select label="Select Branch" name="branch_id" :options="$branch_id_options" :isRequired="true"
+                    :live="true" :search="true" placeholder="Select Branch" />
 
                 <!-- Employees -->
-                <x-form.select 
-                    label="Complainant Employee" 
-                    name="employee_id" 
-                    :options="$employeesData" 
-                    :isRequired="true" />
+                <x-form.select label="Complainant Employee" name="employee_id" :options="$employee_id_options" :isRequired="true"
+                    :search="true" placeholder="Select Employee" />
 
                 <!-- Against Employee (nullable) -->
-                <x-form.select 
-                    label="Against Employee" 
-                    name="against_employee_id" 
-                    :options="$employeesData" 
-                    :isRequired="false" />
+                <x-form.select label="Against Employee" name="against_employee_id" :options="$against_employee_id_options" :search="true"
+                    :isRequired="false" placeholder="Select Employee" />
 
                 <!-- Subject -->
-                <x-form.input 
-                    label="Complain Subject" 
-                    name="subject" 
-                    placeholder="Enter complain subject" 
+                <x-form.input label="Complain Subject" name="subject" placeholder="Enter complain subject"
                     :isRequired="true" />
 
                 <!-- Date -->
-                <x-form.input 
-                    label="Date" 
-                    name="date" 
-                    type="date" 
-                    :isRequired="true" />
+                <x-form.input label="Date" name="date" type="date" :isRequired="true" />
 
                 <!-- Description -->
-                <x-form.textarea 
-                    label="Describe your Complain" 
-                    name="description" 
-                    placeholder="Describe your complain" 
+                <x-form.textarea label="Describe your Complain" name="description" placeholder="Describe your complain"
                     :isRequired="false" />
 
                 <!-- Documents -->
-                <x-form.file-upload 
-                    title="Documents" 
-                    label="Upload Files" 
-                    name="documents" 
-                    multiple 
-                    accept=".pdf,.doc,.docx,.jpg,.png" />
+                <x-form.file-upload title="Documents" label="Upload Files" name="documents" multiple
+                    accept=".pdf,.doc,.docx,.jpg,.png" :oldFiles="$oldDocument" />
 
-                <!-- Show old documents -->
-                @if(!empty($oldDocument))
-                    <div class="col-span-2 mt-2 space-y-1">
-                        <label class="text-sm font-semibold">Existing Documents:</label>
-                        <ul>
-                            @foreach($oldDocument as $doc)
-                                <li><a href="{{ asset('storage/'.$doc) }}" target="_blank">{{ basename($doc) }}</a></li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
 
                 <!-- Status -->
-                <x-form.select 
-                    label="Status" 
-                    name="status" 
-                    :options="['0'=>'Pending','1'=>'Resolved','2'=>'Rejected']" 
-                    :isRequired="true" />
+                <x-form.select label="Status" name="status" :options="['0' => 'Pending', '1' => 'Resolved', '2' => 'Rejected']" :isRequired="true" />
 
                 <!-- Submit -->
                 <div class="md:col-span-2 text-end">

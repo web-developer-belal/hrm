@@ -10,6 +10,7 @@ class LeaveManagement extends Component
 {
     use WithPagination;
     public $employee;
+    
     public function mount()
     {
         $this->employee = Auth::guard('employee')->user();

@@ -13,6 +13,7 @@ class DepartmentManagement extends Component
     public $branches         = [];
     public $branches_options = [];
     public $branches_search;
+    
     public function mount()
     {
         $this->loadBranches();

@@ -79,10 +79,10 @@
                                     {{ $loop->iteration }}
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-900">{{ $item->employee->first_name }}</td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $item->frombranch->name ?? 'N/A' }}</td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $item->formdepartment->name ?? 'N/A' }}</td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $item->tobranch->name ?? 'N/A' }}</td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $item->todepartment->name ?? 'N/A' }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->fromBranch->name ?? 'N/A' }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->fromDepartment->name ?? 'N/A' }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->toBranch->name ?? 'N/A' }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->toDepartment->name ?? 'N/A' }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $item->note }}</td>
 
                                 <td class="px-5 py-2.5 text-gray-500">

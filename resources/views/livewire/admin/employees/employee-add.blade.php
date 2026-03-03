@@ -25,7 +25,7 @@
             <div class="mb-2">
                 <a href="{{ route('admin.employees.index') }}"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">
-                    <i class="ti ti-circle-plus me-2"></i>Employees
+                    <i class="ti ti-arrow-back-up me-2"></i>Employees
                 </a>
             </div>
         </div>
@@ -39,206 +39,86 @@
             </div>
 
             <div class="card-body p-5">
-                <form wire:submit.prevent="saveEmployee"
-                    class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+                <form wire:submit.prevent="saveEmployee" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
 
-                    <x-form.input
-                    label="Photo"
-                    name="photo"
-
-                    :error="true"
-
-                    type="file"
-                    />
-                    @if ($oldPhoto)
-                        <img src="{{ customAsset($oldPhoto) }}" height="200" width="200">
-                    @endif
-                    @if ($photo)
-                        <img src="{{ $photo->temporaryUrl() }}" height="200" width="200">
-                    @endif
+                    <x-form.file-upload label="Photo" name="photo" :error="true" />
 
 
-                    <x-form.select
-                    label="Select Branch"
-                    name="branch_id"
-                    :isRequired="true"
-                    :error="true"
-                    :options="$branches" />
+                    <x-form.select label="Select Branch" name="branch_id" :isRequired="true" :error="true"
+                        :search="true" :options="$branch_id_options" />
 
 
-                <x-form.select
-                    label="Select Department"
-                    name="department_id"
-                    :isRequired="false"
-                    :error="true"
-                    :options="$departments" />
+                    <x-form.select label="Select Department" name="department_id" :isRequired="false" :error="true"
+                        :search="true" :options="$department_id_options" />
 
-                    <x-form.input
-                        label="First Name"
-                        name="first_name"
-                        :isRequired="true"
-                        :error="true"
+                    <x-form.input label="First Name" name="first_name" :isRequired="true" :error="true"
                         placeholder="Enter First Name" />
 
-                    <x-form.input
-                        label="Last Name"
-                        name="last_name"
-                        :isRequired="false"
-                        :error="true"
+
+                    <x-form.input label="Last Name" name="last_name" :isRequired="false" :error="true"
                         placeholder="Enter Last Name" />
 
-                    <x-form.input
-                        label="Employee ID"
-                        name="employee_code"
-                        :isRequired="false"
-                        :error="true"
+                    <x-form.input label="Email address" name="email" :isRequired="true" type="email"
+                        :error="true" placeholder="Enter email address" />
+                        
+                    <x-form.input label="Employee ID" name="employee_code" :isRequired="false" :error="true"
                         placeholder="Enter Employee ID or Code" />
 
 
-                        <x-form.input
-                        label="Joinging Date"
-                        name="joining_date"
-                        :isRequired="true"
-                        :error="true"
+                    <x-form.input label="Joining Date" name="joining_date" :isRequired="true" :error="true"
                         type="date" />
 
-                        <x-form.select
-                        label="Select Designation"
-                        name="designation_id"
-                        :isRequired="true"
-                        :error="true"
-                        :options="$designations" />
+                    <x-form.select label="Select Designation" name="designation_id" :isRequired="true"
+                        :error="true" :search="true" :options="$designation_id_options" />
 
-                        <x-form.input
-                        label="Contact No"
-                        name="contact_number"
-                        :isRequired="true"
-                        :error="true"
+                    <x-form.input label="Contact No" name="contact_number" :isRequired="true" :error="true"
                         placeholder="Enter Contact No" />
 
-                        <x-form.input
-                        label="Alternative Contact No"
-                        name="alternative_phone_number"
-                        :isRequired="false"
-                        :error="true"
-                        placeholder="Enter Alternative Contact no" />
+                    <x-form.input label="Alternative Contact No" name="alternative_phone_number" :isRequired="false"
+                        :error="true" placeholder="Enter Alternative Contact no" />
 
 
-                            <x-form.select
-                            label="Select Gender"
-                            name="gender"
-                            :isRequired="true"
-                            :error="true"
-                            :options="['male' => 'Male', 'female' => 'Female','other'=>' Other']" />
+                    <x-form.select label="Select Gender" name="gender" :isRequired="true" :error="true"
+                        :options="['male' => 'Male', 'female' => 'Female', 'other' => ' Other']" />
 
-                            <x-form.input
-                            label="Present Address"
-                            name="local_address"
-                            :isRequired="true"
-                            :error="true"
-                            type="text" />
+                    <x-form.input label="Present Address" name="local_address" :isRequired="true" :error="true"
+                        type="text" />
 
-                            <x-form.input
-                            label="Permanent Address"
-                            name="permanent_address"
-                            :isRequired="true"
-                            :error="true"
-                            type="text" />
+                    <x-form.input label="Permanent Address" name="permanent_address" :isRequired="true"
+                        :error="true" type="text" />
 
 
-                            <x-form.input
-                            label="Banks Name"
-                            name="bank_name"
-                            :isRequired="true"
-                            :error="true"
-                            type="text" />
+                    <x-form.input label="Banks Name" name="bank_name" :isRequired="true" :error="true"
+                        type="text" />
 
-                            <x-form.input
-                            label="Account Holder Name"
-                            name="account_holder_name"
-                            :isRequired="true"
-                            :error="true"
-                            type="text" />
+                    <x-form.input label="Account Holder Name" name="account_holder_name" :isRequired="true"
+                        :error="true" type="text" />
 
-                            <x-form.input
-                            label="Account Number"
-                            name="account_number"
-                            :isRequired="true"
-                            :error="true"
-                            type="text" />
+                    <x-form.input label="Account Number" name="account_number" :isRequired="true" :error="true"
+                        type="text" />
 
-                            <x-form.input
-                            label="Banke Routing Number"
-                            name="routing_number"
-                            :isRequired="false"
-                            :error="true"
-                            type="text" />
+                    <x-form.input label="Banke Routing Number" name="routing_number" :isRequired="false"
+                        :error="true" type="text" />
 
                     <!-- Start Date -->
-                    <x-form.textarea
-                        label="About Employee"
-                        name="description"
-                        :isRequired="false"
-                        :error="true"
-                       />
-
-
-                    {{-- <x-form.input
-                        label="Start Date"
-                        name="start_date"
-                        :isRequired="true"
-                        :error="true"
-                        type="date" /> --}}
+                    <x-form.textarea label="About Employee" name="description" :isRequired="false" :error="true" />
 
 
 
-
-                    <x-form.input
-                    label="Add Resume"
-                    name="resume"
-                    :error="true"
-                    type="file"
-                    />
-                    <x-form.input
-                    label="Add Offer Letter"
-                    name="offer_letter"
-                    :error="true"
-                    type="file"
-                    />
-                    <x-form.input
-                    label="Add Joinging Letter"
-                    name="joining_letter"
-                    :error="true"
-                    type="file"
-                    />
-                    <x-form.input
-                    label="Add Contract & Agreement"
-                    name="contract_agreement"
-                    :error="true"
-                    type="file"
-                    />
-                    <x-form.input
-                    label="Add ID Proof"
-                    name="Id_proof"
-                    :error="true"
-                    type="file"
-                    />
+                    <x-form.file-upload label="Add Resume" name="resume" :error="true" />
+                    <x-form.file-upload label="Add Offer Letter" name="offer_letter" :error="true" />
+                    <x-form.file-upload label="Add Joining Letter" name="joining_letter" :error="true" />
+                    <x-form.file-upload label="Add Contract & Agreement" name="contract_agreement" :error="true" />
+                    <x-form.file-upload label="Add ID Proof" name="Id_proof" :error="true" />
 
                     <!-- Status -->
-                    <x-form.select
-                        label="Status"
-                        name="status"
-                        :isRequired="true"
-                        :error="true"
+                    <x-form.select label="Status" name="status" :isRequired="true" :error="true"
                         :options="['1' => 'Active', '0' => 'Inactive']" />
-
-
-
 
                     <!-- Submit Button -->
                     <div class="text-end md:col-span-2">
-                        <x-form.button type="submit" />
+                        <x-form.button type="submit" :text="$isEditMode ? 'Update' : 'Submit'" />
                     </div>
 
                 </form>

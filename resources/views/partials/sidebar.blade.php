@@ -205,9 +205,7 @@
                             </a>
                             <ul class="relative mt-2 before:absolute before:top-0 before:left-3.5 before:w-[1.5px] before:h-full before:bg-gray-100"
                                 style="display: {{ $isPayrollActive ? 'block' : 'none' }};">
-                                <li><a href="salary-setup.html"
-                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Salary
-                                        Setup</a></li>
+                               
                                 <li><a href="{{ route('admin.adjustment.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.adjustment.index') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Advance
                                     </a></li>

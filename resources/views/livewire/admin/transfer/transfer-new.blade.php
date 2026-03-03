@@ -25,7 +25,7 @@
             <div class="mb-2">
                 <a href="{{ route('admin.transfer.index') }}"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">
-                    <i class="ti ti-circle-plus me-2"></i>Transfer
+                    <i class="ti ti-arrow-back-up me-2"></i>Transfer
                 </a>
             </div>
         </div>
@@ -38,11 +38,11 @@
                 <h5 class="card-title">{{ $isEditMode ? 'Edit Transfer' : 'Create Transfer' }}</h5>
 
 
- @if ($errors->any())
-     @foreach ($errors->all() as $error)
-         <div>{{$error}}</div>
-     @endforeach
- @endif
+                @if ($errors->any())
+                    @foreach ($errors->all() as $error)
+                        <div>{{ $error }}</div>
+                    @endforeach
+                @endif
 
             </div>
 
@@ -50,54 +50,35 @@
                 <form wire:submit.prevent="submitTransfer" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
                     <!-- Employees -->
-                    <x-form.select label="Select Employee" name="selectedEmployee" :isRequired="true" :error="true"
-                        :options="$employeesData" :is_multiple="false" :live="true"/>
+                    <x-form.select label="Select Employee" name="selectedEmployee" :search="true" :isRequired="true" :error="true"
+                        :options="$selectedEmployee_options" :live="true" />
 
 
-                            @if($form_branch)
-                         <div class="w-full">
-                        <label class="form-label">From Branch</label>
+                    @if ($form_branch)
+                        <div class="w-full">
+                            <label class="form-label">From Branch</label>
 
-                        <input type="text" class="form-control " wire:model="form_branch"
-                            readonly>
+                            <input type="text" class="form-control " wire:model="form_branch" readonly>
 
-                        <input type="text" class="form-control " wire:model="form_branch_id"
-                            readonly>
-                        <input type="text" class="form-control " wire:model="employee_id"
-                            readonly>
-                        <input type="text" class="form-control " wire:model="branch_id"
-                            readonly>
-                    </div>
-                     <div class="w-full">
-                        <label class="form-label">From Department</label>
+                        </div>
+                        <div class="w-full">
+                            <label class="form-label">From Department</label>
 
-                        <input type="text" class="form-control " wire:model="form_department"
-                            readonly>
-                        <input type="text" class="form-control " wire:model="form_department_id"
-                            readonly>
-                    </div>
+                            <input type="text" class="form-control " wire:model="form_department" readonly>
+                        </div>
                     @endif
 
                     <!-- Branch -->
-                    <x-form.select label="Transfer To Branch" name="to_branch_id" :isRequired="true" :error="true"
-                        :options="$branches" />
-
-
-
-
-
+                    <x-form.select label="Transfer To Branch" name="to_branch_id" :search="true" :isRequired="true" :error="true"
+                        :options="$to_branch_id_options" />
 
 
                     <!-- Department (Optional) -->
-                    <x-form.select label="Transfer To Department" name="to_department_id" :isRequired="true"
-                        :error="true" :options="$departments" />
+                    <x-form.select label="Transfer To Department" name="to_department_id" :search="true" :isRequired="true"
+                        :error="true" :options="$to_department_id_options" />
 
 
-                     <x-form.textarea
-                        label="Note"
-                        name="note"
-                        :isRequired="false"
-                        :error="true"
+                    <x-form.textarea label="Note" name="note" :isRequired="false" :error="true"
                         placeholder="Describe note" />
 
                     <!-- Status -->
