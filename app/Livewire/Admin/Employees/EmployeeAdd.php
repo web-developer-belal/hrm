@@ -74,7 +74,7 @@ class EmployeeAdd extends Component
 
             $this->isEditMode = true;
 
-            $emp = Employee::findorfail($emp);
+            $emp = Employee::findOrFail($emp);
             $this->emp = $emp;
             $this->employee_id= $emp->id;
             $this->first_name = $emp->first_name;
@@ -143,7 +143,7 @@ class EmployeeAdd extends Component
         // if( $this->isEditMode == true)
         // {
 
-        //     $emp = Employee::findorfail($this->employee_id);
+        //     $emp = Employee::findOrFail($this->employee_id);
 
         //     $emp->update($data);
 

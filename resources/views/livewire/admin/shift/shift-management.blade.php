@@ -36,7 +36,12 @@
         <div
             class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3">
             <h5>Shift List</h5>
+            <div class="flex my-xl-auto right-content items-center flex-wrap gap-3">
+                <div class="me-3">
+                    <x-form.input name="search" placeholder="Search here.." :live="true" />
+                </div>
 
+            </div>
         </div>
         <div class="card-body p-0">
             <div class="overflow-x-auto">
@@ -48,14 +53,14 @@
                                 SL
                             </th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                               Shift Name</th>
+                                Shift Name</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Start time</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 End time</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Work Hours</th>
-                                
+
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Status</th>
 
@@ -71,8 +76,9 @@
                                     {{ $shifts->firstItem() + $loop->index }}
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-900">{{ $item->name }}</td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $item->start_time }}</td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $item->end_time }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->start_time->format('d-M-Y H:i A') }}
+                                </td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->end_time->format('d-M-Y H:i A') }}</td>
                                 <td class="px-5 py-2.5 text-gray-500 text-center">{{ $item->working_hours }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">
 

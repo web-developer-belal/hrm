@@ -36,11 +36,19 @@
         <div
             class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3">
             <h5>Roster List</h5>
-
+            <div class="flex my-xl-auto right-content items-center flex-wrap gap-3">
+                <div class="me-3">
+                    <x-form.input name="search" placeholder="Search here.." :live="true" />
+                </div>
+                <div class="me-3">
+                    <x-form.select name="branches" placeholder="Select branch" :live="true" :option="$branches_options"
+                        :isMultiple="true" :search="true" />
+                </div>
+            </div>
         </div>
         <div class="card-body p-0">
             <div class="overflow-x-auto">
-                <table class="table w-full border-b border-borderColor">
+                <table class="table w-full border-b border-borderColor" >
                     <thead class="thead-light">
                         <tr>
                             <th
@@ -48,7 +56,7 @@
                                 SL
                             </th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                               Roster Name</th>
+                                Roster Name</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Branch</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
@@ -67,7 +75,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-borderColor">
+                    <tbody class="bg-white divide-y divide-borderColor" wire:loading.class="opacity-50">
                         @foreach ($rosters as $item)
                             <tr class="even:bg-white dark:even-bg-white">
                                 <td class="px-5 py-2.5 text-gray-500">
@@ -77,8 +85,8 @@
                                 <td class="px-5 py-2.5 text-gray-500">{{ $item->branch->name ?? 'N/A' }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $item->department->name ?? 'N/A' }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $item->shift->name ?? 'N/A' }}</td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $item->start_date->format('d M Y') }}</td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $item->end_date->format('d M Y') }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->start_date->format('d-M-Y') }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->end_date->format('d-M-Y') }}</td>
 
                                 <td class="px-5 py-2.5 text-gray-500">
 

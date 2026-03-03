@@ -15,10 +15,10 @@ class LoanDetails extends Component
 
     public function mount($loan)
     {
-        $this->loan = Loan::findorfail($loan);
+        $this->loan = Loan::findOrFail($loan);
 
         // dd( $this->loan);
-        $this->employee = Employee::findorfail($this->loan->employee_id);
+        $this->employee = Employee::findOrFail($this->loan->employee_id);
         $this->installments = LoanInstallment::where('loan_id',$loan)->get();
     }
 

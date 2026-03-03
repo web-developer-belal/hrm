@@ -48,7 +48,7 @@ class TransferNew extends Component
 
     public function updatedSelectedEmployee()
     {
-        $this->selectedEmployee = Employee::findorfail($this->selectedEmployee);
+        $this->selectedEmployee = Employee::findOrFail($this->selectedEmployee);
 
         $this->employee_id = $this->selectedEmployee->id;
         $this->branch_id   = $this->selectedEmployee->branch_id;
@@ -68,10 +68,10 @@ class TransferNew extends Component
 
             $this->transferid->update($data);
 
-            $checkTransfer = Transfer::findorfail($this->transferid->id);
+            $checkTransfer = Transfer::findOrFail($this->transferid->id);
 
             if ($checkTransfer->status === 1) {
-                $emp = Employee::findorfail($checkTransfer->employee_id);
+                $emp = Employee::findOrFail($checkTransfer->employee_id);
                 $emp->update([
                     'branch_id'     => $checkTransfer->to_branch_id,
                     'department_id' => $checkTransfer->to_department_id,
@@ -84,7 +84,7 @@ class TransferNew extends Component
             $transferEmp = Transfer::create($data);
 
             if ($transferEmp->status === 1) {
-                $emp = Employee::findorfail($transferEmp->employee_id);
+                $emp = Employee::findOrFail($transferEmp->employee_id);
                 $emp->update([
                     'branch_id'     => $transferEmp->to_branch_id,
                     'department_id' => $transferEmp->to_department_id,

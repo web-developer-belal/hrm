@@ -36,7 +36,7 @@ class LeaveList extends Component
 public function deleteLeave($id)
 {
 
-    $leave= Leave::findorfail($id)->delete();
+    $leave= Leave::findOrFail($id)->delete();
     // $leave->delete();
   flash()->success('Leave status change updated successfully.');
 }

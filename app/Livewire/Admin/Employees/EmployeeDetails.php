@@ -66,7 +66,7 @@ class EmployeeDetails extends Component
 
     public function mount($emp)
     {
-        $this->employee = Employee::findorfail($emp);
+        $this->employee = Employee::findOrFail($emp);
 
         $salay = Salary::where('employee_id', $emp)->first();
         //  $this->totalSalary = $salay->basic_salary + $salay->house_rent +$salay->medical_allowance+$salay->dear_allowance +$salay->transport_allowance ;
