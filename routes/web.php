@@ -2,6 +2,8 @@
 
 use App\Livewire\Admin\Attendance\AddManualAttendance;
 use App\Livewire\Admin\Attendance\AttendanceList;
+use App\Livewire\Admin\AttendancePolicy\AttendenancePolicyAdd;
+use App\Livewire\Admin\AttendancePolicy\AttendenancePolicyList;
 use App\Livewire\Admin\Branch\BranchForm;
 use App\Livewire\Admin\Branch\BranchManagement;
 use App\Livewire\Admin\Complain\ComplainAdd;
@@ -28,10 +30,10 @@ use App\Livewire\Admin\Loan\LoanDetails;
 use App\Livewire\Admin\Loan\LoanList;
 use App\Livewire\Admin\Notice\ManageNotice;
 use App\Livewire\Admin\Notice\NoticeForm;
-use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeduction;
-use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeductionNew;
 use App\Livewire\Admin\Payroll\PayrollEngine;
 use App\Livewire\Admin\Payroll\PayrollList;
+use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeduction;
+use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeductionNew;
 use App\Livewire\Admin\Roster\RosterForm;
 use App\Livewire\Admin\Roster\RosterManagement;
 use App\Livewire\Admin\Shift\ShiftForm;
@@ -222,8 +224,19 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('index');
         Route::livewire('/add/holiday', HolidayAdd::class)
             ->name('add');
-            
+
 
     });
+
+      // Attendace Policy Management
+           Route::prefix('attendace-policy')->name('attendace-policy.')->group(function () {
+            Route::livewire('/', AttendenancePolicyList::class)
+                ->name('index');
+            Route::livewire('/add', AttendenancePolicyAdd::class)
+                ->name('add');
+            Route::livewire('/attendance/edit/{policyID}', AttendenancePolicyAdd::class)
+                ->name('edit');
+
+        });
 
 });

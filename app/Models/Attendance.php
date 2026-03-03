@@ -26,6 +26,8 @@ class Attendance extends Model
         'edited_at',
         'early_exit_minutes',
         'overtime_minutes',
+        'in_grace_period_minutes',
+        'out_grace_period_minutes',
     ];
 
     protected $casts = [

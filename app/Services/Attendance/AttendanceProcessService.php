@@ -91,10 +91,10 @@ $lastPunch = Carbon::parse($logs->last()->attendance_date)
     ->setTimeFromTimeString($logs->last()->attendance_time);
 
 $shiftStart = Carbon::parse($attendance->date)
-    ->setTimeFromTimeString($attendance->shift_start_time);
+    ->setTimeFromTimeString($attendance->shift_start_time)->addMinutes($attendance->in_grace_period_minutes);;
 
 $shiftEnd = Carbon::parse($attendance->date)
-    ->setTimeFromTimeString($attendance->shift_end_time);
+    ->setTimeFromTimeString($attendance->shift_end_time)->subMinutes($attendance->out_grace_period_minutes);;
 
 // Night shift handling
 if ($shiftEnd->lessThan($shiftStart)) {
