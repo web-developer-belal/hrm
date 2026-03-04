@@ -24,6 +24,8 @@ return new class extends Migration
             $table->integer('late_minutes')->default(0);
             $table->integer('overtime_minutes')->default(0);
             $table->integer('early_exit_minutes')->default(0);
+            $table->integer('in_grace_period_minutes')->default(0);
+            $table->integer('out_grace_period_minutes')->default(0);
 
             $table->enum('status',['late','present','absent','leave','holiday','offday'])->nullable()->default(null);
             $table->string('remarks')->nullable();
