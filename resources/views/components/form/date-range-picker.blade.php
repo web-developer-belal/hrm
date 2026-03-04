@@ -31,7 +31,6 @@
                     'Last 7 Days': [moment().subtract(6, 'days'), moment()],
                     'Last 30 Days': [moment().subtract(29, 'days'), moment()],
                     'This Year': [moment().startOf('year'), moment().endOf('year')],
-                    'Next Year': [moment().add(1, 'year').startOf('year'), moment().add(1, 'year').endOf('year')]
                 }
             },
             (start, end) => updateLabel(start, end, false)

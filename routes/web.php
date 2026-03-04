@@ -1,9 +1,8 @@
 <?php
-
 use App\Livewire\Admin\Attendance\AddManualAttendance;
 use App\Livewire\Admin\Attendance\AttendanceList;
-use App\Livewire\Admin\AttendancePolicy\AttendenancePolicyAdd;
-use App\Livewire\Admin\AttendancePolicy\AttendenancePolicyList;
+use App\Livewire\Admin\AttendancePolicy\AttendancePolicyAdd;
+use App\Livewire\Admin\AttendancePolicy\AttendancePolicyList;
 use App\Livewire\Admin\Branch\BranchForm;
 use App\Livewire\Admin\Branch\BranchManagement;
 use App\Livewire\Admin\Complain\ComplainAdd;
@@ -30,13 +29,9 @@ use App\Livewire\Admin\Loan\LoanDetails;
 use App\Livewire\Admin\Loan\LoanList;
 use App\Livewire\Admin\Notice\ManageNotice;
 use App\Livewire\Admin\Notice\NoticeForm;
-use App\Livewire\Admin\Payroll\PayrollEngine;
-use App\Livewire\Admin\Payroll\PayrollList;
 use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeduction;
 use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeductionNew;
 use App\Livewire\Admin\Payroll\ExportPayRoll;
-use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeduction;
-use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeductionNew;
 use App\Livewire\Admin\Payroll\PayrollEngine;
 use App\Livewire\Admin\Payroll\PayrollList;
 use App\Livewire\Admin\PaySlips\PaySlipManagement;
@@ -48,6 +43,7 @@ use App\Livewire\Admin\Shift\ShiftManagement;
 use App\Livewire\Admin\Transfer\TransferList;
 use App\Livewire\Admin\Transfer\TransferNew;
 use App\Livewire\Auth\AdminLogin;
+use App\Livewire\Admin\SettingManagement;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
@@ -184,7 +180,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('index');
         Route::livewire('/payroll/list', PayrollList::class)
             ->name('list');
-            
+
         Route::livewire('/payroll/export/{payrolls}', ExportPayRoll::class)
             ->name('export');
 
@@ -238,18 +234,20 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::livewire('/add/holiday', HolidayAdd::class)
             ->name('add');
 
-
     });
 
-      // Attendace Policy Management
-           Route::prefix('attendace-policy')->name('attendace-policy.')->group(function () {
-            Route::livewire('/', AttendenancePolicyList::class)
-                ->name('index');
-            Route::livewire('/add', AttendenancePolicyAdd::class)
-                ->name('add');
-            Route::livewire('/attendance/edit/{policyID}', AttendenancePolicyAdd::class)
-                ->name('edit');
-
-        });
+    // Attendance Policy Management
+    Route::prefix('attendance-policy')->name('attendance-policy.')->group(function () {
+        Route::livewire('/', AttendancePolicyList::class)
+            ->name('index');
+        Route::livewire('/add', AttendancePolicyAdd::class)
+            ->name('add');
+        Route::livewire('/attendance/edit/{policyID}', AttendancePolicyAdd::class)
+            ->name('edit');
+    });
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::livewire('/', SettingManagement::class)
+            ->name('index');
+    });
 
 });

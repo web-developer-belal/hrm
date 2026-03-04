@@ -39,65 +39,54 @@
             </div>
 
             <div class="card-body p-5">
-                <form wire:submit.prevent="submitApplication"
-                    class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+                <form wire:submit.prevent="submitApplication" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
-                     <!-- Employees -->
-                     <div class="w-full">
-                    <label>Employee *</label>
-                    <select class="form-control"
-                            wire:change="setEmployee($event.target.value)" required>
-                        <option value="">Select</option>
-                        @foreach($employees as $emp)
-                            <option value="{{ $emp->id }}">{{ $emp->first_name }}</option>
-                        @endforeach
-                    </select>
-                     </div>
+                    <!-- Employees -->
+                    <div class="w-full">
+                        <label>Employee *</label>
+                        <select class="form-control" wire:change="setEmployee($event.target.value)" required>
+                            <option value="">Select</option>
+                            @foreach ($employees as $emp)
+                                <option value="{{ $emp->id }}">{{ $emp->first_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                <div class="w-full">
-                      <label>Leave Type *</label>
-                    <select class="form-control"
-                            wire:change="setLeaveType($event.target.value)" required>
-                        <option value="">Select</option>
-                        @foreach($leaveTypes as $type)
-                            <option value="{{ $type->id }}">{{ $type->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="w-full">
-                      <label>Leave Balance</label>
-                  <input class="form-control" readonly value="{{ $leave_balance }}">
-                </div>
+                    <div class="w-full">
+                        <label>Leave Type *</label>
+                        <select class="form-control" wire:change="setLeaveType($event.target.value)" required>
+                            <option value="">Select</option>
+                            @foreach ($leaveTypes as $type)
+                                <option value="{{ $type->id }}">{{ $type->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="w-full">
+                        <label>Leave Balance</label>
+                        <input class="form-control" readonly value="{{ $leave_balance }}">
+                    </div>
 
 
-   <div class="w-full">
-                    <label>From Date</label>
-                    <input type="date" class="form-control"
-                           wire:change="setFromDate($event.target.value)" required>
-                </div>
+                    <div class="w-full">
+                        <label>From Date</label>
+                        <input type="date" class="form-control" wire:change="setFromDate($event.target.value)"
+                            required>
+                    </div>
 
-                <div class="w-full">
-                    <label>To Date</label>
-                    <input type="date" class="form-control"
-                           wire:change="setToDate($event.target.value)" required>
-                </div>
+                    <div class="w-full">
+                        <label>To Date</label>
+                        <input type="date" class="form-control" wire:change="setToDate($event.target.value)"
+                            required>
+                    </div>
 
-                <div class="w-full">
-                    <label>Total Days</label>
-                    <input class="form-control" readonly value="{{ $total_days }}">
-                </div>
-<div class="w-full">
-                    <label>Reason</label>
-                    <textarea class="form-control"
-                              wire:input="setDescription($event.target.value)"></textarea>
-                </div>
-
-
-
-
-
-
-
+                    <div class="w-full">
+                        <label>Total Days</label>
+                        <input class="form-control" readonly value="{{ $total_days }}">
+                    </div>
+                    <div class="w-full">
+                        <label>Reason</label>
+                        <textarea class="form-control" wire:input="setDescription($event.target.value)"></textarea>
+                    </div>
 
                     <!-- Submit Button -->
                     <div class="text-end md:col-span-2">

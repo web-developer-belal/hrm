@@ -22,7 +22,6 @@
             </nav>
         </div>
         <div class="my-xl-auto right-content grid grid-cols-1 md:grid-cols-2 gap-2">
-
             <div class="">
                 <x-form.date-range-picker :startDate="$startDate" :endDate="$endDate" />
             </div>
@@ -163,50 +162,56 @@
 
 
         <!-- Attendance Overview -->
-        <div class="xl:col-span-6 flex" x-data="{
-            chart: null,
-            initChart() {
-                const ctx = document.getElementById('attendanceChart').getContext('2d');
-        
-                // Destroy existing chart if exists
-                if (this.chart) this.chart.destroy();
-        
-                this.chart = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Late', 'Present', 'On Time', 'Absent'],
-                        datasets: [{
-                            label: 'Attendance',
-                            data: [
-                                {{ (int)$attendance['late'] }},
-                                {{ (int)$attendance['present'] }},
-                                {{ (int)$attendance['on_time'] }},
-                                {{ (int)$attendance['absent'] }}
-                            ],
-                            backgroundColor: ['#03C95A', '#0C4B5E', '#FFC107', '#E70D0D'],
-                            borderWidth: 5,
-                            borderColor: '#fff',
-                            cutout: '60%'
-                        }]
-                    },
-                    options: {
-                        rotation: -100,
-                        circumference: 200,
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } }
+        <div class="xl:col-span-6 flex"
+            wire:key="attendance-chart-{{ $startDate }}-{{ $endDate }}-{{ $branch ?? 'all' }}"
+            x-data="{
+                chart: null,
+                initChart() {
+                    if (typeof Chart === 'undefined' || !this.$refs.attendanceCanvas) {
+                        return;
                     }
-                });
-            }
-        }" x-init="initChart()"
-            x-on:livewire:load.window="initChart()" x-on:update-chart.window="initChart()">
+            
+                    const ctx = this.$refs.attendanceCanvas.getContext('2d');
+            
+                    // Destroy existing chart if exists
+                    if (this.chart) this.chart.destroy();
+            
+                    this.chart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Late', 'Present', 'On Time', 'Absent'],
+                            datasets: [{
+                                label: 'Attendance',
+                                data: [
+                                    {{ (int) $attendance['late'] }},
+                                    {{ (int) $attendance['present'] }},
+                                    {{ (int) $attendance['on_time'] }},
+                                    {{ (int) $attendance['absent'] }}
+                                ],
+                                backgroundColor: ['#03C95A', '#0C4B5E', '#FFC107', '#E70D0D'],
+                                borderWidth: 5,
+                                borderColor: '#fff',
+                                cutout: '60%'
+                            }]
+                        },
+                        options: {
+                            rotation: -100,
+                            circumference: 200,
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                }
+            }" x-init="$nextTick(() => initChart())" x-on:livewire:load.window="initChart()"
+            x-on:update-chart.window="initChart()">
             <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white w-full mb-6">
                 <div class="card-header pt-4 px-5 pb-2 flex items-center justify-between border-b border-borderColor">
                     <h5 class="mb-2">Attendance Overview</h5>
                 </div>
                 <div class="card-body p-5">
                     <div class="w-full h-52 relative">
-                        <canvas id="attendanceChart" class="w-full h-full"></canvas>
+                        <canvas x-ref="attendanceCanvas" class="w-full h-full"></canvas>
                         <div class="absolute text-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                             <p class="text-[13px] mb-1">Total Attendance</p>
                             <h3>{{ $attendance['total_attendance'] }}</h3>
@@ -300,7 +305,7 @@
                                         To</th>
                                     <th
                                         class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                        No of Days</th>
+                                        Days</th>
                                     <th
                                         class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                         Status</th>
@@ -314,10 +319,12 @@
                                         <td class="px-5 py-2.5 text-gray-500">
                                             {{ $loop->index + 1 }}
                                         </td>
-                                        <td class="px-5 py-2.5 text-gray-900">{{ $leave->employee->first_name }}</td>
+                                        <td class="px-5 py-2.5 text-gray-900">{{ $leave->employee->full_name }}</td>
                                         <td class="px-5 py-2.5 text-gray-900">{{ $leave->type->name }}</td>
-                                        <td class="px-5 py-2.5 text-gray-500">{{ $leave->from_date }}</td>
-                                        <td class="px-5 py-2.5 text-gray-500">{{ $leave->to_date }}</td>
+                                        <td class="px-5 py-2.5 text-gray-500">{{ $leave->from_date->format('d-M-Y') }}
+                                        </td>
+                                        <td class="px-5 py-2.5 text-gray-500">{{ $leave->to_date->format('d-M-Y') }}
+                                        </td>
                                         <td class="px-5 py-2.5 text-gray-500">{{ $leave->total_days }}</td>
 
                                         <td class="px-5 py-2.5 text-gray-500 p-3">

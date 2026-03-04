@@ -17,7 +17,9 @@ class FileUpload extends Component
         public bool $multiple = false,
         public ?string $accept = null,
         public int $maxSize = 10485760,
-        public $oldFiles = null
+        public $oldFiles = null,
+        public bool $fullPreview = false,
+
     ) {
         $this->uploadId = 'upload_' . Str::random(8);
     }

@@ -67,10 +67,10 @@
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.device.history') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Device
                                         Sync History</a>
                                 </li>
-                                <li><a href="overtime.html"
+                                <li><a href=""
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Overtime</a>
                                 </li>
-                                <li><a href="attendance-policy.html"
+                                <li><a href="{{ route('admin.attendance-policy.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Attendance
                                         Policy</a></li>
                             </ul>
@@ -246,9 +246,9 @@
                                 class="relative flex item-center w-full p-2 text-sm font-medium text-gray-900 group hover:bg-dark-transparent rounded-[5px]"><i
                                     class="ti ti-file-analytics text-gray-500"></i><span class="ms-2">Reports &
                                     Analytics</span></a></li>
-                        <li class="mb-[5px]"><a href="settings.html"
-                                class="relative flex item-center w-full p-2 text-sm font-medium text-gray-900 group hover:bg-dark-transparent rounded-[5px]"><i
-                                    class="ti ti-settings text-gray-500"></i><span class="ms-2">Settings</span></a>
+                        <li class="mb-[5px]"><a href="{{ route('admin.settings.index') }}"
+                                class="relative flex item-center w-full p-2 text-sm font-medium {{ request()->routeIs('admin.settings.index') ? 'text-primary bg-dark-transparent' : 'text-gray-900 group hover:bg-dark-transparent hover:text-gray-900' }} rounded-[5px]"><i
+                                    class="ti ti-settings {{ request()->routeIs('admin.settings.index') ? 'text-primary' : 'text-gray-500 group-hover:text-gray-900' }}"></i><span class="ms-2">Settings</span></a>
                         </li>
 
                     </ul>

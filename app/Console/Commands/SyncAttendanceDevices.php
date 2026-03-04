@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Console\Commands;
 
 use App\Models\AttendanceLog;
@@ -30,15 +29,15 @@ class SyncAttendanceDevices extends Command
      */
     public function handle()
     {
-        $devices = Device::where('status',1)->get(); // Sync all devices
+        $devices = Device::where('status', 1)->get(); // Sync all devices
 
         foreach ($devices as $device) {
             $this->info("Syncing device: {$device->ip_address}");
 
             $history = DeviceSyncHistories::create([
-                'device_id' => $device->id,
+                'device_id'       => $device->id,
                 'sync_started_at' => now(),
-                'status' => 'processing'
+                'status'          => 'processing',
             ]);
 
             try {
@@ -56,19 +55,19 @@ class SyncAttendanceDevices extends Command
                         AttendanceLog::firstOrCreate(
                             ['employee_id' => $log['id'], 'attendance_minute' => $minuteKey],
                             [
-                                'device_id' => $device->id,
-                                'attendance_date' => $timestamp->format('Y-m-d'),
-                                'attendance_time' => $timestamp->format('H:i:s'),
-                                'device_timestamp' => $timestamp
+                                'device_id'        => $device->id,
+                                'attendance_date'  => $timestamp->format('Y-m-d'),
+                                'attendance_time'  => $timestamp->format('H:i:s'),
+                                'device_timestamp' => $timestamp,
                             ]
                         );
                         $count++;
                     }
 
                     $history->update([
-                        'total_logs' => $count,
+                        'total_logs'        => $count,
                         'sync_completed_at' => now(),
-                        'status' => 'success'
+                        'status'            => 'success',
                     ]);
                 } else {
                     throw new \Exception("Could not connect to device.");
@@ -76,8 +75,8 @@ class SyncAttendanceDevices extends Command
 
             } catch (\Exception $e) {
                 $history->update([
-                    'status' => 'failed',
-                    'message' => $e->getMessage(),
+                    'status'            => 'failed',
+                    'message'           => $e->getMessage(),
                     'sync_completed_at' => now(),
                 ]);
                 $this->error("Failed for device {$device->ip_address}: " . $e->getMessage());

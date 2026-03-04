@@ -23,7 +23,7 @@
             <div class="mb-2">
                 <button wire:click="exportSelected" wire:loading.attr="disabled"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
-                        class="ti ti-circle-plus me-2"></i>Export</button>
+                        class="ti ti-file-export me-2"></i>Export</button>
             </div>
 
         </div>

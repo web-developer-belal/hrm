@@ -46,6 +46,12 @@ class Dashboard extends Component
     {
         $this->startDate = $start;
         $this->endDate   = $end;
+        $this->dispatch('update-chart');
+    }
+
+    public function updatedBranch(): void
+    {
+        $this->dispatch('update-chart');
     }
 
     public function render()

@@ -63,11 +63,15 @@
         <div class="mt-2 space-y-1">
             <template x-for="(file, index) in existingFiles" :key="index">
                 <div class="flex items-center justify-between text-xs bg-gray-50 px-2 py-1 rounded">
+                    @if ($fullPreview)
+                        <img :src="file" alt="Preview" class="w-10 h-10 object-cover rounded mr-2">
+                    @else
                     <a :href="file"
                        target="_blank"
                        class="text-primary truncate max-w-[150px]"
                        x-text="fileName(file)">
                     </a>
+                    @endif
 
                     <button
                         type="button"

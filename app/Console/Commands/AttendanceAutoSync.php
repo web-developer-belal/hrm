@@ -1,8 +1,8 @@
 <?php
-
 namespace App\Console\Commands;
 
 use App\Models\Attendance;
+use App\Services\Attendance\AttendanceProcessService;
 use Illuminate\Console\Command;
 
 class AttendanceAutoSync extends Command
@@ -26,20 +26,20 @@ class AttendanceAutoSync extends Command
      */
     public function handle()
     {
-           $year = now()->year;
-    $month = now()->month;
+        $year  = now()->year;
+        $month = now()->month;
 
-    $service = new \App\Services\Attendance\AttendanceProcessService();
-    Attendance::whereYear('date', $year)
-    ->whereMonth('date', $month)
-    ->cursor()
-    ->each(function ($attendance) use ($service) {
+        $service = new AttendanceProcessService();
+        Attendance::whereYear('date', $year)
+            ->whereMonth('date', $month)
+            ->cursor()
+            ->each(function ($attendance) use ($service) {
 
-        $service->process(
-            $attendance->employee_id,
-            $attendance->date
-        );
+                $service->process(
+                    $attendance->employee_id,
+                    $attendance->date
+                );
 
-    });
+            });
     }
 }

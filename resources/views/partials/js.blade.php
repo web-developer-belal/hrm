@@ -38,6 +38,10 @@
 <!-- Color Picker JS -->
 <script src="{{ asset('assets/plugins/%40simonwep/pickr/pickr.es5.min.js') }}"></script>
 
+<!-- Sticky Sidebar JS -->
+{{-- <script src="assets/plugins/theia-sticky-sidebar/ResizeSensor.js"></script>
+<script src="assets/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js"></script> --}}
+
 <!-- Custom JS -->
 <script src="{{ asset('assets/js/todo.js') }}"></script>
 <script src="{{ asset('assets/js/theme-colorpicker.js') }}"></script>
