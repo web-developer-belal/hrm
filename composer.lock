@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a14715bb4b38ec254050a9ed09b362cd",
+    "content-hash": "0a64b33fb8939df38da329cfc6c21b42",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -6566,6 +6566,50 @@
                 }
             ],
             "time": "2026-01-01T22:13:48+00:00"
+        },
+        {
+            "name": "synthora/gem",
+            "version": "v2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/web-developer-belal/Tor-Gem.git",
+                "reference": "1b5fbc517651259a9596b97d435e4bd9cfa8467d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/web-developer-belal/Tor-Gem/zipball/1b5fbc517651259a9596b97d435e4bd9cfa8467d",
+                "reference": "1b5fbc517651259a9596b97d435e4bd9cfa8467d",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Synthora\\Gem\\Tor"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Synthora\\Gem\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Md Belal Hossen (programmer)",
+                    "email": "programmer.m.belal@gmail.com"
+                }
+            ],
+            "description": "Synthora package for core built",
+            "support": {
+                "issues": "https://github.com/web-developer-belal/Tor-Gem/issues",
+                "source": "https://github.com/web-developer-belal/Tor-Gem/tree/v2.0.2"
+            },
+            "time": "2025-05-10T06:10:46+00:00"
         },
         {
             "name": "thecodingmachine/safe",

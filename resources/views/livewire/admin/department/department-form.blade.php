@@ -24,7 +24,7 @@
             <div class="mb-2">
                 <a href="{{ route('admin.departments.index') }}"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
-                        class="ti ti-circle-plus me-2"></i>Departments</a>
+                        class="ti ti-arrow-back-up me-2"></i>Departments</a>
             </div>
 
         </div>
@@ -41,8 +41,8 @@
                 <form wire:submit.prevent="save" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
                     <x-form.input label="Department Name" name="name" :isRequired="true" :error="true"
                         placeholder="Enter Department Name" />
-                    <x-form.select label="Contact" name="branch_id" :isRequired="true" :error="true"
-                        :options="$branches" />
+                    <x-form.select label="Branch" name="branch" :isRequired="true" :error="true"
+                        :options="$branch_options"  :search="true" placeholder="Select brach." />
                     <div class="md:col-span-2">
                         <x-form.textarea label="Description" name="description" :error="true" />
                     </div>

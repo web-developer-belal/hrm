@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Admin\Payroll;
 
 use App\Models\Branch;
@@ -9,11 +8,12 @@ use Livewire\Component;
 
 class PayrollEngine extends Component
 {
-   public $branch_id;
+    public $branch_id;
     public $year;
     public $month;
 
-    public $branches = [];
+    public $branch_id_options = [];
+    public $branch_id_search;
 
     protected $rules = [
         'branch_id' => 'required',
@@ -30,28 +30,43 @@ class PayrollEngine extends Component
 
     public function mount()
     {
-        $this->branches = Branch::all();
+        $this->loadBranches();
         $this->year  = now()->year;
         $this->month = now()->month;
+    }
+
+    protected function loadBranches(): void
+    {
+        $this->branch_id_options = Branch::query()
+            ->where('status', 'active')
+            ->when($this->branch_id_search, fn($q) =>
+                $q->where('name', 'like', '%' . $this->branch_id_search . '%')
+            )
+            ->limit(5)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    public function updatedBranchIdSearch(): void
+    {
+        $this->loadBranches();
     }
 
     //  Generate selected Branch
     public function generateBranch()
     {
 
-
         $this->validate();
-    // dd($this->branch_id);
-         $totalDays = Carbon::create($this->year, $this->month, 1)->daysInMonth;
-        $count = $this->payrollService->generateForBranch(
+        // dd($this->branch_id);
+        $totalDays = Carbon::create($this->year, $this->month, 1)->daysInMonth;
+        $count     = $this->payrollService->generateForBranch(
             $this->branch_id,
             $this->year,
             $this->month,
             $totalDays,
         );
 
-
-         flash()->success( "$count payrolls generated for all branches.");
+        flash()->success("$count payrolls generated for all branches.");
     }
 
     // Generate All Branches Salary
@@ -71,7 +86,7 @@ class PayrollEngine extends Component
             $totalDays,
         );
 
-       flash()->success( "$count payrolls generated for all branches.");
+        flash()->success("$count payrolls generated for all branches.");
 
     }
     public function render()

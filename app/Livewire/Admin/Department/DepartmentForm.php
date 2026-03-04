@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Admin\Department;
 
 use App\Http\Requests\DepartmentRequest;
@@ -11,26 +10,44 @@ class DepartmentForm extends Component
 {
     public $isEditMode = false;
     public $name;
-    public $branch_id;
+    public $branch;
     public $description;
-    public $status;
-    public $branches = [];
+    public $status         = 'active';
+    public $branch_options = [];
+    public $branch_search;
+
     public $department;
 
     public function mount($department = null)
     {
-        $this->branches = Branch::where('status', 'active')->pluck('name', 'id')->prepend('Select Branch', 0)->toArray();
+        $this->branch = $this->loadBranches();
 
         if ($department) {
-            $this->isEditMode = true;
-            $this->department = Department::findOrFail($department);
-            $this->name = $this->department->name;
-            $this->branch_id = $this->department->branch_id;
+            $this->isEditMode  = true;
+            $this->department  = Department::findOrFail($department);
+            $this->name        = $this->department->name;
+            $this->branch      = $this->department->branch_id;
             $this->description = $this->department->description;
-            $this->status = $this->department->status;
+            $this->status      = $this->department->status;
         }
     }
+    protected function loadBranches(): void
+    {
+        $this->branch_options = Branch::query()
+            ->where('status', 'active')
+            ->when($this->branch_search, fn($q) =>
+                $q->where('name', 'like', '%' . $this->branch_search . '%')
+            )
+            ->limit(5)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+    public function updatedBranchesSearch(): void
+    {
+        $this->loadBranches();
+    }
 
+    
     public function save()
     {
         $validatedData = $this->validate((new DepartmentRequest())->rules(), (new DepartmentRequest())->messages());

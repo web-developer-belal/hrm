@@ -25,7 +25,7 @@
             <div class="mb-2">
                 <a href="{{ route('admin.rosters.index') }}"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">
-                    <i class="ti ti-circle-plus me-2"></i>Rosters
+                    <i class="ti ti-arrow-back-up me-2"></i>Rosters
                 </a>
             </div>
         </div>
@@ -47,15 +47,15 @@
 
                     <!-- Branch -->
                     <x-form.select label="Select Branch" name="branch_id" :isRequired="true" :error="true"
-                        :options="$branches" />
+                        :options="$branch_id_options" :search="true" />
 
                     <!-- Department (Optional) -->
                     <x-form.select label="Select Department" name="department_id" :isRequired="false" :error="true"
-                        :options="$departments" />
+                        :options="$department_id_options" :search="true" />
 
                     <!-- Shift -->
                     <x-form.select label="Select Shift" name="shift_id" :isRequired="true" :error="true"
-                        :options="$shifts" />
+                        :options="$shift_id_options" :search="true" />
 
                  
 
@@ -68,31 +68,6 @@
                         :options="$working_days_options"
                         :isMultiple="true" />
 
-                    {{-- <select name="working_days[]" id="" wire:model="working_days" class="form-control"
-                        multiple>
-                        <option value="">Select working days</option>
-                        @foreach ($days as $key => $day)
-                            <option value="{{ $key }}">{{ $day }}</option>
-                        @endforeach
-                    </select> --}}
-
-                    <!-- Weekly Off Days -->
-                    <x-form.select
-                        label="Weekly Off Days"
-                        name="weekly_off_days"
-                        :isRequired="false"
-                        :error="true"
-                        :options="$working_days_options"
-                        :isMultiple="true" />
-
-                    {{-- <select name="weekly_off_days[]" wire:model="weekly_off_days" class="form-control" multiple>
-                        <option value="">Select weekly dayoffs</option>
-
-                        @foreach ($days as $key => $day)
-                            <option value="{{ $key }}">{{ $day }}</option>
-                        @endforeach
-                    </select> --}}
-
                     <!-- Employees -->
                     <x-form.select
                         label="Select Employee"
@@ -102,12 +77,6 @@
                         :search="true"
                         :options="$employees_options"
                         :isMultiple="true" />
-
-                    {{-- <select name="employees[]" wire:model="employees" multiple class="form-control">
-                        @foreach ($employees_options as $id => $name)
-                            <option value="{{ $id }}">{{ $name }}</option>
-                        @endforeach
-                    </select> --}}
 
                     <!-- Start Date -->
                     <x-form.input label="Start Date" name="start_date" :isRequired="true" :error="true"

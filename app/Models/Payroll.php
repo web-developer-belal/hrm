@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -7,8 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class Payroll extends Model
 {
 
-
-   protected $fillable = [
+    protected $fillable = [
         'branch_id',
         'employee_id',
         'year',
@@ -42,10 +40,25 @@ class Payroll extends Model
         'approval_stage',
     ];
 
-
+    protected $casts = [
+        'approved_at'  => 'datetime',
+        'is_locked'    => 'boolean',
+        'is_generated' => 'boolean',
+    ];
 
     public function employee()
     {
         return $this->belongsTo(Employee::class);
     }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
 }

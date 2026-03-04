@@ -1,46 +1,59 @@
 <?php
-
 namespace App\Livewire\Admin\Holiday;
 
 use App\Models\Attendance;
 use App\Models\Branch;
 use App\Models\Holiday;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
-use DB;
 
 class HolidayAdd extends Component
 {
-    public $branches = [];
-
     #[Validate('required')]
     public $name;
     public $branch_id;
     #[Validate('required|date|unique:holidays,date')]
     public $date;
+    public $branch_id_options = [];
+    public $branch_id_search;
 
-        public function mount($department = null)
-        {
-            $this->branches = Branch::where('status', 'active')->pluck('name', 'id')->prepend('Select Branch', 0)->toArray();
+    public function mount()
+    {
+        $this->loadBranches();
+    }
 
-        }
+    protected function loadBranches(): void
+    {
+        $this->branch_id_options = Branch::query()
+            ->where('status', 'active')
+            ->when($this->branch_id_search, fn($q) =>
+                $q->where('name', 'like', '%' . $this->branch_id_search . '%')
+            )
+            ->limit(5)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
 
-        public function saveHoliday()
-        {
-            // dd($this->branch_id);
-            $validatedData = $this->validate();
-            DB::beginTransaction();
-            try {
+    public function updatedBranchIdSearch(): void
+    {
+        $this->loadBranches();
+    }
+
+    public function saveHoliday()
+    {
+        $this->validate();
+        DB::beginTransaction();
+        try {
             Holiday::create([
-                'name' => $this->name,
+                'name'      => $this->name,
                 'branch_id' => $this->branch_id,
-                'date' => $this->date,
+                'date'      => $this->date,
             ]);
 
-            if($this->branch_id)
-            {
-                Attendance::where('branch_id',$this->branch_id)->whereDate('date', $this->date)->update(['status' => 'holiday']);
-            }else{
+            if ($this->branch_id) {
+                Attendance::where('branch_id', $this->branch_id)->whereDate('date', $this->date)->update(['status' => 'holiday']);
+            } else {
                 Attendance::whereDate('date', $this->date)->update(['status' => 'holiday']);
             }
 
@@ -53,8 +66,8 @@ class HolidayAdd extends Component
             throw $e;
         }
 
-            return redirect()->route('admin.holiday.index');
-        }
+        return redirect()->route('admin.holiday.index');
+    }
     public function render()
     {
         return view('livewire.admin.holiday.holiday-add');

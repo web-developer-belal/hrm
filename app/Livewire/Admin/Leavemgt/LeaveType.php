@@ -10,14 +10,29 @@ use Livewire\Component;
 class LeaveType extends Component
 {
     public $name, $annual_limit, $is_paid, $branch_id, $leaveTypeId;
-    public $branches           = [];
-    public bool $typeModalshow = false;
+    public $branch_id_options = [];
+    public $branch_id_search;
+    public bool $typeModalShow = false;
 
     public function mount()
     {
-        $this->branches = Branch::where('status', 'active')->pluck('name', 'id')->prepend('Select Branch', '')->toArray();
+        $this->loadBranchIdOptions();
+    }
+    protected function loadBranchIdOptions()
+    {
+        $this->branch_id_options = Branch::where('status', 'active')
+            ->when($this->branch_id_search, fn($q) =>
+                $q->where('name', 'like', '%' . $this->branch_id_search . '%')
+            )
+            ->limit(5)
+            ->pluck('name', 'id')
+            ->toArray();
     }
 
+    public function updatedBranchIdSearch()
+    {
+        $this->loadBranchIdOptions();
+    }
     public function addLeaveType($id = null)
     {
         // Reset form
@@ -34,12 +49,20 @@ class LeaveType extends Component
             $this->is_paid      = $type->is_paid;
         }
 
-        $this->typeModalshow = true;
+        $this->typeModalShow = true;
+    }
+
+    public function toggleStatus($id)
+    {
+        $leave         = ModelsLeaveType::find($id);
+        $leave->is_paid = $leave->is_paid == 0 ? 1 : 0;
+        $leave->save();
+        
     }
 
     public function closeModal()
     {
-        $this->typeModalshow = false;
+        $this->typeModalShow = false;
         $this->resetErrorBag();
     }
 

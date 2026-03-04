@@ -149,7 +149,7 @@
                                     </div> --}}
 
                                 </td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $item->from_date->format('d M Y') }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->from_date->format('d-M-Y') }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">
                                     <div class="flex items-center file-name-icon">
                                         <a href="#" class="size-8 rounded-full border border-borderColor">
@@ -165,7 +165,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $item->from_date->format('d M Y') }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->from_date->format('d-M-Y') }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $item->total_days }} Days</td>
                                 <td class="px-5 py-2.5 text-gray-500">
                                     {{ ucfirst($item->status) }}

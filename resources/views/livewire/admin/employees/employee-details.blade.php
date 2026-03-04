@@ -80,7 +80,7 @@
                                     <i class="ti ti-calendar-check me-2"></i>
                                     Date Of Join
                                 </span>
-                                <p class="text-dark">{{ $employee->joining_date->format('d M Y') }}</p>
+                                <p class="text-dark">{{ $employee->joining_date->format('d-M-Y') }}</p>
                             </div>
                             <div class="flex items-center justify-between mb-2">
                                 <span class="inline-flex items-center">

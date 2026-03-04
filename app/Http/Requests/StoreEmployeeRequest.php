@@ -49,6 +49,7 @@ class StoreEmployeeRequest extends FormRequest
             'account_number' => 'nullable',
             'bank_notes' => 'nullable',
             'status' => 'required',
+            'email'=>'required|email'
         ];
     }
 

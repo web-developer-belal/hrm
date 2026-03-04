@@ -36,7 +36,15 @@
         <div
             class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3">
             <h5>Department List</h5>
-
+            <div class="flex my-xl-auto right-content items-center flex-wrap gap-3">
+                <div class="me-3">
+                    <x-form.input name="search" placeholder="Search here.." :live="true" />
+                </div>
+                <div class="me-3">
+                    <x-form.select name="branches" placeholder="Select branch" :live="true" :option="$branches_options"
+                        :isMultiple="true" :search="true" />
+                </div>
+            </div>
         </div>
         <div class="card-body p-0">
             <div class="overflow-x-auto">
@@ -97,6 +105,7 @@
                 </table>
             </div>
         </div>
+        
         @if ($departments->hasPages())
             <div class="card-footer py-4 px-5 border-t border-borderColor">
                 {{ $departments->links() }}

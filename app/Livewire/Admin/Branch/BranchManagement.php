@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Livewire\Admin\Branch;
 
 use App\Models\Branch;
@@ -9,22 +8,28 @@ use Livewire\WithPagination;
 class BranchManagement extends Component
 {
     use WithPagination;
+    public $search;
     public function toggleStatus(Branch $branch)
     {
         $branch->status = $branch->status === 'active' ? 'inactive' : 'active';
         $branch->save();
-        // notyf()->success('Branch status updated successfully.');
+        flash()->success('Branch status updated successfully.');
     }
 
     public function deleteBranch(Branch $branch)
     {
         $branch->delete();
-        // notyf()->success('Branch deleted successfully.');
+        flash()->success('Branch deleted successfully.');
     }
 
     public function render()
     {
-        $branches = Branch::latest()->paginate(10);
+        $branches = Branch::
+            when($this->search, function ($q) {
+            $q->where('name', 'like', '%' . $this->search . '%')
+                ->orWhere('address', 'like', '%' . $this->search . '%');
+        })->
+            latest()->paginate(10);
         return view('livewire.admin.branch.branch-management', compact('branches'));
     }
 }

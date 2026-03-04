@@ -225,7 +225,7 @@
                     {{-- Current Date Time --}}
                     <div class="text-center mb-4">
                         <h6 class="text-gray-500 mb-2 font-medium">Attendance</h6>
-                        <h4>{{ now()->format('h:i A, d M Y') }}</h4>
+                        <h4>{{ now()->format('h:i A, d-M-Y') }}</h4>
                     </div>
 
                     {{-- Circular Total Hours --}}
@@ -361,7 +361,7 @@
 
                                         {{-- Date --}}
                                         <td class="px-5 py-2.5 text-gray-500">
-                                            {{ $item->created_at->format('d M Y') }}
+                                            {{ $item->created_at->format('d-M-Y') }}
                                         </td>
 
                                         <td class="px-5 py-2.5 text-gray-500">

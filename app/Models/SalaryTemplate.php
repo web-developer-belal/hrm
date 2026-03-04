@@ -21,4 +21,13 @@ class SalaryTemplate extends Model
         'welfare_contribution',
         'tax_deduction',
     ];
+
+    public function designation()
+    {
+        return $this->belongsTo(Designation::class);
+    }
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
 }

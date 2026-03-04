@@ -48,11 +48,11 @@
 
                     {{-- Branch --}}
                     <x-form.select label="Select Branch" name="branch_id" live="true" :isRequired="true"
-                        :error="true" :options="$branches" />
+                        :error="true" :options="$branch_id_options" :search="true" />
 
                     {{-- Department --}}
                     <x-form.select label="Select Department" name="department_id" :isRequired="false" :error="true"
-                        :options="$departments" />
+                        :options="$department_id_options" :search="true" />
 
                     {{-- Status --}}
                     <x-form.select label="Status" name="status" :isRequired="true" :error="true"
@@ -66,7 +66,7 @@
 
                     {{-- Attachments --}}
                     <div class="md:col-span-2">
-                        <x-form.input label="Attachments (Image, PDF, DOC)" name="attachments" type="file" multiple
+                        <x-form.file-upload label="Attachments (Image, PDF, DOC)" name="attachments" type="file" multiple
                             :error="true" />
                     </div>
 

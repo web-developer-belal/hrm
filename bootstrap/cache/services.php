@@ -35,7 +35,8 @@
     31 => 'Termwind\\Laravel\\TermwindServiceProvider',
     32 => 'Pest\\Laravel\\PestServiceProvider',
     33 => 'Flasher\\Laravel\\FlasherServiceProvider',
-    34 => 'App\\Providers\\AppServiceProvider',
+    34 => 'Synthora\\Gem\\Tor',
+    35 => 'App\\Providers\\AppServiceProvider',
   ),
   'eager' => 
   array (
@@ -58,7 +59,8 @@
     16 => 'Termwind\\Laravel\\TermwindServiceProvider',
     17 => 'Pest\\Laravel\\PestServiceProvider',
     18 => 'Flasher\\Laravel\\FlasherServiceProvider',
-    19 => 'App\\Providers\\AppServiceProvider',
+    19 => 'Synthora\\Gem\\Tor',
+    20 => 'App\\Providers\\AppServiceProvider',
   ),
   'deferred' => 
   array (

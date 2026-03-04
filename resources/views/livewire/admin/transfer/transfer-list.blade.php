@@ -35,8 +35,13 @@
     <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white">
         <div
             class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3">
-            <h5>Roster List</h5>
-
+            <h5>Transfer List</h5>
+            <div class="flex my-xl-auto right-content items-center flex-wrap gap-3">
+                <div class="me-3">
+                    <x-form.input name="search" placeholder="Search here.." :live="true" />
+                </div>
+                
+            </div>
         </div>
         <div class="card-body p-0">
             <div class="overflow-x-auto">
@@ -48,11 +53,11 @@
                                 SL
                             </th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                               Name</th>
+                                Name</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                               From Branch</th>
+                                From Branch</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                               From Department</th>
+                                From Department</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 To Branch </th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
@@ -67,24 +72,25 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-borderColor">
+                    <tbody class="bg-white divide-y divide-borderColor" wire:loading.class='opacity-50'>
                         @foreach ($tranasfers as $item)
                             <tr class="even:bg-white dark:even-bg-white">
                                 <td class="px-5 py-2.5 text-gray-500">
-                                  {{ $loop->iteration }}
+                                    {{ $loop->iteration }}
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-900">{{ $item->employee->first_name }}</td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $item->frombranch->name ?? 'N/A' }}</td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $item->formdepartment->name ?? 'N/A' }}</td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $item->tobranch->name ?? 'N/A' }}</td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $item->todepartment->name ?? 'N/A' }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->fromBranch->name ?? 'N/A' }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->fromDepartment->name ?? 'N/A' }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->toBranch->name ?? 'N/A' }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->toDepartment->name ?? 'N/A' }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $item->note }}</td>
 
                                 <td class="px-5 py-2.5 text-gray-500">
 
                                     <span wire:click="toggleStatus({{ $item->id }})"
-                                        class="bg-{{ $item->status ===1 ? 'success' : 'warning' }} text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs cursor-pointer">
-                                        <i class="ti ti-point-filled me-1"></i>{{ $item->status ===1 ? 'Approved' : 'Unapproved'  }}
+                                        class="bg-{{ $item->status === 1 ? 'success' : 'warning' }} text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs cursor-pointer">
+                                        <i
+                                            class="ti ti-point-filled me-1"></i>{{ $item->status === 1 ? 'Approved' : 'Unapproved' }}
                                     </span>
 
                                 </td>

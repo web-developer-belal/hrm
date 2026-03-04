@@ -15,11 +15,19 @@
                         <span class="text-default">/</span>
                     </li>
                     <li class="text-xs text-default">Notices</li>
-                   
+
                 </ol>
             </nav>
         </div>
+        <div class="flex my-xl-auto right-content items-center flex-wrap ">
 
+            <div class="mb-2">
+                <a href="{{ route('admin.notice.create') }}"
+                    class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
+                        class="ti ti-circle-plus me-2"></i>New Notice</a>
+            </div>
+
+        </div>
     </div>
     <!-- /Breadcrumb -->
 
@@ -33,14 +41,12 @@
             <h5 class="me-2">Notices</h5>
             <div class="flex my-xl-auto right-content items-center flex-wrap gap-3">
                 <div class="me-3">
-                    <div class="relative">
-                        <input type="search" wire:model.live.debounce.500s='search'
-                            class="block flex-1 border border-borderColor bg-white rounded-[5px] py-1.5 pl-2.5 pr-8 text-gray-900 placeholder:text-gray-400 focus:ring-0 focus:border-borderColor h-[38px] text-sm date-range"
-                            placeholder="Search notice">
-
-                    </div>
+                    <x-form.input name="search" placeholder="Search here .." :live="true" />
                 </div>
-
+                <div class="me-3">
+                    <x-form.select name="branches" placeholder="Select branch" :live="true" :option="$branches_options"
+                        :isMultiple="true" :search="true" />
+                </div>
             </div>
         </div>
         <div class="card-body p-0">
@@ -55,6 +61,12 @@
                                 Title</th>
                             <th
                                 class="text-sm text-start leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Branch</th>
+                            <th
+                                class="text-sm text-start leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Department</th>
+                            <th
+                                class="text-sm text-start leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Date</th>
 
                             <th
@@ -62,7 +74,7 @@
                                 Action</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-borderColor">
+                    <tbody class="bg-white divide-y divide-borderColor" wire:loading.class="opacity-50">
                         @foreach ($notices as $item)
                             <tr class="even:bg-white dark:even:bg-white">
 
@@ -75,9 +87,19 @@
                                     {{ $item->title }}
                                 </td>
 
+                                {{-- Branch --}}
+                                <td class="px-5 py-2.5 text-gray-500">
+                                    {{ $item->branch->name ?? '' }}
+                                </td>
+
+                                {{-- Department --}}
+                                <td class="px-5 py-2.5 text-gray-500">
+                                    {{ $item->department->name ?? '' }}
+                                </td>
+
                                 {{-- Date --}}
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $item->created_at->format('d M Y') }}
+                                    {{ $item->created_at->format('d-M-Y') }}
                                 </td>
 
                                 <td class="px-5 py-2.5 text-gray-500">
@@ -86,7 +108,8 @@
                                         <a href="{{ route('admin.notice.edit', ['notice' => $item->id]) }}"
                                             class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-edit"></i></a>
-                                        <button wire:click="deleteNotice({{ $item->id }})" wire:confirm="Are you sure ?"
+                                        <button wire:click="deleteNotice({{ $item->id }})"
+                                            wire:confirm="Are you sure ?"
                                             class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-trash"></i></button>
                                     </div>

@@ -4,10 +4,10 @@
 
         <div class="header-left hidden relative float-left text-center h-[50px] z-[1] media-max-md:flex">
             <a href="{{ route('admin.dashboard') }}" class="logo">
-                <img src="{{ asset('assets/img/logo.svg') }}" alt="Logo">
+                <img src="{{ asset('assets/img/Logo-Babyshop.png') }}" alt="Logo">
             </a>
             <a href="{{ route('admin.dashboard') }}" class="dark-logo">
-                <img src="{{ asset('assets/img/logo-white.svg') }}" alt="Logo">
+                <img src="{{ asset('assets/img/Logo-Babyshop.png') }}" alt="Logo">
             </a>
         </div>
 

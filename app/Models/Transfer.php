@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -7,8 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class Transfer extends Model
 {
 
-
-   protected $fillable = [
+    protected $fillable = [
         'branch_id',
         'employee_id',
         'form_branch_id',
@@ -20,31 +18,31 @@ class Transfer extends Model
         'note',
         'status',
         'approved_by',
-        ];
+    ];
 
-        public function employee()
+    public function employee()
     {
         return $this->belongsTo(Employee::class);
     }
-        public function branch()
+    public function branch()
     {
         return $this->belongsTo(Branch::class);
     }
-        public function frombranch()
+    public function fromBranch()
     {
-        return $this->belongsTo(Branch::class,'form_branch_id');
+        return $this->belongsTo(Branch::class, 'form_branch_id');
     }
-        public function tobranch()
+    public function toBranch()
     {
-        return $this->belongsTo(Branch::class,'to_branch_id');
+        return $this->belongsTo(Branch::class, 'to_branch_id');
     }
 
-    public function todepartment()
+    public function toDepartment()
     {
-        return $this->belongsTo(Department::class,'to_department_id');
+        return $this->belongsTo(Department::class, 'to_department_id');
     }
-    public function formdepartment()
+    public function fromDepartment()
     {
-        return $this->belongsTo(Department::class,'form_department_id');
+        return $this->belongsTo(Department::class, 'form_department_id');
     }
 }

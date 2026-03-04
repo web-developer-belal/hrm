@@ -1,10 +1,9 @@
 <?php
-
 namespace App\Livewire\Admin\Notice;
 
-use App\Models\Notice;
 use App\Models\Branch;
 use App\Models\Department;
+use App\Models\Notice;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -19,12 +18,14 @@ class NoticeForm extends Component
     public $title;
     public $description;
     public $attachments = [];
-    public $status = 1;
+    public $status      = 1;
     public $branch_id;
     public $department_id;
 
-    public $branches = [];
-    public $departments = [];
+    public $branch_id_options     = [];
+    public $department_id_options = [];
+
+    public $branch_id_search, $department_id_search;
 
     /* =========================
        MOUNT
@@ -32,9 +33,7 @@ class NoticeForm extends Component
     public function mount(?Notice $notice = null)
     {
         // Load active branches
-        $this->branches = Branch::where('status', 'active')
-            ->pluck('name', 'id')->prepend('Select Branch','')
-            ->toArray();
+        $this->loadBranches();
 
         if ($notice && $notice->exists) {
 
@@ -58,17 +57,37 @@ class NoticeForm extends Component
         $this->loadDepartments();
     }
 
+    public function loadBranches()
+    {
+        $this->branch_id_options = Branch::whereHas('departments')->when($this->branch_id_search, function ($query) {
+            $query->where('name', 'like', '%' . $this->branch_id_search . '%');
+        })->where('status', 'active')->take(5)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
     public function loadDepartments()
     {
         if ($this->branch_id) {
-            $this->departments = Department::where('branch_id', $this->branch_id)
-                ->pluck('name', 'id')->prepend('Select Department','')
+            $this->department_id_options = Department::where('branch_id', $this->branch_id)
+                ->when($this->department_id_search, function ($query) {
+                    $query->where('name', 'like', '%' . $this->department_id_search . '%');
+                })->pluck('name', 'id')->prepend('Select Department', '')
                 ->toArray();
         } else {
-            $this->departments = [];
+            $this->department_id_options = [];
         }
     }
 
+    public function updatedBranchIdSearch()
+    {
+        $this->loadBranches();
+    }
+
+    public function updatedDepartmentIdSearch()
+    {
+        $this->loadDepartments();
+    }
 
     public function save()
     {
@@ -88,9 +107,9 @@ class NoticeForm extends Component
         }
 
         // Upload new files
-        if (!empty($this->attachments)) {
+        if (! empty($this->attachments)) {
             foreach ($this->attachments as $file) {
-                $path = $file->store('notices', 'public');
+                $path              = $file->store('notices', 'public');
                 $attachmentPaths[] = $path;
             }
         }
@@ -113,38 +132,38 @@ class NoticeForm extends Component
     }
 
     public function removeAttachment($index)
-{
-    if (!$this->isEdit || !$this->notice) {
-        return;
-    }
-
-    $attachments = $this->notice->attachments ?? [];
-
-    if (isset($attachments[$index])) {
-
-        // Delete file from storage
-        if (Storage::disk('public')->exists($attachments[$index])) {
-            Storage::disk('public')->delete($attachments[$index]);
+    {
+        if (! $this->isEdit || ! $this->notice) {
+            return;
         }
 
-        // Remove from array
-        unset($attachments[$index]);
+        $attachments = $this->notice->attachments ?? [];
 
-        // Reindex array
-        $attachments = array_values($attachments);
+        if (isset($attachments[$index])) {
 
-        // Update database
-        $this->notice->update([
-            'attachments' => $attachments
-        ]);
+            // Delete file from storage
+            if (Storage::disk('public')->exists($attachments[$index])) {
+                Storage::disk('public')->delete($attachments[$index]);
+            }
 
-        // Refresh notice instance
-        $this->notice->refresh();
+            // Remove from array
+            unset($attachments[$index]);
 
-        flash()->success('Deleted old file.');
+            // Reindex array
+            $attachments = array_values($attachments);
 
+            // Update database
+            $this->notice->update([
+                'attachments' => $attachments,
+            ]);
+
+            // Refresh notice instance
+            $this->notice->refresh();
+
+            flash()->success('Deleted old file.');
+
+        }
     }
-}
 
     public function render()
     {
