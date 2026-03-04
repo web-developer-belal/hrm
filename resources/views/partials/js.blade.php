@@ -42,3 +42,4 @@
 <script src="{{ asset('assets/js/todo.js') }}"></script>
 <script src="{{ asset('assets/js/theme-colorpicker.js') }}"></script>
 <script src="{{ asset('assets/js/script.js') }}"></script>
+<script src="{{ asset('js/employee-documents.js') }}" defer></script>
