@@ -34,96 +34,57 @@
 
 
 
-<div class="">
-    <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white mb-6">
-        <div class="card-header p-5 border-b border-borderColor">
-            <h5 class="card-title">Loan Create</h5>
-        </div>
+    <div class="">
+        <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white mb-6">
+            <div class="card-header p-5 border-b border-borderColor">
+                <h5 class="card-title">Loan Create</h5>
+            </div>
 
-        <div class="card-body p-5">
-            <form wire:submit.prevent="saveLoan"
-                class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+            <div class="card-body p-5">
+                <form wire:submit.prevent="saveLoan" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
-                              <!-- Branch -->
-                <x-form.select
-                    label="Select Branch"
-                    name="selectedBranch"
-                    :isRequired="true"
-                    :error="true"
-                    :live="true"
-                    :options="$branches" />
+                    <!-- Branch -->
+                    <x-form.select label="Select Branch" name="branch_id" :isRequired="true" :error="true"
+                        :live="true" :search="true" placeholder="Select Branch" :options="$branch_id_options" />
 
-                <!-- Department (Optional) -->
-                <x-form.select
-                    label="Select Department"
-                    name="selectedDepartment"
-                    :isRequired="false"
-                    :error="true"
-                    :live="true"
-                    :options="$departments" />
+                    <!-- Department (Optional) -->
+                    <x-form.select label="Select Department" name="department_id" :isRequired="false" :error="true"
+                        :live="true" :search="true" placeholder="Select Department" :options="$department_id_options" />
 
-                <!-- Employees -->
-                <x-form.select
-                    label="Select Employee"
-                    name="selectedEmployee"
-                    :isRequired="true"
-                    :error="true"
-                    :options="$employeesData"
-                    :is_multiple="false" />
+                    <!-- Employees -->
+                    <x-form.select label="Select Employee" name="employee_id" :isRequired="true" :error="true"
+                        :live="true" :search="true" placeholder="Select Employee" :options="$employee_id_options"
+                        :is_multiple="false" />
 
 
 
-                <x-form.input
-                label="Amount"
-                name="amount"
-                :isRequired="true"
-                :live="true"
-                :error="true"
-                type="text" />
+                    <x-form.input label="Amount" name="amount" :isRequired="true" :live="true" :error="true"
+                        type="text" />
 
-                <x-form.input
-                label="Installment"
-                name="installment"
-                :isRequired="true"
-                :live="true"
-                :error="true"
-                type="number" />
+                    <x-form.input label="Installment" name="installment" :isRequired="true" :live="true"
+                        :error="true" type="number" />
 
-                <x-form.input
-                label="Emi Amount"
-                name="emiAmount"
-                :isRequired="true"
-
-                :error="true"
-                type="text" />
+                    <x-form.input label="Emi Amount" name="emiAmount" :isRequired="true" :error="true"
+                        type="text" />
 
 
-                <x-form.input
-                label="Start Month"
-                name="startMonth"
-                :isRequired="true"
-                :error="true"
-                type="date" />
+                    <x-form.input label="Start Month" name="startMonth" :isRequired="true" :error="true"
+                        type="date" />
 
 
-                <x-form.textarea
-                    label="Note"
-                    name="note"
-                    :isRequired="false"
-                    :error="true"
-                     />
+                    <x-form.textarea label="Note" name="note" :isRequired="false" :error="true" />
 
 
 
-                @if($isSettled==0)
-                <!-- Submit Button -->
-                <div class="text-end md:col-span-2">
-                    <x-form.button type="submit" />
-                </div>
-                @endif
+                    @if ($isSettled == 0)
+                        <!-- Submit Button -->
+                        <div class="text-end md:col-span-2">
+                            <x-form.button type="submit" text="{{ $isEditMode ? 'Update Loan' : 'Create Loan' }}" />
+                        </div>
+                    @endif
 
-            </form>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 </div>

@@ -55,7 +55,7 @@
                                 <td class="px-4 py-2">{{ $exp->type->name }}</td>
                                 <td class="px-4 py-2">{{ $exp->name }}</td>
                                 <td class="px-4 py-2">{{ number_format($exp->amount, 2) }}</td>
-                                <td class="px-4 py-2">{{ $exp->date->format('d M Y') }}</td>
+                                <td class="px-4 py-2">{{ $exp->date->format('d-M-Y') }}</td>
                                 <td class="px-4 py-2 space-x-2">
                                     <button wire:click="editExpense({{ $exp->id }})" @click="modalOpen = true"
                                         class="btn btn-warning btn-sm">Edit</button>

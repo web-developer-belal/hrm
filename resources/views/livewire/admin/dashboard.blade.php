@@ -408,7 +408,7 @@
 
                                         {{-- Date --}}
                                         <td class="px-5 py-2.5 text-gray-500">
-                                            {{ $item->created_at->format('d M Y') }}
+                                            {{ $item->created_at->format('d-M-Y') }}
                                         </td>
 
                                         <td class="px-5 py-2.5 text-gray-500">

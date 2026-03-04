@@ -85,7 +85,7 @@
                                 <td class="px-5 py-2.5 text-gray-900">{{ $complain->complainant->first_name }}</td>
                                 <td class="px-5 py-2.5 text-gray-900">{{ $complain->againstEmp->first_name }}</td>
                                 <td class="px-5 py-2.5 text-gray-900">{{ $complain->subject }}</td>
-                                <td class="px-5 py-2.5 text-gray-900">{{ $complain->date->format('d M Y') }}</td>
+                                <td class="px-5 py-2.5 text-gray-900">{{ $complain->date->format('d-M-Y') }}</td>
                                 <td class="px-5 py-2.5 text-gray-900">{{ $complain->status_label }}</td>
                                
                                 <td class="px-5 py-2.5 text-gray-500">

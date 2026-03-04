@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Salary extends Model
 {
-    //
-
    protected $fillable = [
         'branch_id',
         'employee_id',
@@ -21,6 +19,14 @@ class Salary extends Model
         'pf_employee_contribution',
         'welfare_contribution',
         'tax_deduction',
-
     ];
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
 }

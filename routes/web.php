@@ -28,10 +28,13 @@ use App\Livewire\Admin\Loan\LoanDetails;
 use App\Livewire\Admin\Loan\LoanList;
 use App\Livewire\Admin\Notice\ManageNotice;
 use App\Livewire\Admin\Notice\NoticeForm;
+use App\Livewire\Admin\Payroll\ExportPayRoll;
 use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeduction;
 use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeductionNew;
 use App\Livewire\Admin\Payroll\PayrollEngine;
 use App\Livewire\Admin\Payroll\PayrollList;
+use App\Livewire\Admin\PaySlips\PaySlipManagement;
+use App\Livewire\Admin\PaySlips\PaySlipsDetails;
 use App\Livewire\Admin\Roster\RosterForm;
 use App\Livewire\Admin\Roster\RosterManagement;
 use App\Livewire\Admin\Shift\ShiftForm;
@@ -175,10 +178,16 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('index');
         Route::livewire('/payroll/list', PayrollList::class)
             ->name('list');
+            
+        Route::livewire('/payroll/export/{payrolls}', ExportPayRoll::class)
+            ->name('export');
 
         Route::livewire('/adjustment/details/{loan}', LoanDetails::class)
             ->name('show');
-
+        Route::livewire('/payslips', PaySlipManagement::class)
+            ->name('payslips');
+        Route::livewire('/payslips/{payslip}', PaySlipsDetails::class)
+            ->name('payslips.show');
     });
     // Complaint Management
     Route::prefix('complain')->name('complain.')->group(function () {
@@ -222,7 +231,6 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('index');
         Route::livewire('/add/holiday', HolidayAdd::class)
             ->name('add');
-            
 
     });
 

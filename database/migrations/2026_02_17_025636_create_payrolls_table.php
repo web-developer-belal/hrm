@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('present_days')->nullable();
             $table->integer('off_days')->nullable();
             $table->integer('holy_days')->nullable();
+            $table->integer('leave_days')->nullable();
             $table->integer('absent_days')->nullable();
             $table->integer('late_days')->nullable();
             $table->integer('late_penalty_days')->nullable();
