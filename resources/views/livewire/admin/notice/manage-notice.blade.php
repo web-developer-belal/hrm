@@ -15,11 +15,19 @@
                         <span class="text-default">/</span>
                     </li>
                     <li class="text-xs text-default">Notices</li>
-                   
+
                 </ol>
             </nav>
         </div>
+        <div class="flex my-xl-auto right-content items-center flex-wrap ">
 
+            <div class="mb-2">
+                <a href="{{ route('admin.notice.create') }}"
+                    class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
+                        class="ti ti-circle-plus me-2"></i>New Notice</a>
+            </div>
+
+        </div>
     </div>
     <!-- /Breadcrumb -->
 
@@ -86,7 +94,8 @@
                                         <a href="{{ route('admin.notice.edit', ['notice' => $item->id]) }}"
                                             class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-edit"></i></a>
-                                        <button wire:click="deleteNotice({{ $item->id }})" wire:confirm="Are you sure ?"
+                                        <button wire:click="deleteNotice({{ $item->id }})"
+                                            wire:confirm="Are you sure ?"
                                             class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-trash"></i></button>
                                     </div>

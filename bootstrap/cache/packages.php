@@ -93,4 +93,11 @@
       0 => 'Flasher\\Laravel\\FlasherServiceProvider',
     ),
   ),
+  'synthora/gem' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Synthora\\Gem\\Tor',
+    ),
+  ),
 );

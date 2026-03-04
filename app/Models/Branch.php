@@ -29,5 +29,14 @@ class Branch extends Model
     {
         return $this->hasMany(Employee::class);
     }
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
+    }
+
+    public function expenseTypes()
+    {
+        return $this->hasMany(ExpenseType::class);
+    }
 }
 

@@ -18,8 +18,9 @@ class ExpenseManagement extends Component
     public $name;
     public $amount;
     public $date;
+    public $branch_id_search;
 
-    public $branches = [];
+    public $branch_id_options = [];
     public $types = [];
 
     public $isEditMode = false;
@@ -36,9 +37,23 @@ class ExpenseManagement extends Component
         ];
     }
 
-    public function mount()
+   public function mount()
     {
-        $this->branches = Branch::where('status','active')->pluck('name','id')->prepend('Select Branch','')->toArray();
+        $this->loadBranchOptions();
+    }
+
+    public function loadBranchOptions()
+    {
+        $this->branch_id_options = Branch::whereHas('expenseTypes')->where('status', 'active')->when($this->branch_id_search, function ($query) {
+            $query->where('name', 'like', '%' . $this->branch_id_search . '%');
+        })
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    public function updatedBranchIdSearch()
+    {
+        $this->loadBranchOptions();
     }
 
     public function updatedBranchId()
@@ -78,7 +93,7 @@ class ExpenseManagement extends Component
                 'amount'=>$this->amount,
                 'date'=>$this->date,
             ]);
-            session()->flash('success','Expense updated successfully.');
+            flash()->success('Expense updated successfully.');
         } else {
             Expense::create([
                 'branch_id'=>$this->branch_id,
@@ -87,7 +102,7 @@ class ExpenseManagement extends Component
                 'amount'=>$this->amount,
                 'date'=>$this->date,
             ]);
-            session()->flash('success','Expense created successfully.');
+            flash()->success('Expense created successfully.');
         }
 
         $this->resetForm();
@@ -97,7 +112,7 @@ class ExpenseManagement extends Component
     public function deleteExpense($id)
     {
         Expense::findOrFail($id)->delete();
-        session()->flash('success','Expense deleted successfully.');
+        flash()->success('Expense deleted successfully.');
     }
 
     public function render()
