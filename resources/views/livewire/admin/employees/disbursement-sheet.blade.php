@@ -1,18 +1,8 @@
-<div x-data="{
-    selectedEmployees: @entangle('selectedEmployees'),
-    selectAll: false,
-    toggleAll() {
-        if (this.selectAll) {
-            this.selectedEmployees = @json($employees->pluck('id')->toArray());
-        } else {
-            this.selectedEmployees = [];
-        }
-    }
-}">
+<div>
     <!-- Breadcrumb -->
     <div class="md:flex block items-center justify-between page-breadcrumb mb-4">
         <div class="my-auto mb-2">
-            <h2 class="mb-1">Employee Management</h2>
+            <h2 class="mb-1">Disbursement Management</h2>
             <nav class="flex" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-2">
                     <li class="inline-flex items-center">
@@ -24,22 +14,17 @@
                     <li>
                         <span class="text-default">/</span>
                     </li>
-                    <li class="text-xs text-default">Employee Management</li>
+                    <li class="text-xs text-default">Disbursement Management</li>
 
                 </ol>
             </nav>
         </div>
-        <div class="flex my-xl-auto right-content items-center flex-wrap gap-2">
-            <div class="mb-2" x-show="selectedEmployees.length > 0" x-cloak>
-                <button wire:click="exportEmployees" type="button"
-                    class="flex items-center bg-success text-sm font-medium py-2 rounded text-white px-3 hover:bg-success-900 hover:text-white">
-                    <i class="ti ti-file-export me-2"></i>Export Selected (<span x-text="selectedEmployees.length"></span>)
-                </button>
-            </div>
+        <div class="flex my-xl-auto right-content items-center flex-wrap ">
+
             <div class="mb-2">
-                <a href="{{ route('admin.employees.create') }}"
+                <button wire:click="exportSheet"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
-                        class="ti ti-circle-plus me-2"></i>Add Employee</a>
+                        class="ti ti-file-export me-2"></i>Export</button>
             </div>
 
         </div>
@@ -56,12 +41,13 @@
                     <x-form.input name="search" placeholder="Search here .." :live="true" />
                 </div>
                 <div class="">
-                    <x-form.select name="branch" placeholder="Select branch" :live="true" :option="$branch_options" :search="true" />
+                    <x-form.select name="branch" placeholder="Select branch" :live="true" :option="$branch_options"
+                        :search="true" />
                 </div>
-                <div class="">
-                    <x-form.select name="departments" placeholder="Select department" :live="true"
-                        :option="$departments_options" :isMultiple="true" :search="true" />
+                <div class="w-fit">
+                    <x-form.select name="perPage" class="w-fit" :live="true" :options="['10' => '10', '25' => '25', '50' => '50', '100' => '100']" />
                 </div>
+
             </div>
         </div>
         <div class="card-body p-0">
@@ -69,11 +55,6 @@
                 <table class="table w-full border-b border-borderColor">
                     <thead class="thead-light">
                         <tr>
-                            <th
-                                class="no-sort text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor hover:outline-none">
-                                <input type="checkbox" x-model="selectAll" @change="toggleAll()"
-                                    class="rounded border-gray-300 text-primary focus:ring-primary">
-                            </th>
                             <th
                                 class="no-sort text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor hover:outline-none">
                                 SL
@@ -91,19 +72,13 @@
                                 Joining Date</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Status</th>
-                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Action
-                            </th>
+
                         </tr>
                     </thead>
 
                     <tbody class="bg-white divide-y divide-borderColor">
                         @foreach ($employees as $emp)
                             <tr class="even:bg-white dark:even-bg-white">
-                                <td class="px-5 py-2.5 text-gray-500">
-                                    <input type="checkbox" value="{{ $emp->id }}" x-model="selectedEmployees"
-                                        class="rounded border-gray-300 text-primary focus:ring-primary">
-                                </td>
                                 <td class="px-5 py-2.5 text-gray-500">
                                     {{ $loop->iteration }}
                                 </td>
@@ -141,7 +116,7 @@
 
                                 <td class="px-5 py-2.5 text-gray-500">
 
-                                    <span wire:click="statusToggle({{ $emp->id }})"
+                                    <span
                                         class="bg-{{ $emp->status == 1 ? 'success' : 'warning' }} text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs cursor-pointer">
                                         <i class="ti ti-point-filled me-1">
                                             {{ $emp->status == 1 ? 'Active' : 'Deactive' }}</i>
@@ -149,18 +124,6 @@
 
                                 </td>
 
-
-                                <td class="px-5 py-2.5 text-gray-500">
-                                    <div class="action-icon inline-flex">
-                                        <a href="{{ route('admin.employees.edit', ['emp' => $emp->id]) }}"
-                                            class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
-                                                class="ti ti-edit"></i></a>
-                                      
-                                        <a href="{{ route('admin.employees.details', ['emp' => $emp->id]) }}"
-                                            class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
-                                                class="ti ti-eye"></i></a>
-                                    </div>
-                                </td>
                             </tr>
                         @endforeach
 

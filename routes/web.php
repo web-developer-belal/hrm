@@ -1,10 +1,13 @@
 <?php
+
+use App\Http\Controllers\AdmsController;
 use App\Livewire\Admin\Attendance\AddManualAttendance;
 use App\Livewire\Admin\Attendance\AttendanceList;
 use App\Livewire\Admin\AttendancePolicy\AttendancePolicyAdd;
 use App\Livewire\Admin\AttendancePolicy\AttendancePolicyList;
 use App\Livewire\Admin\Branch\BranchForm;
 use App\Livewire\Admin\Branch\BranchManagement;
+use App\Livewire\Admin\Calender;
 use App\Livewire\Admin\Complain\ComplainAdd;
 use App\Livewire\Admin\Complain\ComplainList;
 use App\Livewire\Admin\Dashboard;
@@ -14,6 +17,7 @@ use App\Livewire\Admin\Designation\DesignationForm;
 use App\Livewire\Admin\Designation\DesignationManagement;
 use App\Livewire\Admin\Device\DeviceSync;
 use App\Livewire\Admin\Device\SyncHistory;
+use App\Livewire\Admin\Employees\DisbursementSheet;
 use App\Livewire\Admin\Employees\EmployeeAdd;
 use App\Livewire\Admin\Employees\EmployeeDetails;
 use App\Livewire\Admin\Employees\EmployeeList;
@@ -49,6 +53,7 @@ use App\Livewire\Admin\Transfer\TransferNew;
 use App\Livewire\Auth\AdminLogin;
 use App\Livewire\Admin\SettingManagement;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/admin/login', AdminLogin::class)->name('admin.login');
@@ -56,6 +61,16 @@ Route::get('/admin/login', AdminLogin::class)->name('admin.login');
 Route::get('/create/storage', function () {
     Artisan::call('storage:link');
 });
+
+Route::get('admin/logout', function () {
+    Auth::logout();
+    return redirect()->route('admin.login');
+})->name('admin.logout');
+
+Route::get('/employee/logout', function () {
+    Auth::guard('employee')->logout();
+    return redirect()->route('login');
+})->name('employee.logout');
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::livewire('dashboard', Dashboard::class)
@@ -131,6 +146,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('edit');
         Route::livewire('/details/{emp}', EmployeeDetails::class)
             ->name('details');
+        Route::livewire('/disbursement', DisbursementSheet::class)
+            ->name('disbursement');
     });
 
     // Attendance Management
@@ -177,6 +194,11 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('show');
 
     });
+    // Calendar Management
+    Route::prefix('calendar')->name('calendar.')->group(function () {
+        Route::livewire('/', Calender::class)
+            ->name('index');
+    });
 
     // Payroll Engine
     Route::prefix('payroll')->name('payroll.')->group(function () {
@@ -206,13 +228,13 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     });
     // Device Management
-    Route::prefix('device')->name('device.')->group(function () {
-        Route::livewire('/', DeviceSync::class)
-            ->name('index');
-        Route::livewire('/sync/history', SyncHistory::class)
-            ->name('history');
+    // Route::prefix('device')->name('device.')->group(function () {
+    //     Route::livewire('/', DeviceSync::class)
+    //         ->name('index');
+    //     Route::livewire('/sync/history', SyncHistory::class)
+    //         ->name('history');
 
-    });
+    // });
 
     Route::prefix('notices')->name('notice.')->group(function () {
         Route::livewire('/', ManageNotice::class)
@@ -267,5 +289,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::livewire('/', SettingManagement::class)
             ->name('index');
     });
+
+    Route::any('/mobile/get/data', [AdmsController::class,'receive'])->where('any', '.*');
+    Route::any('/mobile/get/request', [AdmsController::class,'getRequest'])->where('any', '.*');
 
 });

@@ -3,13 +3,13 @@
     <!-- Logo -->
     <div class="sidebar-logo fixed h-[50px] w-sidebar pt-3 px-3">
         <a href="{{ route('employee.dashboard') }}" class="logo logo-normal">
-            <img src="{{ asset('assets/img/Logo-Babyshop.png') }}" class="my-logo" alt="Logo">
+            <img src="{{ customAsset(settingData('company_logo_path')) }}" class="my-logo" alt="Logo">
         </a>
         <a href="{{ route('employee.dashboard') }}" class="logo-small hidden">
-            <img src="{{ asset('assets/img/Logo-Babyshop.png') }}" class="my-logo" alt="Logo">
+            <img src="{{ customAsset(settingData('company_logo_path')) }}" class="my-logo" alt="Logo">
         </a>
         <a href="{{ route('employee.dashboard') }}" class="dark-logo hidden">
-            <img src="{{ asset('assets/img/Logo-Babyshop.png') }}" class="my-logo" alt="Logo">
+            <img src="{{ customAsset(settingData('company_logo_path')) }}" class="my-logo" alt="Logo">
         </a>
     </div>
     <!-- /Logo -->

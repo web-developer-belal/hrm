@@ -30,9 +30,6 @@ class dateRangePicker extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.form.date-range-picker', [
-            'startDate' => $this->startDate,
-            'endDate'   => $this->endDate,
-        ]);
+        return view('components.form.date-range-picker');
     }
 }

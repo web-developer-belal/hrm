@@ -4,10 +4,10 @@
 
         <div class="header-left hidden relative float-left text-center h-[50px] z-[1] media-max-md:flex">
             <a href="{{ route('employee.dashboard') }}" class="logo">
-                <img src="{{ asset('assets/img/Logo-Babyshop.png') }}" alt="Logo">
+                <img src="{{ customAsset(settingData('company_logo_path')) }}" alt="Logo">
             </a>
             <a href="{{ route('employee.dashboard') }}" class="dark-logo">
-                <img src="{{ asset('assets/img/Logo-Babyshop.png') }}" alt="Logo">
+                <img src="{{ customAsset(settingData('company_logo_path')) }}" alt="Logo">
             </a>
         </div>
 
@@ -22,32 +22,11 @@
         <div class="header-user px-[15px] py-4">
             <div class="nav user-menu nav-list flex items-center justify-end h-full px-6 'media-max-md:hidden">
 
-                {{-- <div class="me-auto flex items-center" id="header-search">
-                    <a id="toggle_btn" href="javascript:void(0);"
-                        class="btn btn-menubar size-[30px] flex items-center justify-center text-gray-500 text-lg leading-normal rounded-[5px] hover:text-gray-900 hover:bg-dark-transparent me-1">
-                        <i class="ti ti-arrow-bar-to-left"></i>
-                    </a>
-                    <!-- Search -->
-                    <div class="flex w-[259px] relative me-1">
-                        <span
-                            class="absolute inset-y-0 start-0 flex items-center ps-2.5 pointer-events-none text-gray-400"><i
-                                class="ti ti-search"></i></span>
-                        <input type="text"
-                            class="block flex-1 border border-borderColor bg-white rounded-[5px] py-1.5 pl-7 pr-12 text-gray-900 placeholder:text-gray-400 focus:ring-0 focus:border-borderColor h-[30px] text-xs"
-                            placeholder="Search in HRMS">
-                        <span class="absolute inset-y-1/2 end-0 flex items-center me-2.5 pointer-events-none "><kbd
-                                class="bg-dark-transparent text-[10px] font-medium text-gray-500 px-[3px] py-0.5 rounded">CTRL
-                                + / </kbd></span>
-                    </div>
-                    <!-- /Search -->
-
-                  
-                </div> --}}
 
                 <div class="flex items-center">
                     
                   
-                    <div class="me-1 notification_item">
+                    {{-- <div class="me-1 notification_item">
                         <button data-dropdown-toggle="noti-dropdown"
                             class="btn btn-menubar size-[30px] flex items-center justify-center text-gray-500 rounded-[5px] hover:text-gray-900 hover:bg-dark-transparent focus:bg-dark-transparent focus:text-gray-900 relative"
                             type="button">
@@ -160,7 +139,8 @@
                                     All</a>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
+
                     <div class="me-1">
                         <button data-dropdown-toggle="profile-dropdown" class="flex items-center justify-center"
                             type="button">
@@ -189,7 +169,7 @@
                             <ul class="p-[20px]">
                                 <li>
                                     <a class="inline-flex items-center text-gray-900 py-2 hover:text-primary"
-                                        href="">
+                                        href="{{ route('employee.profile') }}">
                                         <i class="ti ti-user-circle me-1"></i>My Profile
                                     </a>
                                 </li>
@@ -197,7 +177,7 @@
                             </ul>
                             <div class="px-[20px] py-4">
                                 <a class="inline-flex items-center text-gray-900 py-2 hover:text-primary"
-                                    href="">
+                                    href="{{ route('employee.logout') }}">
                                     <i class="ti ti-login me-2"></i>Logout
                                 </a>
                             </div>
@@ -213,9 +193,8 @@
             <ul id="mobile-dropdown" class="hidden p-1 border rounded bg-white shadow-lg w-40 z-[1]">
                 <li><a class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary text-gray-900"
                         href="{{ route('employee.profile') }}">My Profile</a></li>
-                <li><a class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary text-gray-900"
-                        href="">Settings</a></li>
-                <li><a class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary text-gray-900"
+               
+                <li><a href="{{ route('employee.logout') }}" class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary text-gray-900"
                         href="">Logout</a></li>
             </ul>
         </div>

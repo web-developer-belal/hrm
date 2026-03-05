@@ -48,5 +48,10 @@ class Branch extends Model
     {
         return $this->hasMany(Payroll::class);
     }
+
+    public function holidays()
+    {
+        return $this->hasMany(Holiday::class);
+    }
 }
 

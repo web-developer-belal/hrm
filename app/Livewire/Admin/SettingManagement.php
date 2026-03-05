@@ -125,7 +125,7 @@ class SettingManagement extends Component
             }
 
             $storedLogo              = storeImage($this->company_logo, 'uploads/settings');
-            $this->company_logo_path = 'storage/' . $storedLogo;
+            $this->company_logo_path = $storedLogo;
             $this->company_logo      = null;
         }
 
@@ -135,7 +135,7 @@ class SettingManagement extends Component
             }
 
             $storedFavicon      = storeImage($this->favicon, 'uploads/settings');
-            $this->favicon_path = 'storage/' . $storedFavicon;
+            $this->favicon_path = $storedFavicon;
             $this->favicon      = null;
         }
 
