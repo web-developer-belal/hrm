@@ -40,7 +40,6 @@
                         <input type="search" wire:model.live.debounce.500s='search'
                             class="block flex-1 border border-borderColor bg-white rounded-[5px] py-1.5 pl-2.5 pr-8 text-gray-900 placeholder:text-gray-400 focus:ring-0 focus:border-borderColor h-[38px] text-sm date-range"
                             placeholder="Search notice">
-
                     </div>
                 </div>
 

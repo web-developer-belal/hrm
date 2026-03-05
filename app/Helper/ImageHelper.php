@@ -450,4 +450,39 @@ if (! function_exists('getDocumentIcon')) {
     }
 }
 
+if (!function_exists('documentAsset')) {
+    function documentAsset($path)
+    {
+        if (empty($path)) {
+            return null;
+        }
+
+        // Check if it's already a full URL
+        if (filter_var($path, FILTER_VALIDATE_URL)) {
+            return $path;
+        }
+
+        // Remove 'public/' from path if it exists
+        $path = str_replace('public/', '', $path);
+
+        // Generate URL for storage
+        return Storage::url('employees/documents/' . $path);
+    }
+}
+
+if (!function_exists('documentExists')) {
+    function documentExists($path)
+    {
+        if (empty($path)) {
+            return false;
+        }
+
+        // Remove 'public/' from path if it exists
+        $path = str_replace('public/', '', $path);
+
+        // Check in storage disk
+        return Storage::disk('public')->exists('employees/documents/' . $path);
+    }
+}
+
 }

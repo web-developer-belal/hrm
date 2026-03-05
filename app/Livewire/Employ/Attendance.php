@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\On;
 
 class Attendance extends Component
 {
@@ -13,11 +14,60 @@ class Attendance extends Component
 
     public $employee;
     public $todayAttendance;
+    public $search = '';
+    public $startDate = null; // Set to null initially
+    public $endDate = null;   // Set to null initially
+    public $selectedStatus = null;
+    public $statuses = [];
+
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'startDate' => ['except' => null],
+        'endDate' => ['except' => null],
+    ];
 
     public function mount()
     {
         $this->employee = Auth::guard('employee')->user();
         $this->loadTodayAttendance();
+
+        $this->statuses = [
+            'late'  => 'Late',
+            'present' => 'Present',
+            'absent' => 'Absent',
+            'leave' => 'Leave',
+            'holiday' => 'Holiday',
+            'offday' => 'Off Day',
+        ];
+
+        // Don't set default dates - keep them null to show all data
+    }
+
+    #[On('date-range-update')]
+    public function updateDateRange($start, $end)
+    {
+        $this->startDate = $start;
+        $this->endDate = $end;
+        $this->resetPage();
+    }
+
+    // Add method to clear date filter
+    public function clearDateFilter()
+    {
+        $this->startDate = null;
+        $this->endDate = null;
+        $this->resetPage();
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function filterByStatus($status)
+    {
+        $this->selectedStatus = $status;
+        $this->resetPage();
     }
 
     public function loadTodayAttendance()
@@ -82,10 +132,12 @@ class Attendance extends Component
         $today = Carbon::today();
         $now   = Carbon::now();
 
-        $attendance = ModelsAttendance::where('date', $today)->first();
+        $attendance = ModelsAttendance::where('employee_id', $this->employee->id)
+            ->where('date', $today)
+            ->first();
 
         if (! $attendance) {
-            flash()->error('Not found attendance');
+            flash()->error('No attendance record found for today');
             return;
         }
 
@@ -93,8 +145,7 @@ class Attendance extends Component
             $attendance->clock_in = $now;
 
             // Late calculation
-            $shiftStart = Carbon::parse($attendance->date)
-                ->setTimeFromTimeString($attendance->shift_start_time);
+            $shiftStart = Carbon::parse($attendance->date->format('Y-m-d') . ' ' . $attendance->shift_start_time);
             if ($now->gt($shiftStart)) {
                 $attendance->late_minutes = $shiftStart->diffInMinutes($now);
                 $attendance->status       = 'late';
@@ -118,7 +169,7 @@ class Attendance extends Component
 
             $attendance->clock_out = Carbon::now();
 
-            $shiftEnd = Carbon::parse($attendance->date . ' ' . $attendance->shift_end_time);
+            $shiftEnd = Carbon::parse($attendance->date->format('Y-m-d') . ' ' . $attendance->shift_end_time);
 
             if ($attendance->clock_out->gt($shiftEnd)) {
                 $attendance->overtime_minutes =
@@ -136,7 +187,19 @@ class Attendance extends Component
         $employeeId = $this->employee->id;
 
         $attendances = ModelsAttendance::where('employee_id', $employeeId)
-            ->latest()
+            ->when($this->search, function ($query) {
+                $query->whereHas('employee', function ($q) {
+                    $q->where('name', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->when($this->startDate && $this->endDate, function ($query) {
+                // Only apply date filter if both dates are provided
+                $query->whereBetween('date', [$this->startDate, $this->endDate]);
+            })
+            ->when($this->selectedStatus, function ($q) {
+                $q->where('status', $this->selectedStatus);
+            })
+            ->latest('date')
             ->paginate(10);
 
         return view('livewire.employ.attendance', [

@@ -42,16 +42,10 @@
             class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3">
             <div class="flex">
                 <h5 class="me-2">Leave List</h5>
-               
+
             </div>
             <div class="flex my-xl-auto right-content items-center flex-wrap gap-3">
-                <div class="me-3">
-                    <div class="relative">
-                        <input type="search" wire:model.live.debounce.500s='search'
-                            class="block flex-1 border border-borderColor bg-white rounded-[5px] py-1.5 pl-2.5 pr-8 text-gray-900 placeholder:text-gray-400 focus:ring-0 focus:border-borderColor h-[38px] text-sm date-range"
-                            placeholder="Search notice">
-                    </div>
-                </div>
+
                 <div class="me-3">
                     <a href="javascript:void(0);"
                         class="border rounded p-2 bg-white inline-flex items-center focus:bg-primary focus:border-primary focus:text-white text-gray-900"
@@ -61,47 +55,71 @@
                     <ul id="leave_type-dropdown2" class="hidden p-4 border rounded bg-white shadow-lg w-40 z-[1]">
                         <li>
                             <a href="javascript:void(0);"
-                                class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">Medical
-                                Leave</a>
+                            wire:click="filterByType(null)"
+                            class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">
+                                All
+                            </a>
                         </li>
-                        <li>
-                            <a href="javascript:void(0);"
-                                class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">Casual
-                                Leave</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);"
-                                class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">Annual
-                                Leave</a>
-                        </li>
+
+                        @foreach($leaveTypes as $id => $name)
+                            <li>
+                                <a href="javascript:void(0);"
+                                wire:click="filterByType({{ $id }})"
+                                class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">
+                                    {{ $name }}
+                                </a>
+                            </li>
+                        @endforeach
                     </ul>
                 </div>
 
                 <div class="me-3">
                     <a href="javascript:void(0);"
-                        class="border rounded p-2 bg-white inline-flex items-center focus:bg-primary focus:border-primary focus:text-white"
-                        data-dropdown-toggle="status-dropdown">
-                        <span class="rounded-circle bg-transparent-success flex justify-center items-center me-2">
-                            Select Status<i class="ti ti-chevron-down ml-1"></i>
-                        </span></a>
+                    class="border rounded p-2 bg-white inline-flex items-center focus:bg-primary focus:border-primary focus:text-white"
+                    data-dropdown-toggle="status-dropdown">
+
+                        {{ $selectedStatus
+                            ? $statuses[$selectedStatus]
+                            : 'Select Status'
+                        }}
+
+                        <i class="ti ti-chevron-down ml-1"></i>
+                    </a>
                     <ul id="status-dropdown" class="hidden p-4 border rounded bg-white shadow-lg w-40 z-[1]">
+
                         <li>
                             <a href="javascript:void(0);"
-                                class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary"><i
-                                    class="ti ti-point-filled text-success me-2"></i>Approved</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);"
-                                class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary"><i
-                                    class="ti ti-point-filled text-danger me-2"></i>Declined</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);"
-                                class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary"><i
-                                    class="ti ti-point-filled text-purple me-2"></i>New</a>
+                            wire:click="filterByStatus(null)"
+                            class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">
+                                All
+                            </a>
                         </li>
 
+                        @foreach($statuses as $key => $label)
+                            <li>
+                                <a href="javascript:void(0);"
+                                wire:click="filterByStatus('{{ $key }}')"
+                                class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">
+                                    {{ $label }}
+                                </a>
+                            </li>
+                        @endforeach
+
                     </ul>
+                </div>
+
+                {{-- <div class="me-3">
+                    <div class="relative">
+                        <input type="search" wire:model.live.debounce.500s='search'
+                            class="block flex-1 border border-borderColor bg-white rounded-[5px] py-1.5 pl-2.5 pr-8 text-gray-900 placeholder:text-gray-400 focus:ring-0 focus:border-borderColor h-[38px] text-sm date-range"
+                            placeholder="Search notice">
+                    </div>
+                </div> --}}
+
+                <div>
+                    <div class="relative w-[120px]">
+                        <x-form.date-range-picker/>
+                    </div>
                 </div>
 
             </div>
