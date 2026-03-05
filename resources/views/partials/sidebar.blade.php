@@ -39,8 +39,8 @@
                             $attendanceRoutes = [
                                 'admin.attendance.add.mannual',
                                 'admin.attendance.index',
-                                'admin.device.index',
-                                'admin.device.history'
+                                // 'admin.device.index',
+                                // 'admin.device.history'
                             ];
                             $isAttendanceActive = request()->routeIs($attendanceRoutes);
                         @endphp
@@ -60,13 +60,13 @@
                                 <li><a href="{{ route('admin.attendance.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.attendance.index') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Attendance
                                         Reports</a></li>
-                                <li><a href="{{ route('admin.device.index') }}"
+                                {{-- <li><a href="{{ route('admin.device.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.device.index') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Device</a>
                                 </li>
                                 <li><a href="{{ route('admin.device.history') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.device.history') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Device
                                         Sync History</a>
-                                </li>
+                                </li> --}}
                                 <li><a href=""
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Overtime</a>
                                 </li>
@@ -242,10 +242,42 @@
                                 class="relative flex item-center w-full p-2 text-sm font-medium text-gray-900 group hover:bg-dark-transparent rounded-[5px]"><i
                                     class="ti ti-calendar-event text-gray-500"></i><span class="ms-2">Calendar &
                                     Events</span></a></li>
-                        <li class="mb-[5px]"><a href="reports.html"
-                                class="relative flex item-center w-full p-2 text-sm font-medium text-gray-900 group hover:bg-dark-transparent rounded-[5px]"><i
-                                    class="ti ti-file-analytics text-gray-500"></i><span class="ms-2">Reports &
-                                    Analytics</span></a></li>
+                        
+
+                                     @php
+                            $reportsRoutes = [
+                                'admin.reports.attendance',
+                                'admin.reports.expense',
+                                'admin.reports.leave',
+                                'admin.reports.payslips'
+                            ];
+                            $isReportsActive = request()->routeIs($reportsRoutes);
+                        @endphp
+                        <li class="submenu mb-[5px]">
+                            <a href="javascript:void(0);"
+                                class="relative flex item-center w-full p-2 text-sm leading-normal font-medium {{ $isReportsActive ? 'text-primary bg-dark-transparent' : 'text-gray-900 group hover:bg-dark-transparent hover:text-gray-900' }} transition-all duration-500 ease-in-out rounded-[5px]">
+                                <i class="ti ti-file-analytics {{ $isReportsActive ? 'text-primary' : 'text-gray-500 group-hover:text-gray-900' }}"></i>
+                                <span class="ms-2">Reports</span>
+                                <span
+                                    class="menu-arrow absolute top-1/2 -translate-y-1/2 right-2.5 flex items-center w-4 h-4"></span>
+                            </a>
+                            <ul class="relative mt-2 before:absolute before:top-0 before:left-3.5 before:w-[1.5px] before:h-full before:bg-gray-100"
+                                style="display: {{ $isReportsActive ? 'block' : 'none' }};">
+                               
+                                <li><a href="{{ route('admin.reports.attendance') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.reports.attendance') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Attendance
+                                    </a></li>
+                                <li><a href="{{ route('admin.reports.expense') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.reports.expense') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">
+                                        Expense</a></li>
+                                <li><a href="{{ route('admin.reports.leave') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.reports.leave') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Leave
+                                        Report</a></li>
+                                <li><a href="{{ route('admin.reports.payslips') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.reports.payslips') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Payslips</a>
+                                </li>
+                            </ul>
+                        </li>
                         <li class="mb-[5px]"><a href="{{ route('admin.settings.index') }}"
                                 class="relative flex item-center w-full p-2 text-sm font-medium {{ request()->routeIs('admin.settings.index') ? 'text-primary bg-dark-transparent' : 'text-gray-900 group hover:bg-dark-transparent hover:text-gray-900' }} rounded-[5px]"><i
                                     class="ti ti-settings {{ request()->routeIs('admin.settings.index') ? 'text-primary' : 'text-gray-500 group-hover:text-gray-900' }}"></i><span class="ms-2">Settings</span></a>

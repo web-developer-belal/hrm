@@ -36,6 +36,10 @@ use App\Livewire\Admin\Payroll\PayrollEngine;
 use App\Livewire\Admin\Payroll\PayrollList;
 use App\Livewire\Admin\PaySlips\PaySlipManagement;
 use App\Livewire\Admin\PaySlips\PaySlipsDetails;
+use App\Livewire\Admin\Reports\AttendanceReport;
+use App\Livewire\Admin\Reports\ExpenseReport;
+use App\Livewire\Admin\Reports\LeaveReport;
+use App\Livewire\Admin\Reports\PayslipReport;
 use App\Livewire\Admin\Roster\RosterForm;
 use App\Livewire\Admin\Roster\RosterManagement;
 use App\Livewire\Admin\Shift\ShiftForm;
@@ -245,6 +249,20 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::livewire('/attendance/edit/{policyID}', AttendancePolicyAdd::class)
             ->name('edit');
     });
+
+    // Reports
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::livewire('/attendance', AttendanceReport::class)
+            ->name('attendance');
+        Route::livewire('/leave', LeaveReport::class)
+            ->name('leave');
+        Route::livewire('/payslips', PayslipReport::class)
+            ->name('payslips');
+        Route::livewire('/expense', ExpenseReport::class)
+            ->name('expense');
+    });
+
+    // Settings
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::livewire('/', SettingManagement::class)
             ->name('index');

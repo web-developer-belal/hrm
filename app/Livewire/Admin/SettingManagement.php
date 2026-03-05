@@ -1,52 +1,61 @@
 <?php
-
 namespace App\Livewire\Admin;
 
+use App\Models\AttendanceLog;
+use App\Models\Device;
+use App\Models\DeviceSyncHistories;
 use App\Models\Setting;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Rats\Zkteco\Lib\ZKTeco;
 
 #[Title('Settings')]
 class SettingManagement extends Component
 {
     use WithFileUploads;
 
-    public $company_name = '';
-    public $phone_number = '';
+    public $company_name             = '';
+    public $phone_number             = '';
     public $alternative_phone_number = '';
-    public $email_address = '';
-    public $company_address = '';
-    public $website_url = '';
+    public $email_address            = '';
+    public $company_address          = '';
+    public $website_url              = '';
     public $company_logo;
     public $company_logo_path = '';
     public $favicon;
     public $favicon_path = '';
 
-    public $system_language = 'en';
-    public $date_format = 'Y-m-d';
-    public $time_format = 'H:i';
-    public $time_zone = 'UTC';
+    public $system_language       = 'en';
+    public $date_format           = 'Y-m-d';
+    public $time_format           = 'H:i';
+    public $time_zone             = 'UTC';
     public $enable_ip_restriction = false;
 
-    public $mail_driver = 'smtp';
-    public $smtp_host = '';
-    public $smtp_port = '';
-    public $smtp_username = '';
-    public $smtp_password = '';
+    public $mail_driver     = 'smtp';
+    public $smtp_host       = '';
+    public $smtp_port       = '';
+    public $smtp_username   = '';
+    public $smtp_password   = '';
     public $smtp_encryption = 'tls';
     public $smtp_from_email = '';
-    public $smtp_from_name = '';
+    public $smtp_from_name  = '';
 
-    public $zkteco_device_url = '';
+    public $zkteco_device_url   = '';
     public $zkteco_api_username = '';
     public $zkteco_api_password = '';
-    public $zkteco_api_token = '';
+    public $zkteco_api_token    = '';
 
     public $cacheSize = '0 B';
+
+    public $name;
+    public $ip_address;
+    public $port;
+    public $status;
+    public $device_id;
 
     public function mount(): void
     {
@@ -59,37 +68,37 @@ class SettingManagement extends Component
     {
         $settings = Setting::pluck('value', 'key');
 
-        $this->company_name = $settings->get('company_name', '');
-        $this->phone_number = $settings->get('phone_number', '');
+        $this->company_name             = $settings->get('company_name', '');
+        $this->phone_number             = $settings->get('phone_number', '');
         $this->alternative_phone_number = $settings->get('alternative_phone_number', '');
-        $this->email_address = $settings->get('email_address', '');
-        $this->company_address = $settings->get('company_address', '');
-        $this->website_url = $settings->get('website_url', '');
-        $this->company_logo_path = $settings->get('company_logo_path', '');
-        $this->favicon_path = $settings->get('favicon_path', '');
+        $this->email_address            = $settings->get('email_address', '');
+        $this->company_address          = $settings->get('company_address', '');
+        $this->website_url              = $settings->get('website_url', '');
+        $this->company_logo_path        = $settings->get('company_logo_path', '');
+        $this->favicon_path             = $settings->get('favicon_path', '');
 
-        $this->system_language = $settings->get('system_language', 'en');
-        $this->date_format = $settings->get('date_format', 'Y-m-d');
-        $this->time_format = $settings->get('time_format', 'H:i');
-        $this->time_zone = $settings->get('time_zone', 'UTC');
+        $this->system_language       = $settings->get('system_language', 'en');
+        $this->date_format           = $settings->get('date_format', 'Y-m-d');
+        $this->time_format           = $settings->get('time_format', 'H:i');
+        $this->time_zone             = $settings->get('time_zone', 'UTC');
         $this->enable_ip_restriction = (bool) $settings->get('enable_ip_restriction', false);
     }
 
     private function loadEnvSettings(): void
     {
-        $this->mail_driver = env('MAIL_MAILER', 'smtp');
-        $this->smtp_host = env('MAIL_HOST', '');
-        $this->smtp_port = (string) env('MAIL_PORT', '');
-        $this->smtp_username = env('MAIL_USERNAME', '');
-        $this->smtp_password = env('MAIL_PASSWORD', '');
+        $this->mail_driver     = env('MAIL_MAILER', 'smtp');
+        $this->smtp_host       = env('MAIL_HOST', '');
+        $this->smtp_port       = (string) env('MAIL_PORT', '');
+        $this->smtp_username   = env('MAIL_USERNAME', '');
+        $this->smtp_password   = env('MAIL_PASSWORD', '');
         $this->smtp_encryption = env('MAIL_ENCRYPTION', 'tls');
         $this->smtp_from_email = env('MAIL_FROM_ADDRESS', '');
-        $this->smtp_from_name = env('MAIL_FROM_NAME', '');
+        $this->smtp_from_name  = env('MAIL_FROM_NAME', '');
 
-        $this->zkteco_device_url = env('ZKTECO_DEVICE_URL', '');
+        $this->zkteco_device_url   = env('ZKTECO_DEVICE_URL', '');
         $this->zkteco_api_username = env('ZKTECO_API_USERNAME', '');
         $this->zkteco_api_password = env('ZKTECO_API_PASSWORD', '');
-        $this->zkteco_api_token = env('ZKTECO_API_TOKEN', '');
+        $this->zkteco_api_token    = env('ZKTECO_API_TOKEN', '');
     }
 
     private function saveSetting(string $key, $value): void
@@ -100,14 +109,14 @@ class SettingManagement extends Component
     public function saveCompanySettings(): void
     {
         $this->validate([
-            'company_name' => ['required', 'string', 'max:255'],
-            'phone_number' => ['nullable', 'string', 'max:50'],
+            'company_name'             => ['required', 'string', 'max:255'],
+            'phone_number'             => ['nullable', 'string', 'max:50'],
             'alternative_phone_number' => ['nullable', 'string', 'max:50'],
-            'email_address' => ['nullable', 'email', 'max:255'],
-            'company_address' => ['nullable', 'string'],
-            'website_url' => ['nullable', 'url', 'max:255'],
-            'company_logo' => ['nullable', 'image', 'max:2048'],
-            'favicon' => ['nullable', 'image', 'max:1024'],
+            'email_address'            => ['nullable', 'email', 'max:255'],
+            'company_address'          => ['nullable', 'string'],
+            'website_url'              => ['nullable', 'url', 'max:255'],
+            'company_logo'             => ['nullable', 'image', 'max:2048'],
+            'favicon'                  => ['nullable', 'image', 'max:1024'],
         ]);
 
         if ($this->company_logo) {
@@ -115,9 +124,9 @@ class SettingManagement extends Component
                 deleteImage($this->company_logo_path);
             }
 
-            $storedLogo = storeImage($this->company_logo, 'uploads/settings');
+            $storedLogo              = storeImage($this->company_logo, 'uploads/settings');
             $this->company_logo_path = 'storage/' . $storedLogo;
-            $this->company_logo = null;
+            $this->company_logo      = null;
         }
 
         if ($this->favicon) {
@@ -125,9 +134,9 @@ class SettingManagement extends Component
                 deleteImage($this->favicon_path);
             }
 
-            $storedFavicon = storeImage($this->favicon, 'uploads/settings');
+            $storedFavicon      = storeImage($this->favicon, 'uploads/settings');
             $this->favicon_path = 'storage/' . $storedFavicon;
-            $this->favicon = null;
+            $this->favicon      = null;
         }
 
         $this->saveSetting('company_name', $this->company_name);
@@ -163,10 +172,10 @@ class SettingManagement extends Component
     public function saveSystemSettings(): void
     {
         $this->validate([
-            'system_language' => ['required', 'string', 'max:20'],
-            'date_format' => ['required', 'string', 'max:30'],
-            'time_format' => ['required', 'string', 'max:30'],
-            'time_zone' => ['required', 'string', 'max:100'],
+            'system_language'       => ['required', 'string', 'max:20'],
+            'date_format'           => ['required', 'string', 'max:30'],
+            'time_format'           => ['required', 'string', 'max:30'],
+            'time_zone'             => ['required', 'string', 'max:100'],
             'enable_ip_restriction' => ['boolean'],
         ]);
 
@@ -182,54 +191,139 @@ class SettingManagement extends Component
     public function saveSmtpSettings(): void
     {
         $this->validate([
-            'mail_driver' => ['required', 'string', 'max:50'],
-            'smtp_host' => ['required', 'string', 'max:255'],
-            'smtp_port' => ['required', 'numeric'],
-            'smtp_username' => ['required', 'string', 'max:255'],
-            'smtp_password' => ['required', 'string', 'max:255'],
+            'mail_driver'     => ['required', 'string', 'max:50'],
+            'smtp_host'       => ['required', 'string', 'max:255'],
+            'smtp_port'       => ['required', 'numeric'],
+            'smtp_username'   => ['required', 'string', 'max:255'],
+            'smtp_password'   => ['required', 'string', 'max:255'],
             'smtp_encryption' => ['nullable', 'in:tls,ssl'],
             'smtp_from_email' => ['required', 'email', 'max:255'],
-            'smtp_from_name' => ['required', 'string', 'max:255'],
+            'smtp_from_name'  => ['required', 'string', 'max:255'],
         ]);
 
         $this->setEnvValues([
-            'MAIL_MAILER' => $this->mail_driver,
-            'MAIL_HOST' => $this->smtp_host,
-            'MAIL_PORT' => $this->smtp_port,
-            'MAIL_USERNAME' => $this->smtp_username,
-            'MAIL_PASSWORD' => $this->smtp_password,
-            'MAIL_ENCRYPTION' => $this->smtp_encryption,
+            'MAIL_MAILER'       => $this->mail_driver,
+            'MAIL_HOST'         => $this->smtp_host,
+            'MAIL_PORT'         => $this->smtp_port,
+            'MAIL_USERNAME'     => $this->smtp_username,
+            'MAIL_PASSWORD'     => $this->smtp_password,
+            'MAIL_ENCRYPTION'   => $this->smtp_encryption,
             'MAIL_FROM_ADDRESS' => $this->smtp_from_email,
-            'MAIL_FROM_NAME' => '"' . addslashes($this->smtp_from_name) . '"',
+            'MAIL_FROM_NAME'    => '"' . addslashes($this->smtp_from_name) . '"',
         ]);
 
         Artisan::call('config:clear');
         session()->flash('success', 'SMTP settings saved to .env successfully.');
     }
 
-    public function generateZktecoToken(): void
+    public function saveDeviceIP()
     {
-        $this->zkteco_api_token = Str::random(60);
+        $validateData = $this->validate([
+            'name'       => ['required', 'string', 'max:255'],
+            'ip_address' => ['required', 'ip'],
+            'port'       => ['nullable', 'numeric'],
+            'status'     => ['required', 'in:0,1'],
+        ]);
+
+        if ($this->device_id) {
+            $device = Device::find($this->device_id);
+            $device->update($validateData);
+            session()->flash('success', 'Device updated successfully.');
+        } else {
+            Device::create($validateData);
+            session()->flash('success', 'Device created successfully.');
+        }
+
+        $this->reset(['name', 'ip_address', 'port', 'status', 'device_id']);
+        $this->dispatch('deviceFormClose');
     }
 
-    public function saveZktecoSettings(): void
+    public function addDevice($deviceId = null)
     {
-        $this->validate([
-            'zkteco_device_url' => ['required', 'url', 'max:255'],
-            'zkteco_api_username' => ['required', 'string', 'max:255'],
-            'zkteco_api_password' => ['required', 'string', 'max:255'],
-            'zkteco_api_token' => ['required', 'string', 'max:255'],
+        if ($deviceId) {
+            $device = Device::find($deviceId);
+            if ($device) {
+                $this->device_id  = $device->id;
+                $this->name       = $device->name;
+                $this->ip_address = $device->ip_address;
+                $this->port       = $device->port;
+                $this->status     = $device->status;
+            }
+        } else {
+            $this->reset(['name', 'ip_address', 'port', 'status', 'device_id']);
+        }
+        $this->dispatch('deviceFormOpen');
+    }
+
+    public function resetDeviceForm()
+    {
+        $this->reset(['name', 'ip_address', 'port', 'status', 'device_id']);
+    }
+
+    public function deleteDevice($deviceId)
+    {
+        $device = Device::find($deviceId);
+        if ($device) {
+            $device->delete();
+            session()->flash('success', 'Device deleted successfully.');
+        }
+    }
+
+    public function sync($deviceId)
+    {
+        $device = Device::find($deviceId);
+
+        $history = DeviceSyncHistories::create([
+            'device_id'       => $device->id,
+            'sync_started_at' => now(),
+            'status'          => 'processing',
         ]);
 
-        $this->setEnvValues([
-            'ZKTECO_DEVICE_URL' => $this->zkteco_device_url,
-            'ZKTECO_API_USERNAME' => $this->zkteco_api_username,
-            'ZKTECO_API_PASSWORD' => $this->zkteco_api_password,
-            'ZKTECO_API_TOKEN' => $this->zkteco_api_token,
-        ]);
+        try {
+            $zk = new ZKTeco($device->ip_address, $device->port);
+            $zk->connect();
+            $logs = $zk->getAttendance();
+            $zk->disconnect();
 
-        Artisan::call('config:clear');
-        session()->flash('success', 'ZKTeco settings saved to .env successfully.');
+            $count = 0;
+
+            foreach ($logs as $log) {
+
+                $timestamp = Carbon::parse($log['timestamp']);
+
+                $minuteKey = $timestamp->format('Y-m-d H:i');
+
+                AttendanceLog::firstOrCreate(
+                    [
+                        'employee_id' => $log['id'],
+                        // 'attendance_minute' => $minuteKey,
+                    ],
+                    [
+                        'attendance_minute' => $minuteKey,
+                        'device_id'         => $device->id,
+                        'attendance_date'   => $timestamp->format('Y-m-d'),
+                        'attendance_time'   => $timestamp->format('H:i:s'),
+                        'device_timestamp'  => $timestamp,
+                    ]
+                );
+
+                $count++;
+            }
+
+            $history->update([
+                'total_logs'        => $count,
+                'sync_completed_at' => now(),
+                'status'            => 'success',
+            ]);
+
+        } catch (\Exception $e) {
+
+            $history->update([
+                'status'            => 'failed',
+                'message'           => $e->getMessage(),
+                'sync_completed_at' => now(),
+            ]);
+        }
     }
 
     public function clearCache(): void
@@ -258,7 +352,7 @@ class SettingManagement extends Component
             $formattedValue = preg_replace('/\r?\n/', '', $formattedValue);
 
             $pattern = "/^{$key}=.*/m";
-            $line = "{$key}={$formattedValue}";
+            $line    = "{$key}={$formattedValue}";
 
             if (preg_match($pattern, $content)) {
                 $content = preg_replace($pattern, $line, $content);
@@ -306,6 +400,11 @@ class SettingManagement extends Component
 
     public function render()
     {
-        return view('livewire.admin.setting-management');
+        $syncHistory = DeviceSyncHistories::with('device')->latest()->paginate(10, ['*'], 'sync_page');
+        $devices = Device::latest()->get();
+        return view('livewire.admin.setting-management', [
+            'syncHistory' => $syncHistory,
+            'devices' => $devices,
+        ]);
     }
 }
