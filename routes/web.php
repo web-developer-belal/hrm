@@ -48,6 +48,8 @@ use App\Livewire\Admin\Transfer\TransferList;
 use App\Livewire\Admin\Transfer\TransferNew;
 use App\Livewire\Auth\AdminLogin;
 use App\Livewire\Admin\SettingManagement;
+use App\Http\Controllers\EmailController;
+use App\Http\Controllers\SalaryReportController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
@@ -56,6 +58,26 @@ Route::get('/admin/login', AdminLogin::class)->name('admin.login');
 Route::get('/create/storage', function () {
     Artisan::call('storage:link');
 });
+
+// Route to view the leave approval email template
+Route::get('/email/leave-approval', [EmailController::class, 'leaveApprovalEmail'])->name('emails.leave');
+Route::post('/email/leave-approval/send', [EmailController::class, 'sendLeaveApprovalEmail'])->name('emails.leave.send');
+Route::get('/email/payslip', [EmailController::class, 'payslipEmail'])->name('emails.payslip');
+Route::post('/email/payslip/send', [EmailController::class, 'sendPayslipEmail'])->name('emails.payslip.send');
+Route::get('/email/employee-credentials', [EmailController::class, 'employeeCredentialsEmail'])->name('email.employee-credentials');
+Route::post('/email/send-employee-credentials', [EmailController::class, 'sendEmployeeCredentialsEmail'])->name('email.send-employee-credentials');
+Route::get('/email/loan-management', [EmailController::class, 'loanManagementEmail'])->name('email.loan-management');
+Route::post('/email/send-loan-management', [EmailController::class, 'sendLoanManagementEmail'])->name('email.send-loan-management');
+Route::get('/email/monthly-attendance', [EmailController::class, 'monthlyAttendanceEmail'])->name('email.monthly-attendance');
+Route::post('/email/send-monthly-attendance', [EmailController::class, 'sendMonthlyAttendanceEmail'])->name('email.send-monthly-attendance');
+Route::get('/email/notice/general', [EmailController::class, 'noticeEmail'])->name('email.notice.general');
+Route::get('/email/notice/event', [EmailController::class, 'eventEmail'])->name('email.notice.event');
+Route::get('/email/notice/urgent', [EmailController::class, 'urgentNoticeEmail'])->name('email.notice.urgent');
+Route::post('/email/send-notice', [EmailController::class, 'sendNoticeEmail'])->name('email.send-notice');
+
+Route::get('/salary-report', [SalaryReportController::class, 'index'])->name('salary.report');
+Route::get('/salary-report/pdf', [SalaryReportController::class, 'generatePDF'])->name('salary.pdf');
+Route::get('/salary-report/print', [SalaryReportController::class, 'print'])->name('salary.print');
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::livewire('dashboard', Dashboard::class)
