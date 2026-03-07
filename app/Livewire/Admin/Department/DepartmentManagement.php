@@ -9,6 +9,7 @@ use Livewire\WithPagination;
 class DepartmentManagement extends Component
 {
     use WithPagination;
+    
     public $search;
     public $branches         = [];
     public $branches_options = [];
@@ -62,7 +63,7 @@ class DepartmentManagement extends Component
                 ->orWhere('address', 'like', '%' . $this->search . '%');
         })->when($this->branches, function ($q) {
             $q->whereIn('branch_id', (array) $this->branches);
-        })->orderBy('name', 'asc')->paginate(10);
+        })->latest()->paginate(10);
         
         return view('livewire.admin.department.department-management', compact('departments'));
     }

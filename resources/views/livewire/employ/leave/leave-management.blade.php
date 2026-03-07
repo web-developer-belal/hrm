@@ -28,7 +28,7 @@
             <div class="mb-2">
                 <a href="{{ route('employee.leave.create') }}"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
-                        class="ti ti-circle-plus me-2"></i>New Leave</a>
+                        class="ti ti-circle-plus me-2"></i>Leave Apply</a>
             </div>
 
         </div>
@@ -157,14 +157,7 @@
 
                                 <td class="px-5 py-2.5 text-gray-500 font-medium">
                                     <p class="text-500 font-medium">{{ $item->type?->name }}
-                                        <a href="#" data-tooltip-target="tooltip-right-01"
-                                            data-tooltip-placement="right" class=""><i
-                                                class="ti ti-info-circle text-info"></i></a>
-                                        {{-- <div id="tooltip-right-01" role="tooltip"
-                                        class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                                        I am currently experiencing <br> a fever and design & Development
-                                        <div class="tooltip-arrow" data-popper-arrow=""></div>
-                                    </div> --}}
+                                    </p>
 
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $item->from_date->format('d-M-Y') }}</td>
@@ -186,7 +179,19 @@
                                 <td class="px-5 py-2.5 text-gray-500">{{ $item->from_date->format('d-M-Y') }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $item->total_days }} Days</td>
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {{ ucfirst($item->status) }}
+                                    <div>
+                                        @php
+                                            $statusClasses = [
+                                                'pending' => 'badge bg-warning',
+                                                'approved' => 'badge bg-success',
+                                                'rejected' => 'badge bg-danger',
+                                            ];
+                                            $classes = $statusClasses[$item->status] ?? 'bg-gray-100 text-gray-800';
+                                        @endphp
+                                        <span class="px-2 py-1 rounded text-xs {{ $classes }}">
+                                            {{ ucfirst($item->status) }}
+                                        </span>
+                                    </div>
                                 </td>
 
                             </tr>

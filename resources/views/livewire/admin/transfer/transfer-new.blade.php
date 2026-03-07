@@ -69,12 +69,12 @@
                     @endif
 
                     <!-- Branch -->
-                    <x-form.select label="Transfer To Branch" name="to_branch_id" :search="true" :isRequired="true" :error="true"
+                    <x-form.select placeholder="Select a branch" label="Transfer To Branch" name="to_branch_id" :search="true" :isRequired="true" :error="true"
                         :options="$to_branch_id_options" />
 
 
                     <!-- Department (Optional) -->
-                    <x-form.select label="Transfer To Department" name="to_department_id" :search="true" :isRequired="true"
+                    <x-form.select placeholder="Select a department" label="Transfer To Department" name="to_department_id" :search="true" :isRequired="true"
                         :error="true" :options="$to_department_id_options" />
 
 

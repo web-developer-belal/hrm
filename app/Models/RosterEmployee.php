@@ -13,15 +13,9 @@ class RosterEmployee extends Model
     protected $fillable = [
         'roster_id',
         'employee_id',
-        'date',
-        'is_off_day',
         'shift_id',
-        'notes',
     ];
-    protected $casts = [
-        'date'       => 'date',
-        'is_off_day' => 'boolean',
-    ];
+
     public function roster()
     {
         return $this->belongsTo(Roster::class);

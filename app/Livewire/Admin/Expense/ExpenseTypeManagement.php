@@ -38,7 +38,7 @@ class ExpenseTypeManagement extends Component
         $this->branch_id_options = Branch::where('status', 'active')->when($this->branch_id_search, function ($query) {
             $query->where('name', 'like', '%' . $this->branch_id_search . '%');
         })
-            ->pluck('name', 'id')
+            ->pluck('name', 'id')->take(5)
             ->toArray();
     }
 

@@ -168,12 +168,12 @@
                                 </div>
                             </div>
                             <ul class="p-[20px]">
-                                {{-- <li>
+                                <li>
                                     <a class="inline-flex items-center text-gray-900 py-2 hover:text-primary"
-                                        href="">
-                                        <i class="ti ti-user-circle me-1"></i>My Profile
+                                        href="{{ route('admin.profile') }}">
+                                        <i class="ti ti-user-circle me-1"></i>Profile
                                     </a>
-                                </li> --}}
+                                </li>
                                 <li>
                                     <a class="inline-flex items-center text-gray-900 py-2 hover:text-primary"
                                         href="{{ route('admin.settings.index') }}">
@@ -198,8 +198,8 @@
         <div class="dropdown mobile-user-menu">
             <a href="javascript:void(0);" data-dropdown-toggle="mobile-dropdown"><i class="fa fa-ellipsis-v"></i></a>
             <ul id="mobile-dropdown" class="hidden p-1 border rounded bg-white shadow-lg w-40 z-[1]">
-                    {{-- <li><a class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary text-gray-900"
-                            href="{{ route('employee.profile') }}">My Profile</a></li> --}}
+                        <li><a class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary text-gray-900"
+                                href="{{ route('admin.profile') }}">Profile</a></li>
                 <li><a href="{{ route('admin.settings.index') }}" class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary text-gray-900"
                         href="">Settings</a></li>
                 <li><a href="{{ route('admin.logout') }}" class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary text-gray-900"

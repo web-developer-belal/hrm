@@ -1,10 +1,10 @@
 <div
     x-data="{
-        multiple: @js($multiple),
+        multiple: @js($multiple ?? false),
         files: [],
-        existingFiles: Array.isArray(@js($oldFiles ?? []))
-            ? @js($oldFiles ?? [])
-            : (@js($oldFiles) ? [@js($oldFiles)] : []),
+        existingFiles: Array.isArray(@js($oldFiles ?? [])) 
+            ? @js($oldFiles ?? []) 
+            : ((@js($oldFiles) && @js($oldFiles) !== null) ? [@js($oldFiles)] : []),
         inputName: '{{ $name }}',
 
         handleFiles(event) {
@@ -90,8 +90,11 @@
         <div class="mt-2 space-y-1">
             <template x-for="(file, index) in files" :key="index">
                 <div class="flex items-center justify-between text-xs bg-gray-100 px-2 py-1 rounded">
+                    @if ($fullPreview)
+                        <img :src="file.name" alt="Preview" class="w-10 h-auto object-cover rounded mr-2">
+                    @else
                     <span class="truncate max-w-[150px]" x-text="file.name"></span>
-
+                    @endif
                     <button
                         type="button"
                         @click="removeFile(index)"

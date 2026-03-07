@@ -81,7 +81,7 @@
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Emp ID</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Name</th>
+                                Employee info</th>
 
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Branch</th>

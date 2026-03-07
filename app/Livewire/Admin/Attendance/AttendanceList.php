@@ -3,6 +3,8 @@ namespace App\Livewire\Admin\Attendance;
 
 use App\Models\Attendance;
 use App\Models\Branch;
+use App\Models\Payroll;
+use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -37,6 +39,25 @@ class AttendanceList extends Component
     {
         $this->loadBranches();
     }
+
+    public function deleteAttendance($attendanceId)
+    {
+        $attendance = Attendance::findOrFail($attendanceId);
+        if($attendance){
+            $payroll = Payroll::where('employee_id', $attendance->employee_id)
+                ->where('year', Carbon::parse($attendance->date)->year)
+                ->where('month', Carbon::parse($attendance->date)->month)
+                ->first();
+            if($payroll){
+                flash()->error('Cannot delete attendance record. Payroll has already been processed for this month.');
+                return;
+            }
+        }
+        $attendance->delete();
+
+        flash()->success('Attendance record deleted successfully.');
+    }
+
 
     public function processRunningMonth()
     {

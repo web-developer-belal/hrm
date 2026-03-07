@@ -138,9 +138,11 @@
 
                                 <td class="px-5 py-2.5 text-gray-500">
                                     <div class="action-icon inline-flex">
-                                        <a href="#"
+                                        {{-- <a href="{{ route('admin.attendance.edit',['emp'=>$attendance->id]) }}"
                                             class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
-                                                class="ti ti-edit"></i></a>
+                                                class="ti ti-edit"></i></a> --}}
+                                        <button type="button" wire:click="deleteAttendance({{ $attendance->id }})"
+                                            class="size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i class="ti ti-trash"></i></button>
 
                                     </div>
                                 </td>

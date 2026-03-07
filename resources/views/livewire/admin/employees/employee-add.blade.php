@@ -42,14 +42,14 @@
                 <form wire:submit.prevent="saveEmployee" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
 
-                    <x-form.file-upload label="Photo" name="photo" :error="true" />
+                    <x-form.file-upload label="Photo" name="photo" :error="true" :oldFiles="$isEditMode && $emp->photo ? [customAsset($emp->photo)] : []" :fullPreview="true" />
 
 
-                    <x-form.select label="Select Branch" name="branch_id" :isRequired="true" :error="true"
+                    <x-form.select placeholder="Select Branch" label="Select Branch" name="branch_id" :isRequired="true" :error="true"
                         :search="true" :options="$branch_id_options" />
 
 
-                    <x-form.select label="Select Department" name="department_id" :isRequired="false" :error="true"
+                    <x-form.select placeholder="Select Department" label="Select Department" name="department_id" :isRequired="true" :error="true" :live="true"
                         :search="true" :options="$department_id_options" />
 
                     <x-form.input label="First Name" name="first_name" :isRequired="true" :error="true"
@@ -69,7 +69,7 @@
                     <x-form.input label="Joining Date" name="joining_date" :isRequired="true" :error="true"
                         type="date" />
 
-                    <x-form.select label="Select Designation" name="designation_id" :isRequired="true"
+                    <x-form.select placeholder="Select Designation" label="Select Designation" name="designation_id" :isRequired="true" :live="true"
                         :error="true" :search="true" :options="$designation_id_options" />
 
                     <x-form.input label="Contact No" name="contact_number" :isRequired="true" :error="true"
@@ -78,8 +78,7 @@
                     <x-form.input label="Alternative Contact No" name="alternative_phone_number" :isRequired="false"
                         :error="true" placeholder="Enter Alternative Contact no" />
 
-
-                    <x-form.select label="Select Gender" name="gender" :isRequired="true" :error="true"
+                    <x-form.select placeholder="Select Gender" label="Select Gender" name="gender" :isRequired="true" :error="true"
                         :options="['male' => 'Male', 'female' => 'Female', 'other' => ' Other']" />
 
                     <x-form.input label="Present Address" name="local_address" :isRequired="true" :error="true"
@@ -89,16 +88,18 @@
                         :error="true" type="text" />
 
 
-                    <x-form.input label="Banks Name" name="bank_name" :isRequired="true" :error="true"
+                    <x-form.input label="Bank Name" name="bank_name" :isRequired="true" :error="true"
                         type="text" />
 
                     <x-form.input label="Account Holder Name" name="account_holder_name" :isRequired="true"
+                        :error="true" type="text" />
+                    <x-form.input label="MFS Account number" name="mfs_account"
                         :error="true" type="text" />
 
                     <x-form.input label="Account Number" name="account_number" :isRequired="true" :error="true"
                         type="text" />
 
-                    <x-form.input label="Banke Routing Number" name="routing_number" :isRequired="false"
+                    <x-form.input label="Bank Routing Number" name="routing_number" :isRequired="false"
                         :error="true" type="text" />
 
                     <!-- Start Date -->
@@ -106,11 +107,11 @@
 
 
 
-                    <x-form.file-upload label="Add Resume" name="resume" :error="true" />
-                    <x-form.file-upload label="Add Offer Letter" name="offer_letter" :error="true" />
-                    <x-form.file-upload label="Add Joining Letter" name="joining_letter" :error="true" />
-                    <x-form.file-upload label="Add Contract & Agreement" name="contract_agreement" :error="true" />
-                    <x-form.file-upload label="Add ID Proof" name="Id_proof" :error="true" />
+                    <x-form.file-upload label="Add Resume" name="resume" :error="true" :oldFiles="$isEditMode && $emp->resume ? [$emp->resume] : []" />
+                    <x-form.file-upload label="Add Offer Letter" name="offer_letter" :error="true" :oldFiles="$isEditMode && $emp->offer_letter ? [$emp->offer_letter] : []" />
+                    <x-form.file-upload label="Add Joining Letter" name="joining_letter" :error="true" :oldFiles="$isEditMode && $emp->joining_letter ? [$emp->joining_letter] : []" />
+                    <x-form.file-upload label="Add Contract & Agreement" name="contract_agreement" :error="true" :oldFiles="$isEditMode && $emp->contract_agreement ? [$emp->contract_agreement] : []" />
+                    <x-form.file-upload label="Add ID Proof" name="Id_proof" :error="true" :oldFiles="$isEditMode && $emp->Id_proof ? [$emp->Id_proof] : []" />
 
                     <!-- Status -->
                     <x-form.select label="Status" name="status" :isRequired="true" :error="true"

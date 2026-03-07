@@ -1,8 +1,8 @@
-<div>
+<div >
     <!-- Breadcrumb -->
     <div class="md:flex block items-center justify-between page-breadcrumb mb-4">
         <div class="my-auto mb-2">
-            <h2 class="mb-1">Disbursement Management</h2>
+            <h2 class="mb-1">User Management</h2>
             <nav class="flex" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-2">
                     <li class="inline-flex items-center">
@@ -14,17 +14,17 @@
                     <li>
                         <span class="text-default">/</span>
                     </li>
-                    <li class="text-xs text-default">Disbursement Management</li>
+                    <li class="text-xs text-default">User Management</li>
 
                 </ol>
             </nav>
         </div>
-        <div class="flex my-xl-auto right-content items-center flex-wrap ">
-
+        <div class="flex my-xl-auto right-content items-center flex-wrap gap-2">
+            
             <div class="mb-2">
-                <button wire:click="exportSheet"
+                <a href="{{ route('admin.user.create') }}"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
-                        class="ti ti-file-export me-2"></i>Export</button>
+                        class="ti ti-circle-plus me-2"></i>Add User</a>
             </div>
 
         </div>
@@ -35,19 +35,12 @@
     <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white">
         <div
             class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3 ">
-            <h5>Employee List</h5>
-            <div class="my-xl-auto right-content grid grid-cols-1 md:grid-cols-3 gap-3">
+            <h5>Users List</h5>
+            <div class="my-xl-auto right-content grid grid-cols-1 ">
                 <div class="">
                     <x-form.input name="search" placeholder="Search here .." :live="true" />
                 </div>
-                <div class="">
-                    <x-form.select name="branch" placeholder="Select branch" :live="true" :option="$branch_options"
-                        :search="true" />
-                </div>
-                <div class="w-fit">
-                    <x-form.select name="perPage" class="w-fit" :live="true" :options="['10' => '10', '25' => '25', '50' => '50', '100' => '100']" />
-                </div>
-
+                
             </div>
         </div>
         <div class="card-body p-0">
@@ -55,75 +48,84 @@
                 <table class="table w-full border-b border-borderColor">
                     <thead class="thead-light">
                         <tr>
+                            
                             <th
                                 class="no-sort text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor hover:outline-none">
                                 SL
                             </th>
+                            
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Emp ID</th>
-                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Name</th>
+                                Employee info</th>
 
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Branch</th>
+                                Role</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Department</th>
-                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Joining Date</th>
+                                Permission</th>
+                            
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Status</th>
-
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Action
+                            </th>
                         </tr>
                     </thead>
 
                     <tbody class="bg-white divide-y divide-borderColor">
-                        @foreach ($employees as $emp)
+                        @foreach ($users as $user)
                             <tr class="even:bg-white dark:even-bg-white">
+                                
                                 <td class="px-5 py-2.5 text-gray-500">
                                     {{ $loop->iteration }}
                                 </td>
-                                <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $emp->employee_code }}
-                                </td>
+                                
                                 <td class="px-5 py-2.5 text-gray-500 p-3">
                                     <div class="flex items-center file-name-icon">
-                                        <a href="{{ route('admin.employees.details', ['emp' => $emp->id]) }}"
+                                        <a href="{{ route('admin.user.edit', ['user' => $user->id]) }}"
                                             class="size-8 rounded-full border border-borderColor">
-                                            <img src="{{ customAsset($emp->photo, true, 'emp', $emp->first_name) }}"
+                                            <img src="{{ customAsset($user->photo, true, 'user', $user->first_name) }}"
                                                 class="rounded-full size-8 img-fluid" alt="img">
                                         </a>
                                         <div class="ms-2 flex flex-col gap-1">
                                             <h6 class="font-medium"><a
-                                                    href="{{ route('admin.employees.details', ['emp' => $emp->id]) }}"
-                                                    class="text-gray-900 hover:text-primary">{{ $emp->full_name }}</a>
+                                                    href="{{ route('admin.user.edit', ['user' => $user->id]) }}"
+                                                    class="text-gray-900 hover:text-primary">{{ $user->full_name }}</a>
                                             </h6>
-                                            <span class="text-xs leading-normal"> {{ $emp->designation->name }}</span>
-                                            <span class="text-xs leading-normal"> {{ $emp->email }}</span>
-                                            <span class="text-xs leading-normal"> {{ $emp->contact_number }}</span>
+                                            <span class="text-xs leading-normal"> {{ $user->email }}</span>
+                                            <span class="text-xs leading-normal"> {{ $user->phone_number }}</span>
                                         </div>
                                     </div>
                                 </td>
+                                <td class="px-5 py-2.5 text-gray-500">
+                                    {{ $user->role }}
+                                </td>
 
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $emp->branch->name }}
-                                </td>
-                                <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $emp->department->name }}
-                                </td>
-                                <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $emp->joining_date->format('d-M-Y') }}
+                                    {!! $user->role=='admin' ? 'All Permissions Granted' : $user->permissions->pluck('name')->join(', ') !!}
                                 </td>
 
                                 <td class="px-5 py-2.5 text-gray-500">
 
-                                    <span
-                                        class="bg-{{ $emp->status == 1 ? 'success' : 'warning' }} text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs cursor-pointer">
+                                    <span wire:click="statusToggle({{ $user->id }})"
+                                        class="bg-{{ $user->status == 'active' ? 'success' : 'warning' }} text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs cursor-pointer">
                                         <i class="ti ti-point-filled me-1">
-                                            {{ $emp->status == 1 ? 'Active' : 'Deactive' }}</i>
+                                            {{ $user->status == 'active' ? 'Active' : 'Deactive' }}</i>
                                     </span>
 
                                 </td>
 
+
+                                <td class="px-5 py-2.5 text-gray-500">
+                                    <div class="action-icon inline-flex">
+                                        <a href="{{ route('admin.user.edit', ['user' => $user->id]) }}"
+                                            class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
+                                                class="ti ti-edit"></i></a>
+                                      
+                                        <button wire:click="deleteUser({{ $user->id }})"
+                                            class="size-[26px] flex items-center justify-center rounded-[5px] hover
+                                            <i class="ti ti-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
                         @endforeach
 
@@ -132,9 +134,9 @@
                 </table>
             </div>
         </div>
-        @if ($employees->hasPages())
+        @if ($users->hasPages())
             <div class="card-footer py-4 px-5 border-t border-borderColor">
-                {{ $employees->links() }}
+                {{ $users->links() }}
             </div>
         @endif
 

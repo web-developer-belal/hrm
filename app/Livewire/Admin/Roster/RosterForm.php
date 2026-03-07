@@ -43,6 +43,7 @@ class RosterForm extends Component
 
     // Shift (normal select)
     public $shift_id_options = [];
+    public $shift_id_search;
 
     public $working_days_options = [
         'monday'    => 'Monday',
@@ -58,9 +59,7 @@ class RosterForm extends Component
     {
         $this->loadBranchIdOptions();
 
-        $this->shift_id_options = Shift::where('status', 'active')
-            ->pluck('name', 'id')
-            ->toArray();
+        $this->loadShiftIdOptions();
 
         if ($roster) {
             $this->isEditMode = true;
@@ -86,9 +85,24 @@ class RosterForm extends Component
         }
     }
 
+    protected function loadShiftIdOptions()
+    {
+        $this->shift_id_options = Shift::when($this->shift_id_search, fn($q) =>
+            $q->where('name', 'like', '%' . $this->shift_id_search . '%')
+        )
+        ->where('status', 'active')->take(5)
+        ->pluck('name', 'id')
+        ->toArray();
+    }
+
+    public function updatedShiftIdSearch()
+    {
+        $this->loadShiftIdOptions();
+    }
+
     protected function loadBranchIdOptions()
     {
-        $this->branch_id_options = Branch::where('status', 'active')
+        $this->branch_id_options = Branch::whereHas('departments')->where('status', 'active')
             ->when($this->branch_id_search, fn($q) =>
                 $q->where('name', 'like', '%' . $this->branch_id_search . '%')
             )
@@ -119,7 +133,7 @@ class RosterForm extends Component
             return;
         }
 
-        $this->department_id_options = Department::where('status', 'active')
+        $this->department_id_options = Department::whereHas('employees')->where('status', 'active')
             ->where('branch_id', $this->branch_id)
             ->when($this->department_id_search, fn($q) =>
                 $q->where('name', 'like', '%' . $this->department_id_search . '%')
@@ -149,7 +163,7 @@ class RosterForm extends Component
             return;
         }
 
-        $this->employees_options = Employee::where('status', 'active')
+        $this->employees_options = Employee::whereHas('department')->where('status', 'active')
             ->where('branch_id', $this->branch_id)
             ->where('department_id', $this->department_id)
             ->when($this->employees_search, function ($query) {

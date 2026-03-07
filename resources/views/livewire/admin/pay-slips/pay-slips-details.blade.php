@@ -47,7 +47,7 @@
                             <div class="md:col-span-6">
                                 <div class="mb-3">
                                     <div class="mb-2">
-                                        <img src="{{ asset('assets/img/Logo-Babyshop.png') }}" class="img-fluid" alt="logo">
+                                        <img src="{{ customAsset(settingData('company_logo_path')) }}" class="img-fluid" alt="logo">
                                     </div>
                                     <p>3099 Kennedy Court Framingham, MA 01702</p>
                                 </div>
@@ -56,7 +56,7 @@
                                 <div class=" text-end mb-3">
                                     <h5 class="text-gray mb-1">Payslip No <span class="text-primary"> #{{ $paySlip->id }}</span>
                                     </h5>
-                                    <p class="font-medium">Salary Month : <span class="text-dark">{{ \Carbon\Carbon::createFromDate($paySlip->year, $paySlip->month, 1)->format('F Y') }}</span>
+                                    <p class="font-medium">Salary Month : <span class="text-dark">{{ \Carbon\Carbon::createFromDate((int)$paySlip->year, (int)$paySlip->month, 1)->format('F Y') }}</span>
                                     </p>
                                 </div>
                             </div>

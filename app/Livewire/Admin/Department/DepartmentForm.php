@@ -42,7 +42,7 @@ class DepartmentForm extends Component
             ->pluck('name', 'id')
             ->toArray();
     }
-    public function updatedBranchesSearch(): void
+    public function updatedBranchSearch(): void
     {
         $this->loadBranches();
     }
@@ -52,6 +52,7 @@ class DepartmentForm extends Component
     {
         $validatedData = $this->validate((new DepartmentRequest())->rules(), (new DepartmentRequest())->messages());
 
+        $validatedData['branch_id'] = $this->branch;
         if ($this->isEditMode) {
             $this->department->update($validatedData);
             flash()->success('Department updated successfully.');

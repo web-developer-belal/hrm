@@ -134,7 +134,7 @@
 
                         <!-- Employees -->
                         @php
-                            $employeeRoutes = ['admin.employees.create', 'admin.employees.index','admin.employees.details','admin.employees.disbursement'];
+                            $employeeRoutes = ['admin.employees.create', 'admin.employees.index','admin.employees.details'];
                             $isEmployeeActive = request()->routeIs($employeeRoutes);
                         @endphp
                         <li class="submenu mb-[5px]">
@@ -154,9 +154,7 @@
                                 <li><a href="{{ route('admin.employees.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.employees.index') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Employees</a>
                                 </li>
-                                <li><a href="{{ route('admin.employees.disbursement') }}"
-                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.employees.disbursement') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Disbursement Sheet</a>
-                                </li>
+                                
                             </ul>
                         </li>
 
@@ -281,6 +279,11 @@
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.reports.payslips') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Payslips</a>
                                 </li>
                             </ul>
+                        </li>
+                        <li class="mb-[5px]"><a href="{{ route('admin.users') }}"
+                                class="relative flex item-center w-full p-2 text-sm font-medium {{ request()->routeIs('admin.users') ? 'text-primary bg-dark-transparent' : 'text-gray-900 group hover:bg-dark-transparent hover:text-gray-900' }} rounded-[5px]"><i
+                                    class="ti ti-user {{ request()->routeIs('admin.users') ? 'text-primary' : 'text-gray-500 group-hover:text-gray-900' }}"></i><span
+                                    class="ms-2">Roles & Permissions</span></a>
                         </li>
                         <li class="mb-[5px]"><a href="{{ route('admin.settings.index') }}"
                                 class="relative flex item-center w-full p-2 text-sm font-medium {{ request()->routeIs('admin.settings.index') ? 'text-primary bg-dark-transparent' : 'text-gray-900 group hover:bg-dark-transparent hover:text-gray-900' }} rounded-[5px]"><i

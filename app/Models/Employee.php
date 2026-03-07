@@ -41,6 +41,7 @@ class Employee extends Authenticatable
         'Id_proof',
         'email',
         'password',
+        'mfs_account'
 
     ];
 
@@ -107,7 +108,19 @@ class Employee extends Authenticatable
 
     public function rosters()
     {
-        return $this->belongsToMany(Roster::class, 'roster_employee');
+        return $this->belongsToMany(Roster::class, 'roster_employees')
+            ->withPivot(['shift_id'])
+            ->withTimestamps();
+    }
+
+    public function rosterEntries()
+    {
+        return $this->hasMany(RosterEmployee::class);
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
     }
 
 }

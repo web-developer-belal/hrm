@@ -37,6 +37,7 @@ return new class extends Migration {
             $table->string('account_holder_name')->nullable();
             $table->enum('bank_account_type', ['savings', 'current', 'other'])->nullable();
             $table->string('account_number')->nullable();
+            $table->string('mfs_account')->nullable();
             $table->text('bank_notes')->nullable();
             $table->string('resume')->nullable();
             $table->string('offer_letter')->nullable();

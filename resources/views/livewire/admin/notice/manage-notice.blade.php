@@ -112,6 +112,9 @@
                                             wire:confirm="Are you sure ?"
                                             class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-trash"></i></button>
+                                        <a href="{{ route('admin.notice.show', ['notice' => $item->id]) }}"
+                                            class="size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i class="ti ti-eye"></i></a>
+                                            
                                     </div>
                                 </td>
 

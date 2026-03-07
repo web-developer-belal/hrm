@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('branch_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('ip_address');
             $table->integer('port')->default(4370);

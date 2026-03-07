@@ -21,7 +21,12 @@
         </div>
         <div class="flex my-xl-auto right-content items-center flex-wrap gap-2">
             <div class="mb-2">
-                <button @click="modalOpen = true; $wire.resetForm()" class="btn btn-primary">Add Expense Type</button>
+                <a href="{{ route('admin.expenses.index') }}"
+                    class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">Expense</a>
+            </div>
+            <div class="mb-2">
+                <button @click="modalOpen = true; $wire.resetForm()" class="btn btn-primary"><i
+                        class="ti ti-circle-plus me-2"></i> Add Expense Type</button>
             </div>
 
         </div>

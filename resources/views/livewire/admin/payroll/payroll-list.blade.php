@@ -19,11 +19,33 @@
                 </ol>
             </nav>
         </div>
-        <div class="flex my-xl-auto right-content items-center flex-wrap ">
+        <div class="flex my-xl-auto right-content items-center flex-wrap gap-2">
             <div class="mb-2">
                 <button wire:click="exportSelected" wire:loading.attr="disabled"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
                         class="ti ti-file-export me-2"></i>Export</button>
+            </div>
+            <div class="mb-2">
+                {{-- Dropdown for mfs or bank --}}
+                <div x-data="{ open: false }" class="relative">
+                    <button @click="open = !open" wire:loading.attr="disabled"
+                        class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">
+                        <i class="ti ti-file-export me-2"></i>Export Disbursement Sheet
+                        <i class="ti ti-chevron-down ms-1"></i>
+                    </button>
+                    
+                    <div x-show="open" @click.outside="open = false" x-transition
+                        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-borderColor z-10">
+                        <button wire:click="exportDisbursementSheet({{ true }})" @click="open = false"
+                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="ti ti-file-export me-2"></i>Export MFS
+                        </button>
+                        <button wire:click="exportDisbursementSheet({{ false }})" @click="open = false"
+                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-t border-borderColor">
+                            <i class="ti ti-file-export me-2"></i>Export Bank
+                        </button>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -137,7 +159,7 @@
                                     {{ $pay->branch->name ?? $pay->employee->branch->name }}</td>
                                 <td class="px-5 py-2.5 text-gray-500 cursor-pointer" @click="expandedRows.includes({{ $pay->id }}) ? expandedRows = expandedRows.filter(id => id !== {{ $pay->id }}) : expandedRows.push({{ $pay->id }})">{{ $pay->year }}</td>
                                 <td class="px-5 py-2.5 text-gray-500 cursor-pointer" @click="expandedRows.includes({{ $pay->id }}) ? expandedRows = expandedRows.filter(id => id !== {{ $pay->id }}) : expandedRows.push({{ $pay->id }})">
-                                    {{ \Carbon\Carbon::create()->month($pay->month)->format('F') }}</td>
+                                    {{ \Carbon\Carbon::create()->month((int)$pay->month)->format('F') }}</td>
                                 <td class="px-5 py-2.5 text-gray-500 font-semibold cursor-pointer" @click="expandedRows.includes({{ $pay->id }}) ? expandedRows = expandedRows.filter(id => id !== {{ $pay->id }}) : expandedRows.push({{ $pay->id }})">
                                     {{ number_format($pay->gross_salary, 2) }}</td>
                                 <td class="px-5 py-2.5 text-primary font-semibold cursor-pointer" @click="expandedRows.includes({{ $pay->id }}) ? expandedRows = expandedRows.filter(id => id !== {{ $pay->id }}) : expandedRows.push({{ $pay->id }})">

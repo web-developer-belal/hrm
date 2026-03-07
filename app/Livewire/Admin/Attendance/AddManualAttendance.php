@@ -1,23 +1,21 @@
 <?php
-
 namespace App\Livewire\Admin\Attendance;
 
-use App\Models\Attendance;
 use App\Models\Branch;
 use App\Models\Department;
 use App\Models\Employee;
 use Carbon\Carbon;
-use Livewire\Component;
 use Livewire\Attributes\Validate;
+use Livewire\Component;
 
 class AddManualAttendance extends Component
 {
     /* ===============================
         Dropdown Options
     =============================== */
-    public array $selectedBranch_options = [];
+    public array $selectedBranch_options     = [];
     public array $selectedDepartment_options = ['' => 'Select Department'];
-    public array $selectedEmployee_options = ['' => 'Select Employee'];
+    public array $selectedEmployee_options   = ['' => 'Select Employee'];
 
     /* ===============================
         Selected Values
@@ -56,6 +54,10 @@ class AddManualAttendance extends Component
     protected function loadBranches(): void
     {
         $this->selectedBranch_options = Branch::query()
+            ->whereHas('departments')
+            ->when($this->selectedBranch_search, function ($q) {
+                $q->where('name', 'like', '%' . $this->selectedBranch_search . '%');
+            })
             ->where('status', 'active')
             ->limit(5)
             ->pluck('name', 'id')
@@ -64,13 +66,11 @@ class AddManualAttendance extends Component
 
     protected function loadDepartments(): void
     {
-        if (! $this->selectedBranch) {
-            $this->selectedDepartment_options = ['' => 'Select Department'];
-            return;
-        }
-
         $this->selectedDepartment_options = Department::query()
-            ->where('branch_id', $this->selectedBranch)
+            ->when($this->selectedBranch, fn($q) => $q->where('branch_id', $this->selectedBranch))
+            ->when($this->selectedDepartment_search, function ($q) {
+                $q->where('name', 'like', '%' . $this->selectedDepartment_search . '%');
+            })
             ->where('status', 'active')
             ->limit(5)
             ->pluck('name', 'id')
@@ -79,16 +79,16 @@ class AddManualAttendance extends Component
 
     protected function loadEmployees(): void
     {
-        if (! $this->selectedBranch && ! $this->selectedEmployee_search) {
+        if (! $this->selectedBranch && ! $this->selectedDepartment) {
             $this->selectedEmployee_options = ['' => 'Select Employee'];
             return;
         }
 
         $this->selectedEmployee_options = Employee::query()
-            ->when($this->selectedBranch, fn ($q) =>
+            ->when($this->selectedBranch, fn($q) =>
                 $q->where('branch_id', $this->selectedBranch)
             )
-            ->when($this->selectedDepartment, fn ($q) =>
+            ->when($this->selectedDepartment, fn($q) =>
                 $q->where('department_id', $this->selectedDepartment)
             )
             ->where('status', 1)
@@ -101,8 +101,8 @@ class AddManualAttendance extends Component
             })
             ->limit(5)
             ->get()
-            ->mapWithKeys(fn ($employee) => [
-                $employee->id => $employee->full_name . ' (' . $employee->employee_code . ')'
+            ->mapWithKeys(fn($employee) => [
+                $employee->id => $employee->full_name . ' (' . $employee->employee_code . ')',
             ])
             ->toArray();
     }
@@ -113,32 +113,12 @@ class AddManualAttendance extends Component
 
     public function updatedSelectedBranchSearch(): void
     {
-        $this->selectedBranch_options = Branch::query()
-            ->where('status', 'active')
-            ->when($this->selectedBranch_search, fn ($q) =>
-                $q->where('name', 'like', '%' . $this->selectedBranch_search . '%')
-            )
-            ->limit(5)
-            ->pluck('name', 'id')
-            ->toArray();
+        $this->loadBranches();
     }
 
     public function updatedSelectedDepartmentSearch(): void
     {
-        if (! $this->selectedBranch) {
-            $this->selectedDepartment_options = ['' => 'Select Department'];
-            return;
-        }
-
-        $this->selectedDepartment_options = Department::query()
-            ->where('branch_id', $this->selectedBranch)
-            ->where('status', 'active')
-            ->when($this->selectedDepartment_search, fn ($q) =>
-                $q->where('name', 'like', '%' . $this->selectedDepartment_search . '%')
-            )
-            ->limit(5)
-            ->pluck('name', 'id')
-            ->toArray();
+        $this->loadDepartments();
     }
 
     public function updatedSelectedEmployeeSearch(): void
@@ -153,22 +133,52 @@ class AddManualAttendance extends Component
     public function updatedSelectedBranch(): void
     {
         $this->selectedDepartment = null;
-        $this->selectedEmployee = null;
-
-        $this->selectedDepartment_search = null;
-        $this->selectedEmployee_search = null;
-
+        $this->selectedEmployee   = null;
         $this->loadDepartments();
     }
 
     public function updatedSelectedDepartment(): void
     {
-        $this->selectedEmployee = null;
-        $this->selectedEmployee_search = null;
-
+        $this->selectedEmployee        = null;
         $this->loadEmployees();
     }
 
+    public function saveManualAttendance()
+    {
+        $this->validate();
+        $employee = Employee::find($this->selectedEmployee);
+        // get attendace date from attandence time
+        $attendanceDate = \Carbon\Carbon::parse($this->attandenceTime)->toDateString();
+        // get that date attendance record if exists
+        $attendance = $employee->attendances()->whereDate('date', $attendanceDate)->first();
+        if(! $attendance) {
+            $attendance = $employee->attendances()->create([
+                'branch_id' => $employee->branch_id,
+                'roster_id' => $employee->rosters()->whereDate('start_date', '<=', $attendanceDate)->whereDate('end_date', '>=', $attendanceDate)->first()->id ?? null,
+                'date' => $attendanceDate,
+                'shift_start_time' => $employee->shift?->start_time ?? null,
+                'shift_end_time' => $employee->shift?->end_time ?? null,
+                'clock_in' => $this->clockInOut === 'clock_in' ? Carbon::parse($this->attandenceTime) : null,
+                'clock_out' => $this->clockInOut === 'clock_out' ? Carbon::parse($this->attandenceTime) : null,
+                'status' => 'present',
+                'is_manually_edited' => true,
+            ]);
+        } else {
+            if($this->clockInOut === 'clock_in') {
+                $attendance->update([
+                    'clock_in' => Carbon::parse($this->attandenceTime),
+                    'is_manually_edited' => true,
+                ]);
+            } else {
+                $attendance->update([
+                    'clock_out' => Carbon::parse($this->attandenceTime),
+                    'is_manually_edited' => true,
+                ]);
+            }
+        }
+        flash()->success('Manual attendance added successfully!');
+        return redirect()->route('admin.attendance.index');
+    }
 
     public function render()
     {
