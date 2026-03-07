@@ -5,6 +5,7 @@ use App\Models\Attendance;
 use App\Models\AttendancePolicy;
 use App\Models\Employee;
 use App\Models\Loan;
+use App\Models\LoanInstallment;
 use App\Models\Payroll;
 use App\Models\PayrollAdjustment;
 use Carbon\Carbon;
@@ -86,6 +87,14 @@ class PayrollService
                 $loanDeduction           = $loan->emi_amount ?? $loan->monthly_installment;
                 $loan->remaining_amount -= $loanDeduction;
                 $loan->save();
+
+                 LoanInstallment::create([
+                'loan_id' => $loan->id,
+                'year' => $year,
+                'month' => $month,
+                'amount' => $loanDeduction,
+                'is_paid' => 1,   // 1 for paid, 0 for pending
+            ]);
             }
 
             // Adjustments
