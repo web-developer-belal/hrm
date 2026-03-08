@@ -2,12 +2,14 @@
 namespace App\Livewire\Admin\Employees;
 
 use App\Http\Requests\StoreEmployeeRequest;
+use App\Mail\WelcomeEmployee;
 use App\Models\Branch;
 use App\Models\Department;
 use App\Models\Designation;
 use App\Models\Employee;
 use App\Models\SalaryTemplate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -75,10 +77,10 @@ class EmployeeAdd extends Component
     public function mount($emp = null)
     {
         $this->loadBranchOptions();
-
+        $this->password = rand(100000, 999999);
         if ($emp) {
-            $this->isEditMode               = true;
-            $emp                            = Employee::findOrFail($emp);
+            $this->isEditMode = true;
+            $emp              = Employee::findOrFail($emp);
 
             // dd($emp->toArray());
             $this->emp                      = $emp;
@@ -148,7 +150,7 @@ class EmployeeAdd extends Component
             ->toArray();
 
         // Ensure selected value is included
-        if ($this->department_id && !isset($options[$this->department_id])) {
+        if ($this->department_id && ! isset($options[$this->department_id])) {
             $selected = Department::find($this->department_id);
             if ($selected) {
                 $options[$this->department_id] = $selected->name;
@@ -160,11 +162,11 @@ class EmployeeAdd extends Component
 
     protected function loadDesignationOptions()
     {
-        if(!$this->department_id) {
+        if (! $this->department_id) {
             $this->designation_id_options = [];
             return;
         }
-        
+
         $options = Designation::query()
             ->where('status', 'active')
             ->where('department_id', $this->department_id)
@@ -176,7 +178,7 @@ class EmployeeAdd extends Component
             ->toArray();
 
         // Ensure selected value is included
-        if ($this->designation_id && !isset($options[$this->designation_id])) {
+        if ($this->designation_id && ! isset($options[$this->designation_id])) {
             $selected = Designation::find($this->designation_id);
             if ($selected) {
                 $options[$this->designation_id] = $selected->name;
@@ -196,8 +198,8 @@ class EmployeeAdd extends Component
 
     public function updatedBranchId()
     {
-        if (!$this->isInitializing) {
-            $this->department_id = null;
+        if (! $this->isInitializing) {
+            $this->department_id  = null;
             $this->designation_id = null;
         }
         $this->loadDepartmentOptions();
@@ -205,7 +207,7 @@ class EmployeeAdd extends Component
 
     public function updatedDepartmentId()
     {
-        if (!$this->isInitializing) {
+        if (! $this->isInitializing) {
             $this->designation_id = null;
         }
         $this->loadDesignationOptions();
@@ -216,12 +218,13 @@ class EmployeeAdd extends Component
     {
         $data             = $this->validate((new StoreEmployeeRequest)->rules(), (new StoreEmployeeRequest)->messages());
         $data['password'] = Hash::make($this->password);
-        
+
         if ($this->isEditMode) {
             $emp = Employee::findOrFail($this->employee_id);
             $emp->update($data);
         } else {
-            $emp                 = Employee::create($data);
+            $emp = Employee::create($data);
+
             $checkSalaryTemplate = SalaryTemplate::where('designation_id', $this->designation_id)->first();
             if ($checkSalaryTemplate) {
                 $emp->salaryData()->create([
@@ -238,6 +241,8 @@ class EmployeeAdd extends Component
                     'tax_deduction'            => $checkSalaryTemplate->tax_deduction,
                 ]);
             }
+            // send in queue
+            Mail::to($emp->email)->queue(new WelcomeEmployee($emp, $this->password));
         }
 
         $this->handleFileUploads($emp);

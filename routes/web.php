@@ -58,6 +58,8 @@ use App\Livewire\Auth\AdminLogin;
 use App\Livewire\Admin\SettingManagement;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\SalaryReportController;
+use App\Livewire\Admin\RolesPermission\Roles\ManageRoles;
+use App\Livewire\Admin\RolesPermission\Roles\RolesForm;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -104,123 +106,121 @@ Route::get('/download/{filePath}', [StorageFileDownloader::class, 'download'])
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::livewire('dashboard', Dashboard::class)
-        ->name('dashboard');
+        ->name('dashboard')->middleware('permission:dashboard.show');
 
     // Branch Management
     Route::prefix('branches')->name('branches.')->group(function () {
         Route::livewire('/', BranchManagement::class)
-            ->name('index');
+            ->name('index')->middleware('permission:branches.show');
         Route::livewire('/create', BranchForm::class)
-            ->name('create');
+            ->name('create')->middleware('permission:branches.create');
         Route::livewire('/edit/{branch}', BranchForm::class)
-            ->name('edit');
+            ->name('edit')->middleware('permission:branches.edit');
     });
 
     // Department Management
     Route::prefix('departments')->name('departments.')->group(function () {
         Route::livewire('/', DepartmentManagement::class)
-            ->name('index');
+            ->name('index')->middleware('permission:departments.show');
         Route::livewire('/create', DepartmentForm::class)
-            ->name('create');
+            ->name('create')->middleware('permission:departments.create');
         Route::livewire('/edit/{department}', DepartmentForm::class)
-            ->name('edit');
+            ->name('edit')->middleware('permission:departments.edit');
     });
 
     // Shift Management
     Route::prefix('shifts')->name('shifts.')->group(function () {
         Route::livewire('/', ShiftManagement::class)
-            ->name('index');
+            ->name('index')->middleware('permission:shifts.show');
         Route::livewire('/create', ShiftForm::class)
-            ->name('create');
+            ->name('create')->middleware('permission:shifts.create');
         Route::livewire('/edit/{shift}', ShiftForm::class)
-            ->name('edit');
+            ->name('edit')->middleware('permission:shifts.edit');
     });
 
     // Roster Management
     Route::prefix('rosters')->name('rosters.')->group(function () {
         Route::livewire('/', RosterManagement::class)
-            ->name('index');
+            ->name('index')->middleware('permission:rosters.show');
         Route::livewire('/create', RosterForm::class)
-            ->name('create');
+            ->name('create')->middleware('permission:rosters.create');
         Route::livewire('/edit/{roster}', RosterForm::class)
-            ->name('edit');
+            ->name('edit')->middleware('permission:rosters.edit');
     });
     // Designation Management
     Route::prefix('designations')->name('designations.')->group(function () {
         Route::livewire('/', DesignationManagement::class)
-            ->name('index');
+            ->name('index')->middleware('permission:designations.show');
         Route::livewire('/create', DesignationForm::class)
-            ->name('create');
+            ->name('create')->middleware('permission:designations.create');
         Route::livewire('/edit/{designation}', DesignationForm::class)
-            ->name('edit');
+            ->name('edit')->middleware('permission:designations.edit');
     });
 
     // Leave Management
     Route::prefix('leavemgt')->name('leavemgt.')->group(function () {
-        Route::livewire('/leave/typess', LeaveType::class)
-            ->name('leave.types');
+        Route::livewire('/leave/types', LeaveType::class)
+            ->name('leave.types')->middleware('permission:leave-types.show');
         Route::livewire('/leave/list', LeaveList::class)
-            ->name('leave.list');
+            ->name('leave.list')->middleware('permission:leave-list.show');
         Route::livewire('/leave/application', LeaveApplication::class)
-            ->name('leave.application');
+            ->name('leave.application')->middleware('permission:leave-application.show');
 
     });
 
     // Employee Management
     Route::prefix('employees')->name('employees.')->group(function () {
         Route::livewire('/', EmployeeList::class)
-            ->name('index');
+            ->name('index')->middleware('permission:employees.show');
         Route::livewire('/create', EmployeeAdd::class)
-            ->name('create');
+            ->name('create')->middleware('permission:employees.create');
         Route::livewire('/edit/{emp}', EmployeeAdd::class)
-            ->name('edit');
+            ->name('edit')->middleware('permission:employees.edit');
         Route::livewire('/details/{emp}', EmployeeDetails::class)
-            ->name('details');
+            ->name('details')->middleware('permission:employees.show');
         
     });
 
     // Attendance Management
     Route::prefix('attendance')->name('attendance.')->group(function () {
         Route::livewire('/', AttendanceList::class)
-            ->name('index');
-        Route::livewire('/add/mannual', AddManualAttendance::class)
-            ->name('add.mannual');
-        // Route::livewire('/edit/{emp}', AddManualAttendance::class)
-        //     ->name('edit');
+            ->name('index')->middleware('permission:attendance.show');
+        Route::livewire('/add/manual', AddManualAttendance::class)
+            ->name('add.manual')->middleware('permission:attendance.add');
     });
 
     // Attendance Management
     Route::prefix('transfer')->name('transfer.')->group(function () {
         Route::livewire('/', TransferList::class)
-            ->name('index');
+            ->name('index')->middleware('permission:transfer.show');
         Route::livewire('/new/transfer', TransferNew::class)
-            ->name('new');
+            ->name('new')->middleware('permission:transfer.create');
 
-        Route::livewire('/new/transfe/{transferid}', TransferNew::class)
-            ->name('edit');
+        Route::livewire('/new/transfer/{transferid}', TransferNew::class)
+            ->name('edit')->middleware('permission:transfer.edit');
 
     });
 
     // Payroll Adjustment Management
     Route::prefix('adjustment')->name('adjustment.')->group(function () {
         Route::livewire('/', AdjustmentAdditionDeduction::class)
-            ->name('index');
+            ->name('index')->middleware('permission:adjustment.show');
         Route::livewire('/adjustment/new', AdjustmentAdditionDeductionNew::class)
-            ->name('new');
+            ->name('new')->middleware('permission:adjustment.create');
 
         Route::livewire('/adjustment/edit/{adjustment}', AdjustmentAdditionDeductionNew::class)
-            ->name('edit');
+            ->name('edit')->middleware('permission:adjustment.edit');
 
     });
     // Loan Management
     Route::prefix('loan')->name('loan.')->group(function () {
         Route::livewire('/', LoanList::class)
-            ->name('index');
+            ->name('index')->middleware('permission:loan.show');
         Route::livewire('/create', LoanCreate::class)
-            ->name('new');
+            ->name('new')->middleware('permission:loan.create');
 
         Route::livewire('/adjustment/details/{loan}', LoanDetails::class)
-            ->name('show');
+            ->name('show')->middleware('permission:loan.show');
 
     });
     // Calendar Management
@@ -232,103 +232,112 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     // Payroll Engine
     Route::prefix('payroll')->name('payroll.')->group(function () {
         Route::livewire('/', PayrollEngine::class)
-            ->name('index');
+            ->name('index')->middleware('permission:payroll.show');
         Route::livewire('/payroll/list', PayrollList::class)
-            ->name('list');
+            ->name('list')->middleware('permission:payroll.list.show');
 
         Route::livewire('/payroll/export/{payrolls}', ExportPayRoll::class)
-            ->name('export');
+            ->name('export')->middleware('permission:payroll.export.show');
 
         Route::livewire('/adjustment/details/{loan}', LoanDetails::class)
-            ->name('show');
+            ->name('show')->middleware('permission:payroll.show');
         Route::livewire('/payslips', PaySlipManagement::class)
-            ->name('payslips');
+            ->name('payslips')->middleware('permission:payroll.show');
         Route::livewire('/payslips/{payslip}', PaySlipsDetails::class)
-            ->name('payslips.show');
+            ->name('payslips.show')->middleware('permission:payroll.show');
     });
     // Complaint Management
     Route::prefix('complain')->name('complain.')->group(function () {
         Route::livewire('/', ComplainList::class)
-            ->name('index');
+            ->name('index')->middleware('permission:complains.show');
         Route::livewire('/add', ComplainAdd::class)
-            ->name('new');
+            ->name('new')->middleware('permission:complains.add');
         Route::livewire('/complain/edit/{complainId}', ComplainAdd::class)
-            ->name('edit');
+            ->name('edit')->middleware('permission:complains.edit');
 
     });
     
     Route::prefix('notices')->name('notice.')->group(function () {
         Route::livewire('/', ManageNotice::class)
-            ->name('index');
+            ->name('index')->middleware('permission:notices.show');
         Route::livewire('/create', NoticeForm::class)
-            ->name('create');
+            ->name('create')->middleware('permission:notices.create');
 
         Route::livewire('/edit/{notice}', NoticeForm::class)
-            ->name('edit');
+            ->name('edit')->middleware('permission:notices.edit');
         Route::livewire('/details/{notice}', NoticeDetails::class)
-            ->name('show');
+            ->name('show')->middleware('permission:notices.show');
 
     });
     Route::prefix('expenses')->name('expenses.')->group(function () {
         Route::livewire('/type', ExpenseTypeManagement::class)
-            ->name('type');
+            ->name('type')->middleware('permission:expenses.type.show');
         Route::livewire('/management', ExpenseManagement::class)
-            ->name('index');
+            ->name('index')->middleware('permission:expenses.show');
         Route::livewire('/{expense}', ExpenseDetails::class)
-            ->name('show');
+            ->name('show')->middleware('permission:expenses.show');
     });
 
     // Holiday Management
     Route::prefix('holiday')->name('holiday.')->group(function () {
         Route::livewire('/', HolidayList::class)
-            ->name('index');
+            ->name('index')->middleware('permission:holiday.show');
         Route::livewire('/add/holiday', HolidayAdd::class)
-            ->name('add');
+            ->name('add')->middleware('permission:holiday.add');
 
     });
 
     // Attendance Policy Management
     Route::prefix('attendance-policy')->name('attendance-policy.')->group(function () {
         Route::livewire('/', AttendancePolicyList::class)
-            ->name('index');
+            ->name('index')->middleware('permission:attendance-policy.show');
         Route::livewire('/add', AttendancePolicyAdd::class)
-            ->name('add');
+            ->name('add')->middleware('permission:attendance-policy.add');
         Route::livewire('/attendance/edit/{policyID}', AttendancePolicyAdd::class)
-            ->name('edit');
+            ->name('edit')->middleware('permission:attendance-policy.edit');
     });
 
     // Reports
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::livewire('/attendance', AttendanceReport::class)
-            ->name('attendance');
+            ->name('attendance')->middleware('permission:reports.attendance.show');
         Route::livewire('/leave', LeaveReport::class)
-            ->name('leave');
+            ->name('leave')->middleware('permission:reports.leave.show');
         Route::livewire('/payslips', PayslipReport::class)
-            ->name('payslips');
+            ->name('payslips')->middleware('permission:reports.payslips.show');
         Route::livewire('/expense', ExpenseReport::class)
-            ->name('expense');
+            ->name('expense')->middleware('permission:reports.expense.show');
     });
 
     // Settings
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::livewire('/', SettingManagement::class)
-            ->name('index');
+            ->name('index')->middleware('permission:settings.show');
     });
 
     // Profile
     Route::livewire('/profile', ManageProfile::class)
-            ->name('profile');
+            ->name('profile')->middleware('permission:profile.show');
 
     // Roles and Permissions
    Route::livewire('/users',ManageUser::class)
-            ->name('users');
+            ->name('users')->middleware('permission:users.show');
    Route::livewire('/user/create',UserForm::class)
-            ->name('user.create');
+            ->name('user.create')->middleware('permission:users.create');
    Route::livewire('/user/edit/{user}',UserForm::class)
-            ->name('user.edit');
+            ->name('user.edit')->middleware('permission:users.edit');
+
+    Route::livewire('/roles', ManageRoles::class)
+            ->name('roles')->middleware('permission:roles.show');
+
+    Route::livewire('/role/create', RolesForm::class)
+            ->name('role.create')->middleware('permission:roles.create');
+    Route::livewire('/role/edit/{role}', RolesForm::class)
+            ->name('role.edit')->middleware('permission:roles.edit');
+            
     // Activity Log
     Route::livewire('/activity-log', ActivityLog::class)
-        ->name('activity-log');
+        ->name('activity-log')->middleware('permission:activity-log.show');
 
     Route::any('/mobile/get/data', [AdmsController::class,'receive'])->where('any', '.*');
     Route::any('/mobile/get/request', [AdmsController::class,'getRequest'])->where('any', '.*');

@@ -31,7 +31,7 @@ class ManageUser extends Component
     }
     public function render()
     {
-        $users = User::with('permissions')
+        $users = User::with('role.permissions')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('first_name', 'like', '%' . $this->search . '%')

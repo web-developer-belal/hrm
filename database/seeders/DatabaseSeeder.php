@@ -9,6 +9,7 @@ use App\Models\Employee;
 use App\Models\Leave;
 use App\Models\LeaveType;
 use App\Models\Notice;
+use App\Models\Role;
 use App\Models\Roster;
 use App\Models\RosterEmployee;
 use App\Models\RosterWorkingDay;
@@ -26,10 +27,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1️⃣ Admin User
-        $admin = User::factory()->admin()->active()->create([
-            'email' => 'admin@gmail.com',
+        // Create Admin Role
+        $adminRole = Role::create([
+            'name' => 'Admin',
+            'is_default' => true,
         ]);
+
+        // Create Admin User with role_id
+        $admin = User::factory()->active()->create([
+            'email' => 'admin@gmail.com',
+            'role_id' => $adminRole->id,
+        ]);
+
+        // Sync all permissions to admin role
+        $adminRole->syncPermissions(User::permissionNameArray());
 
         // 2️⃣ Branches
         $branches = Branch::factory()

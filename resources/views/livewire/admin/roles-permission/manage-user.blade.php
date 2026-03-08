@@ -1,4 +1,4 @@
-<div >
+<div>
     <!-- Breadcrumb -->
     <div class="md:flex block items-center justify-between page-breadcrumb mb-4">
         <div class="my-auto mb-2">
@@ -20,7 +20,7 @@
             </nav>
         </div>
         <div class="flex my-xl-auto right-content items-center flex-wrap gap-2">
-            
+
             <div class="mb-2">
                 <a href="{{ route('admin.user.create') }}"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
@@ -40,7 +40,7 @@
                 <div class="">
                     <x-form.input name="search" placeholder="Search here .." :live="true" />
                 </div>
-                
+
             </div>
         </div>
         <div class="card-body p-0">
@@ -48,12 +48,12 @@
                 <table class="table w-full border-b border-borderColor">
                     <thead class="thead-light">
                         <tr>
-                            
+
                             <th
                                 class="no-sort text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor hover:outline-none">
                                 SL
                             </th>
-                            
+
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Employee info</th>
 
@@ -61,7 +61,7 @@
                                 Role</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Permission</th>
-                            
+
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Status</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
@@ -73,11 +73,11 @@
                     <tbody class="bg-white divide-y divide-borderColor">
                         @foreach ($users as $user)
                             <tr class="even:bg-white dark:even-bg-white">
-                                
+
                                 <td class="px-5 py-2.5 text-gray-500">
                                     {{ $loop->iteration }}
                                 </td>
-                                
+
                                 <td class="px-5 py-2.5 text-gray-500 p-3">
                                     <div class="flex items-center file-name-icon">
                                         <a href="{{ route('admin.user.edit', ['user' => $user->id]) }}"
@@ -96,11 +96,20 @@
                                     </div>
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $user->role }}
+                                    <a class="text-red-500 hover:underline" href="{{ $user->role ? route('admin.role.edit', ['role' => $user->role_id]) : '#' }}">
+                                        {{ $user->role->name ?? '-' }}
+                                    </a>
                                 </td>
 
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {!! $user->role=='admin' ? 'All Permissions Granted' : $user->permissions->pluck('name')->join(', ') !!}
+                                    {!! $user->role?->name == 'admin'
+                                        ? 'All Permissions Granted'
+                                        : collect($user->role?->permissions->pluck('permission'))->map(fn($p) => str_replace(['_', '.'], ' ', ucfirst($p)))->take(3)->join(', ') .
+                                            (count($user->role?->permissions) > 3
+                                                ? ' <span class="text-xs badge bg-success text-white px-2 p-1 rounded">+ ' .
+                                                    (count($user->role?->permissions) - 3) .
+                                                    '</span>'
+                                                : '') !!}
                                 </td>
 
                                 <td class="px-5 py-2.5 text-gray-500">
@@ -119,10 +128,11 @@
                                         <a href="{{ route('admin.user.edit', ['user' => $user->id]) }}"
                                             class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-edit"></i></a>
-                                      
+
                                         <button wire:click="deleteUser({{ $user->id }})"
                                             class="size-[26px] flex items-center justify-center rounded-[5px] hover
-                                            <i class="ti ti-trash"></i>
+                                            <i class="ti
+                                            ti-trash"></i>
                                         </button>
                                     </div>
                                 </td>

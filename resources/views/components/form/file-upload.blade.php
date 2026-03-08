@@ -1,57 +1,48 @@
-<div
-    x-data="{
-        multiple: @js($multiple ?? false),
-        files: [],
-        existingFiles: Array.isArray(@js($oldFiles ?? [])) 
-            ? @js($oldFiles ?? []) 
-            : ((@js($oldFiles) && @js($oldFiles) !== null) ? [@js($oldFiles)] : []),
-        inputName: '{{ $name }}',
+<div x-data="{
+    multiple: @js($multiple ?? false),
+    files: [],
+    existingFiles: Array.isArray(@js($oldFiles ?? [])) ?
+        @js($oldFiles ?? []) :
+        ((@js($oldFiles) && @js($oldFiles) !== null) ? [@js($oldFiles)] : []),
+    inputName: '{{ $name }}',
 
-        handleFiles(event) {
-            const selected = Array.from(event.target.files);
+    handleFiles(event) {
+        const selected = Array.from(event.target.files);
 
-            if (!this.multiple) {
-                this.files = [];
-            }
-
-            selected.forEach(file => {
-                this.files.push(file);
-            });
-        },
-
-        removeFile(index) {
-            this.files.splice(index, 1);
-        },
-
-        removeExisting(index, path) {
-            this.existingFiles.splice(index, 1);
-
-            const methodName = this.inputName + 'RemoveFile';
-
-            if (typeof $wire[methodName] === 'function') {
-                $wire[methodName](path);
-            }
-        },
-
-        fileName(path) {
-            return path.split('/').pop();
+        if (!this.multiple) {
+            this.files = [];
         }
-    }"
-    class="bg-white border border-borderColor rounded-md p-3 mb-3"
->
+
+        selected.forEach(file => {
+            this.files.push(file);
+        });
+    },
+
+    removeFile(index) {
+        this.files.splice(index, 1);
+    },
+
+    removeExisting(index, path) {
+        this.existingFiles.splice(index, 1);
+
+        const methodName = this.inputName + 'RemoveFile';
+
+        if (typeof $wire[methodName] === 'function') {
+            $wire[methodName](path);
+        }
+    },
+
+    fileName(path) {
+        return path.split('/').pop();
+    }
+}" class="bg-white border border-borderColor rounded-md p-3 mb-3">
     <label class="text-xs font-medium text-gray-600 mb-1 block">
         {{ $label }}
     </label>
 
     <div class="flex items-center gap-2">
-        <input
-            type="file"
-            wire:model="{{ $name }}"
-            @change="handleFiles"
-            class="text-xs"
-            {{ $multiple ? 'multiple' : '' }}
-            {{ $accept ? 'accept='.$accept : '' }}
-        >
+        <input type="file" wire:model="{{ $name }}" @change="handleFiles" class="text-xs"
+            {{ $multiple ? 'multiple' : '' }} {{ $accept ? 'accept=' . $accept : '' }}>
 
         <span class="text-xs text-gray-400">
             {{ $multiple ? 'Multiple' : 'Single' }}
@@ -66,18 +57,12 @@
                     @if ($fullPreview)
                         <img :src="file" alt="Preview" class="w-10 h-10 object-cover rounded mr-2">
                     @else
-                    <a :href="file"
-                       target="_blank"
-                       class="text-primary truncate max-w-[150px]"
-                       x-text="fileName(file)">
-                    </a>
+                        <a :href="file" target="_blank" class="text-primary truncate max-w-[150px]"
+                            x-text="fileName(file)">
+                        </a>
                     @endif
 
-                    <button
-                        type="button"
-                        @click="removeExisting(index, file)"
-                        class="text-red-500"
-                    >
+                    <button type="button" @click="removeExisting(index, file)" class="text-red-500">
                         ✕
                     </button>
                 </div>
@@ -90,16 +75,10 @@
         <div class="mt-2 space-y-1">
             <template x-for="(file, index) in files" :key="index">
                 <div class="flex items-center justify-between text-xs bg-gray-100 px-2 py-1 rounded">
-                    @if ($fullPreview)
-                        <img :src="file.name" alt="Preview" class="w-10 h-auto object-cover rounded mr-2">
-                    @else
+
                     <span class="truncate max-w-[150px]" x-text="file.name"></span>
-                    @endif
-                    <button
-                        type="button"
-                        @click="removeFile(index)"
-                        class="text-red-500"
-                    >
+
+                    <button type="button" @click="removeFile(index)" class="text-red-500">
                         ✕
                     </button>
                 </div>

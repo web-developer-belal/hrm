@@ -41,34 +41,43 @@
             <div class="card-body p-5">
                 <form wire:submit.prevent="saveUser" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
-
                     <x-form.file-upload label="Photo" name="photo" :error="true" :oldFiles="$isEditMode && $user->photo ? [customAsset($user->photo)] : []"
                         :fullPreview="true" />
-
-
 
                     <x-form.input label="First Name" name="first_name" :isRequired="true" :error="true"
                         placeholder="Enter First Name" />
 
-
                     <x-form.input label="Last Name" name="last_name" :isRequired="false" :error="true"
                         placeholder="Enter Last Name" />
+                    
                     <x-form.input label="Contact No" name="phone_number" :isRequired="true" :error="true"
                         placeholder="Enter Contact No" />
+                    
                     <x-form.input label="Address" name="address" :isRequired="false" :error="true"
                         placeholder="Enter Address" />
+                    
                     <x-form.input label="Email address" name="email" :isRequired="true" type="email"
                         :error="true" placeholder="Enter email address" />
 
-                    <x-form.input label="Password" name="password" :isRequired="false" :error="true"
+                    <x-form.input label="Password" name="password" :isRequired="!$isEditMode" :error="true"
                         placeholder="Enter Password" type="password" />
 
-
-                    <x-form.select placeholder="Select Roles" label="Select Roles" name="role" :isRequired="true" :error="true" :options="[
-                            'admin' => 'Admin',
-                            'manager' => 'Manager',
-                            'hr' => 'HR',
-                        ]" />
+                    <!-- Role Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Select Role <span class="text-danger">*</span>
+                        </label>
+                        <select wire:model="role_id"
+                            class="form-control border border-borderColor rounded-[5px] px-3 py-2 text-sm w-full">
+                            <option value="">Select Role</option>
+                            @foreach ($roles as $role)
+                                <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('role_id')
+                            <p class="text-danger text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
                     <!-- Status -->
                     <x-form.select label="Status" name="status" :isRequired="true" :error="true"

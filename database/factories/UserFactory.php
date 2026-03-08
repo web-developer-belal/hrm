@@ -20,7 +20,6 @@ class UserFactory extends Factory
             'last_name'    => $this->faker->lastName(),
             'phone_number' => $this->faker->phoneNumber(),
             'address'      => $this->faker->address(),
-            'role'         => $this->faker->randomElement(['employee', 'admin', 'hr']),
             'email'        => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password'     => static::$password ??= Hash::make('1234'), 
@@ -44,17 +43,11 @@ class UserFactory extends Factory
         ]);
     }
 
-    public function employee(): static
-    {
-        return $this->state(fn () => [
-            'role' => 'employee',
-        ]);
-    }
-
     public function admin(): static
     {
-        return $this->state(fn () => [
-            'role' => 'admin',
+        return $this->role()->create([
+            'name' => 'admin',
+            'is_default' => true,
         ]);
     }
 }

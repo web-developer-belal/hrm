@@ -6,7 +6,7 @@
             <nav class="flex" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-2">
                     <li class="inline-flex items-center">
-                        <a href="index.html" class="inline-flex items-center text-xs text-gray-500 hover:text-primary">
+                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-xs text-gray-500 hover:text-primary">
                             <i class="ti ti-smart-home"></i>
                         </a>
                     </li>
@@ -21,36 +21,7 @@
                 </ol>
             </nav>
         </div>
-        <div class="flex my-xl-auto right-content items-center flex-wrap ">
-            <div class="me-2 mb-2">
-                <div>
-                    <a href="javascript:void(0);" class="border rounded p-2 bg-white inline-flex items-center"
-                        data-dropdown-toggle="export-dropdown">
-                        <i class="ti ti-file-export me-1"></i>Export<i class="ti ti-chevron-down ml-1"></i>
-                    </a>
-                    <ul id="export-dropdown" class="hidden p-4 border rounded bg-white shadow-lg">
-                        <li>
-                            <a href="javascript:void(0);"
-                                class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary"><i
-                                    class="ti ti-file-type-pdf me-1"></i>Export as PDF</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);"
-                                class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary"><i
-                                    class="ti ti-file-type-xls me-1"></i>Export as Excel </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="head-icons ml-2 mb-2">
-                <a href="javascript:void(0);"
-                    class="border flex items-center justify-center rounded bg-white w-9 h-9 hover:bg-primary hover:text-white hover:border-primary"
-                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Collapse"
-                    id="collapse-header">
-                    <i class="ti ti-chevrons-up"></i>
-                </a>
-            </div>
-        </div>
+        
     </div>
     <!-- /Breadcrumb -->
     <div class="grid grid-cols-1 xxl:grid-cols-12  gap-6 mb-6">
@@ -66,7 +37,7 @@
                             <div class="flex items-center justify-between mb-2">
                                 <div>
                                     <span class="fs-14 font-normal text-truncate mb-1">Total Expense</span>
-                                    <h5>$45,221</h5>
+                                    <h5>${{ number_format($stats['totalExpense']['amount'], 2) }}</h5>
                                 </div>
                                 <a href="#"
                                     class="size-8 rounded-full flex justify-center items-center bg-primary-transparent border border-primary">
@@ -74,9 +45,10 @@
                                 </a>
                             </div>
                             <p class="fs-12 font-normal flex items-center text-truncate">
-                                <span class="text-success fs-12 flex items-center me-1">
-                                    <i class="ti ti-arrow-wave-right-up me-1"></i>+20.01%
-                                </span> from last week
+                                <span class="text-{{ $stats['totalExpense']['percentage'] >= 0 ? 'success' : 'danger' }} fs-12 flex items-center me-1">
+                                    <i class="ti ti-arrow-wave-right-{{ $stats['totalExpense']['percentage'] >= 0 ? 'up' : 'down' }} me-1"></i>
+                                    {{ $stats['totalExpense']['percentage'] >= 0 ? '+' : '' }}{{ $stats['totalExpense']['percentage'] }}%
+                                </span> from last period
                             </p>
                         </div>
                     </div>
@@ -89,8 +61,8 @@
                         <div class="card-body p-5">
                             <div class="flex items-center justify-between mb-2">
                                 <div>
-                                    <span class="fs-14 font-normal text-truncate mb-1">Approved Expense</span>
-                                    <h5>$45,221</h5>
+                                    <span class="fs-14 font-normal text-truncate mb-1">Total Transactions</span>
+                                    <h5>{{ $stats['totalCount']['count'] }}</h5>
                                 </div>
                                 <a href="#"
                                     class="size-8 rounded-full flex justify-center items-center bg-success-transparent border border-success">
@@ -98,9 +70,10 @@
                                 </a>
                             </div>
                             <p class="fs-12 font-normal flex items-center text-truncate">
-                                <span class="text-success fs-12 flex items-center me-1">
-                                    <i class="ti ti-arrow-wave-right-up me-1"></i>+17.01%
-                                </span> from last week
+                                <span class="text-{{ $stats['totalCount']['percentage'] >= 0 ? 'success' : 'danger' }} fs-12 flex items-center me-1">
+                                    <i class="ti ti-arrow-wave-right-{{ $stats['totalCount']['percentage'] >= 0 ? 'up' : 'down' }} me-1"></i>
+                                    {{ $stats['totalCount']['percentage'] >= 0 ? '+' : '' }}{{ $stats['totalCount']['percentage'] }}%
+                                </span> from last period
                             </p>
                         </div>
                     </div>
@@ -113,8 +86,8 @@
                         <div class="card-body p-5">
                             <div class="flex items-center justify-between mb-2">
                                 <div>
-                                    <span class="fs-14 font-normal text-truncate mb-1">Net Pay</span>
-                                    <h5>$45,221,45</h5>
+                                    <span class="fs-14 font-normal text-truncate mb-1">Average Expense</span>
+                                    <h5>${{ number_format($stats['averageExpense']['amount'], 2) }}</h5>
                                 </div>
                                 <a href="#"
                                     class="size-8 rounded-full flex justify-center items-center bg-skyblue-transparent border border-skyblue">
@@ -122,9 +95,10 @@
                                 </a>
                             </div>
                             <p class="fs-12 font-normal flex items-center text-truncate">
-                                <span class="text-success fs-12 flex items-center me-1">
-                                    <i class="ti ti-arrow-wave-right-up me-1"></i>+10.13%
-                                </span> from last week
+                                <span class="text-{{ $stats['averageExpense']['percentage'] >= 0 ? 'success' : 'danger' }} fs-12 flex items-center me-1">
+                                    <i class="ti ti-arrow-wave-right-{{ $stats['averageExpense']['percentage'] >= 0 ? 'up' : 'down' }} me-1"></i>
+                                    {{ $stats['averageExpense']['percentage'] >= 0 ? '+' : '' }}{{ $stats['averageExpense']['percentage'] }}%
+                                </span> from last period
                             </p>
                         </div>
                     </div>
@@ -137,8 +111,8 @@
                         <div class="card-body p-5">
                             <div class="flex items-center justify-between mb-2">
                                 <div>
-                                    <span class="fs-14 font-normal text-truncate mb-1">Allowances</span>
-                                    <h5>$45,221,45</h5>
+                                    <span class="fs-14 font-normal text-truncate mb-1">Highest Expense</span>
+                                    <h5>${{ number_format($stats['highestExpense']['amount'], 2) }}</h5>
                                 </div>
                                 <a href="#"
                                     class="size-8 rounded-full flex justify-center items-center bg-danger-transparent border border-danger">
@@ -146,9 +120,10 @@
                                 </a>
                             </div>
                             <p class="fs-12 font-normal flex items-center text-truncate">
-                                <span class="text-danger fs-12 flex items-center me-1">
-                                    <i class="ti ti-arrow-wave-right-up me-1"></i>-10.17%
-                                </span> from last week
+                                <span class="text-{{ $stats['highestExpense']['percentage'] >= 0 ? 'danger' : 'success' }} fs-12 flex items-center me-1">
+                                    <i class="ti ti-arrow-wave-right-{{ $stats['highestExpense']['percentage'] >= 0 ? 'up' : 'down' }} me-1"></i>
+                                    {{ $stats['highestExpense']['percentage'] >= 0 ? '+' : '' }}{{ $stats['highestExpense']['percentage'] }}%
+                                </span> from last period
                             </p>
                         </div>
                     </div>
@@ -157,8 +132,78 @@
         </div>
         <!-- /Total Exponses -->
 
-        <!-- Total Exponses -->
-        <div class="xxl:col-span-6 flex">
+        <!-- Expense Chart -->
+        <div class="xxl:col-span-6 flex" 
+            x-data="{
+                chart: null,
+                chartData: @js($chartData),
+                
+                initChart() {
+                    const options = {
+                        series: [{
+                            name: 'Expense Amount',
+                            data: this.chartData.expenses
+                        }],
+                        chart: {
+                            height: 190,
+                            type: 'area',
+                            zoom: {
+                                enabled: false
+                            }
+                        },
+                        colors: ['#FF9F43'],
+                        dataLabels: {
+                            enabled: false
+                        },
+                        stroke: {
+                            curve: 'smooth'
+                        },
+                        title: {
+                            text: '',
+                            align: 'left'
+                        },
+                        xaxis: {
+                            categories: this.chartData.categories,
+                        },
+                        yaxis: {
+                            labels: {
+                                offsetX: -15,
+                                formatter: (val) => {
+                                    return '$' + val.toFixed(0)
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                            horizontalAlign: 'left'
+                        }
+                    };
+
+                    this.chart = new ApexCharts(document.querySelector('#my-expense-analysis'), options);
+                    this.chart.render();
+                },
+                
+                updateChart(event) {
+                    if (event.detail && event.detail.chartData) {
+                        this.chartData = event.detail.chartData;
+                        
+                        if (this.chart) {
+                            this.chart.updateOptions({
+                                xaxis: {
+                                    categories: this.chartData.categories
+                                }
+                            });
+                            
+                            this.chart.updateSeries([{
+                                name: 'Expense Amount',
+                                data: this.chartData.expenses
+                            }]);
+                        }
+                    }
+                }
+            }"
+            x-init="initChart()"
+            @update-chart.window="updateChart($event)">
             <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white flex-1 ">
                 <div class="card-header border-0 pb-0 pt-4 px-5">
                     <div class="flex flex-wrap justify-between items-center">
@@ -166,33 +211,15 @@
                             <span class="me-2"><i class="ti ti-chart-area-line text-danger"></i></span>
                             <h5>Expense </h5>
                         </div>
-                        <a href="javascript:void(0);"
-                            class="border rounded p-2 bg-white inline-flex items-center focus:bg-primary focus:border-primary focus:text-white"
-                            data-dropdown-toggle="chart-dropdown">
-                            This Year<i class="ti ti-chevron-down ml-1"></i>
-                        </a>
-                        <ul id="chart-dropdown" class="hidden p-4 border rounded bg-white shadow-lg w-40 z-[1]">
-                            <li>
-                                <a href="javascript:void(0);"
-                                    class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">2025</a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);"
-                                    class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">2024</a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);"
-                                    class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">2023</a>
-                            </li>
-                        </ul>
+                       
                     </div>
                 </div>
                 <div class="card-body py-0 px-5">
-                    <div id="expense-analysis"></div>
+                    <div id="my-expense-analysis"></div>
                 </div>
             </div>
         </div>
-        <!-- /Total Exponses -->
+        <!-- /Expense Chart -->
 
     </div>
     <!-- Expense List -->
@@ -200,7 +227,9 @@
         <div
             class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3">
             <h5>Expense List</h5>
-           
+            <div class="">
+                <x-form.date-range-picker :startDate="$startDate" :endDate="$endDate" />
+            </div>
         </div>
         <div class="card-body p-0">
             <div class="overflow-x-auto">

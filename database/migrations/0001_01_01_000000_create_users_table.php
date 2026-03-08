@@ -21,19 +21,10 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['admin', 'hr','manager'])->default('admin');
+            // $table->enum('role', ['admin', 'hr','manager','sub admin'])->default('admin');
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->rememberToken();
             $table->timestamps();
-        });
-
-        Schema::create('user_permissions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('permission');
-            $table->timestamps();
-            $table->unique(['user_id', 'permission']);
-            $table->index('permission');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

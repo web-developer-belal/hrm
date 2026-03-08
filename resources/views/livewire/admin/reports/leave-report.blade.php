@@ -6,7 +6,8 @@
             <nav class="flex" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-2">
                     <li class="inline-flex items-center">
-                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-xs text-gray-500 hover:text-primary">
+                        <a href="{{ route('admin.dashboard') }}"
+                            class="inline-flex items-center text-xs text-gray-500 hover:text-primary">
                             <i class="ti ti-smart-home"></i>
                         </a>
                     </li>
@@ -21,37 +22,7 @@
                 </ol>
             </nav>
         </div>
-        <div class="flex my-xl-auto right-content items-center flex-wrap ">
-            <div class="me-2 mb-2">
-                <div>
-                    <a href="javascript:void(0);" class="border rounded p-2 bg-white inline-flex items-center"
-                        data-dropdown-toggle="export-dropdown">
-                        <i class="ti ti-file-export me-1"></i>Export<i class="ti ti-chevron-down ml-1"></i>
-                    </a>
-                    <ul id="export-dropdown" class="hidden p-4 border rounded bg-white shadow-lg">
-                        <li>
-                            <a href="javascript:void(0);"
-                                class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary"><i
-                                    class="ti ti-file-type-pdf me-1"></i>Export as PDF</a>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0);"
-                                class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary"><i
-                                    class="ti ti-file-type-xls me-1"></i>Export as Excel </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="head-icons ml-2 mb-2">
-                <a href="javascript:void(0);"
-                    class="border flex items-center justify-center rounded bg-white w-9 h-9 hover:bg-primary hover:text-white hover:border-primary"
-                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Collapse"
-                    id="collapse-header">
-                    <i class="ti ti-chevrons-up"></i>
-                </a>
-            </div>
-        </div>
+        
     </div>
     <!-- /Breadcrumb -->
 
@@ -66,7 +37,7 @@
                             <div class="flex items-center justify-between mb-2 overflow-hidden">
                                 <div>
                                     <p class="text-[12px] font-normal mb-1 text-truncate">Total Leaves</p>
-                                    <h4>15</h4>
+                                    <h4>{{ $stats['totalLeaves']['count'] }}</h4>
                                 </div>
                                 <div class="leave-report-icon">
                                     <a href="#"><span
@@ -76,9 +47,11 @@
                             </div>
                             <div class="p-2 bg-gray-100 rounded">
                                 <div class="flex items-center justify-between">
-                                    <p class="text-[12px] font-normal mb-0">Last Month</p>
-                                    <span class="text-[12px] font-normal text-success flex items-center"><i
-                                            class="ti ti-arrow-wave-right-up text-success me-1"></i>+17.02%</span>
+                                    <p class="text-[12px] font-normal mb-0">Previous Period</p>
+                                    <span class="text-[12px] font-normal {{ $stats['totalLeaves']['percentage'] >= 0 ? 'text-success' : 'text-danger' }} flex items-center">
+                                        <i class="ti {{ $stats['totalLeaves']['percentage'] >= 0 ? 'ti-arrow-wave-right-up' : 'ti-arrow-wave-right-down' }} me-1"></i>
+                                        {{ number_format(abs($stats['totalLeaves']['percentage']), 2) }}%
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -90,7 +63,7 @@
                             <div class="flex items-center justify-between mb-2 overflow-hidden">
                                 <div>
                                     <p class="text-[12px] font-normal mb-1 text-truncate">Approved Leaves</p>
-                                    <h4>15</h4>
+                                    <h4>{{ $stats['approvedLeaves']['count'] }}</h4>
                                 </div>
                                 <div class="leave-report-icon">
                                     <a href="#"><span
@@ -100,9 +73,11 @@
                             </div>
                             <div class="p-2 bg-gray-100 rounded">
                                 <div class="flex items-center justify-between">
-                                    <p class="text-[12px] font-normal mb-0">Last Month</p>
-                                    <span class="text-[12px] font-normal text-success flex items-center"><i
-                                            class="ti ti-arrow-wave-right-up text-success me-1"></i>+17.02%</span>
+                                    <p class="text-[12px] font-normal mb-0">Previous Period</p>
+                                    <span class="text-[12px] font-normal {{ $stats['approvedLeaves']['percentage'] >= 0 ? 'text-success' : 'text-danger' }} flex items-center">
+                                        <i class="ti {{ $stats['approvedLeaves']['percentage'] >= 0 ? 'ti-arrow-wave-right-up' : 'ti-arrow-wave-right-down' }} me-1"></i>
+                                        {{ number_format(abs($stats['approvedLeaves']['percentage']), 2) }}%
+                                    </span>
                                 </div>
                             </div>
 
@@ -115,7 +90,7 @@
                             <div class="flex items-center justify-between mb-2 overflow-hidden">
                                 <div>
                                     <p class="text-[12px] font-normal mb-1 text-truncate">Pending Requests</p>
-                                    <h4>5</h4>
+                                    <h4>{{ $stats['pendingLeaves']['count'] }}</h4>
                                 </div>
                                 <div class="leave-report-icon">
                                     <a href="#"><span
@@ -125,9 +100,11 @@
                             </div>
                             <div class="p-2 bg-gray-100 rounded">
                                 <div class="flex items-center justify-between">
-                                    <p class="text-[12px] font-normal mb-0">Last Month</p>
-                                    <span class="text-[12px] font-normal text-success flex items-center"><i
-                                            class="ti ti-arrow-wave-right-up text-success me-1"></i>+17.02%</span>
+                                    <p class="text-[12px] font-normal mb-0">Previous Period</p>
+                                    <span class="text-[12px] font-normal {{ $stats['pendingLeaves']['percentage'] >= 0 ? 'text-success' : 'text-danger' }} flex items-center">
+                                        <i class="ti {{ $stats['pendingLeaves']['percentage'] >= 0 ? 'ti-arrow-wave-right-up' : 'ti-arrow-wave-right-down' }} me-1"></i>
+                                        {{ number_format(abs($stats['pendingLeaves']['percentage']), 2) }}%
+                                    </span>
                                 </div>
                             </div>
 
@@ -140,7 +117,7 @@
                             <div class="flex items-center justify-between mb-2 overflow-hidden">
                                 <div>
                                     <p class="text-[12px] font-normal mb-1 text-truncate">Rejected Leaves</p>
-                                    <h4>5</h4>
+                                    <h4>{{ $stats['rejectedLeaves']['count'] }}</h4>
                                 </div>
                                 <div class="leave-report-icon">
                                     <a href="#"><span
@@ -150,9 +127,11 @@
                             </div>
                             <div class="p-2 bg-gray-100 rounded">
                                 <div class="flex items-center justify-between">
-                                    <p class="text-[12px] font-normal mb-0">Last Month</p>
-                                    <span class="text-[12px] font-normal text-success flex items-center"><i
-                                            class="ti ti-arrow-wave-right-up text-success me-1"></i>+17.02%</span>
+                                    <p class="text-[12px] font-normal mb-0">Previous Period</p>
+                                    <span class="text-[12px] font-normal {{ $stats['rejectedLeaves']['percentage'] >= 0 ? 'text-success' : 'text-danger' }} flex items-center">
+                                        <i class="ti {{ $stats['rejectedLeaves']['percentage'] >= 0 ? 'ti-arrow-wave-right-up' : 'ti-arrow-wave-right-down' }} me-1"></i>
+                                        {{ number_format(abs($stats['rejectedLeaves']['percentage']), 2) }}%
+                                    </span>
                                 </div>
                             </div>
 
@@ -165,7 +144,61 @@
         <!-- /Total Exponses -->
 
         <!-- Total Exponses -->
-        <div class="xxl:col-span-6 flex">
+        <div class="xxl:col-span-6 flex" 
+            x-data="{
+                chart: null,
+                initChart() {
+                    const chartData = @js($chartData);
+                    const options = {
+                        series: chartData.series,
+                        chart: {
+                            type: 'bar',
+                            height: 210,
+                            stacked: true,
+                            stackType: '100%'
+                        },
+                        responsive: [{
+                            breakpoint: 480,
+                            options: {
+                                legend: {
+                                    position: 'bottom',
+                                    offsetX: -10,
+                                    offsetY: 0
+                                }
+                            }
+                        }],
+                        xaxis: {
+                            categories: chartData.categories
+                        },
+                        yaxis: {
+                            labels: {
+                                offsetX: -15,
+                            }
+                        },
+                        fill: {
+                            opacity: 1
+                        },
+                        legend: {
+                            show: false
+                        },
+                        colors: ['#03C95A', '#FFC107', '#0C4B5E', '#F26522'],
+                        dataLabels: {
+                            enabled: false
+                        }
+                    };
+                    this.chart = new ApexCharts(document.querySelector('#my-leave-report'), options);
+                    this.chart.render();
+                }
+            }"
+            x-init="initChart()"
+            @update-chart.window="
+                if (chart) {
+                    chart.updateOptions({
+                        xaxis: { categories: $event.detail.chartData.categories }
+                    });
+                    chart.updateSeries($event.detail.chartData.series);
+                }
+            ">
             <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white flex-1">
                 <div class="card-header border-0 pb-0 pt-4 px-5">
                     <div class="flex flex-wrap gap-y-2 justify-between items-center">
@@ -174,50 +207,19 @@
                             <h5>Leaves </h5>
                         </div>
                         <div class="flex items-center">
-                            <p class="inline-flex items-center me-2 mb-0">
-                                <i class="ti ti-square-filled text-[12px] text-success me-2"></i>
-                                Annual
-                            </p>
-                            <p class="inline-flex items-center me-2 mb-0">
-                                <i class="ti ti-square-filled text-[12px] text-warning me-2"></i>
-                                Casual
-                            </p>
-                            <p class="inline-flex items-center me-2 mb-0">
-                                <i class="ti ti-square-filled text-[12px] text-dark me-2"></i>
-                                Medical
-                            </p>
-                            <p class="inline-flex items-center mb-0 me-2">
-                                <i class="ti ti-square-filled text-[12px] text-primary me-2"></i>
-                                Others
-                            </p>
+                            @foreach($chartData['series'] as $index => $series)
+                                <p class="inline-flex items-center me-2 mb-0">
+                                    <i class="ti ti-square-filled text-[12px] me-2" 
+                                       style="color: {{ ['#03C95A', '#FFC107', '#0C4B5E', '#F26522'][$index] ?? '#000' }}"></i>
+                                    {{ $series['name'] }}
+                                </p>
+                            @endforeach
                         </div>
-                        <a href="javascript:void(0);"
-                            class="border rounded p-2 bg-white inline-flex items-center focus:bg-primary focus:border-primary focus:text-white"
-                            data-dropdown-toggle="chart-dropdown">
-                            This Year<i class="ti ti-chevron-down ml-1"></i>
-                        </a>
-                        <ul id="chart-dropdown" class="hidden p-4 border rounded bg-white shadow-lg w-40 z-[1]">
-                            <li>
-                                <a href="javascript:void(0);"
-                                    class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">2025</a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);"
-                                    class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">2024</a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0);"
-                                    class="rounded p-2 flex items-center hover:bg-primary-transparent hover:text-primary">2023</a>
-                            </li>
-                        </ul>
                     </div>
                 </div>
 
-                <div class="card-body  px-5 pt-0">
-                    <div id="leave-report" class="flex-fill"></div>
-
-
-
+                <div class="card-body px-5 pt-0">
+                    <div id="my-leave-report" class="flex-fill"></div>
                 </div>
             </div>
         </div>
@@ -228,7 +230,9 @@
         <div
             class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3">
             <h5>Leave List</h5>
-
+            <div class="">
+                <x-form.date-range-picker :startDate="$startDate" :endDate="$endDate" />
+            </div>
         </div>
         <div class="card-body p-0">
             <div class="overflow-x-auto">

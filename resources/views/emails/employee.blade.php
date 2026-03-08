@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Employee Login Credentials</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Welcome {{ $employee->first_name }} to the company</title>
 </head>
 <body style="margin: 10px; padding: 10px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7fa;">
     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f7fa; padding: 40px 20px;">
@@ -18,8 +17,8 @@
                             <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                 <tr>
                                     <td align="center">
-                                        <img src="{{ asset('images/logo-white.png') }}" alt="{{ $companyName ?? 'Company Logo' }}" style="width: 60px; height: auto; margin-bottom: 15px;" onerror="this.style.display='none'">
-                                        <h1 style="color: #ffffff; font-size: 28px; font-weight: 600; margin: 10px 0 5px; line-height: 1.3;">Welcome to {{ $companyName ?? 'Our Company' }}</h1>
+                                        <img src="{{ asset(customAsset(settingData('company_logo_path'))) }}" alt="{{ settingData('company_name') ?? 'Company Logo' }}" style="width: 60px; height: auto; margin-bottom: 15px;" onerror="this.style.display='none'">
+                                        <h1 style="color: #ffffff; font-size: 28px; font-weight: 600; margin: 10px 0 5px; line-height: 1.3;">Welcome to {{ settingData('company_name') ?? 'Our Company' }}</h1>
                                         <p style="color: #e0e7ff; font-size: 16px; margin: 0;">Your Employee Account Has Been Created</p>
                                     </td>
                                 </tr>
@@ -34,7 +33,7 @@
                                 <!-- Greeting -->
                                 <tr>
                                     <td style="padding-bottom: 25px;">
-                                        <p style="color: #374151; font-size: 18px; font-weight: 500; margin: 0;">Dear {{ $employeeName ?? 'Employee' }},</p>
+                                        <p style="color: #374151; font-size: 18px; font-weight: 500; margin: 0;">Dear {{ $employee->first_name }},</p>
                                     </td>
                                 </tr>
 
@@ -71,7 +70,7 @@
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
                                                                         <td width="40%" style="color: #64748b; font-size: 15px;">Employee ID:</td>
-                                                                        <td width="60%" style="color: #0f172a; font-weight: 600; font-size: 16px;">{{ $employeeId ?? 'EMP-'.date('Y').rand(1000,9999) }}</td>
+                                                                        <td width="60%" style="color: #0f172a; font-weight: 600; font-size: 16px;">{{ $employee->employee_code }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </td>
@@ -82,8 +81,8 @@
                                                             <td style="padding: 12px 0; border-bottom: 1px dashed #e2e8f0;">
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
-                                                                        <td width="40%" style="color: #64748b; font-size: 15px;">Username:</td>
-                                                                        <td width="60%" style="color: #0f172a; font-weight: 600; font-size: 16px; font-family: monospace;">{{ $username ?? strtolower(str_replace(' ', '.', $employeeName)).'@company.com' }}</td>
+                                                                        <td width="40%" style="color: #64748b; font-size: 15px;">Email:</td>
+                                                                        <td width="60%" style="color: #0f172a; font-weight: 600; font-size: 16px; font-family: monospace;">{{ $employee->email }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </td>
@@ -95,7 +94,7 @@
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
                                                                         <td width="40%" style="color: #64748b; font-size: 15px;">Temporary Password:</td>
-                                                                        <td width="60%" style="color: #0f172a; font-weight: 600; font-size: 16px; font-family: monospace; letter-spacing: 1px;">{{ $temporaryPassword ?? 'Temp@'.rand(1000,9999) }}</td>
+                                                                        <td width="60%" style="color: #0f172a; font-weight: 600; font-size: 16px; font-family: monospace; letter-spacing: 1px;">{{ $password }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </td>
@@ -127,7 +126,7 @@
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
                                                                         <td width="40%" style="color: #64748b; font-size: 15px;">Department:</td>
-                                                                        <td width="60%" style="color: #0f172a; font-weight: 500; font-size: 15px;">{{ $department ?? 'Information Technology' }}</td>
+                                                                        <td width="60%" style="color: #0f172a; font-weight: 500; font-size: 15px;">{{ $employee->department?->name }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </td>
@@ -139,7 +138,7 @@
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
                                                                         <td width="40%" style="color: #64748b; font-size: 15px;">Position:</td>
-                                                                        <td width="60%" style="color: #0f172a; font-weight: 500; font-size: 15px;">{{ $position ?? 'Software Developer' }}</td>
+                                                                        <td width="60%" style="color: #0f172a; font-weight: 500; font-size: 15px;">{{ $employee->designation?->name }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </td>
@@ -151,7 +150,7 @@
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
                                                                         <td width="40%" style="color: #64748b; font-size: 15px;">Joining Date:</td>
-                                                                        <td width="60%" style="color: #0f172a; font-weight: 500; font-size: 15px;">{{ $joiningDate ?? date('F d, Y') }}</td>
+                                                                        <td width="60%" style="color: #0f172a; font-weight: 500; font-size: 15px;">{{ $employee->joining_date?->format('F d, Y') }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </td>
@@ -163,7 +162,7 @@
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
                                                                         <td width="40%" style="color: #64748b; font-size: 15px;">Employment Type:</td>
-                                                                        <td width="60%" style="color: #0f172a; font-weight: 500; font-size: 15px;">{{ $employmentType ?? 'Full-Time' }}</td>
+                                                                        <td width="60%" style="color: #0f172a; font-weight: 500; font-size: 15px;">{{ $employee->employment_type ?? 'Full-Time' }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </td>
@@ -218,7 +217,7 @@
                                         <table cellpadding="0" cellspacing="0" border="0">
                                             <tr>
                                                 <td style="background-color: #2563eb; border-radius: 6px;">
-                                                    <a href="{{ $loginUrl ?? '#' }}" style="display: inline-block; padding: 14px 35px; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 6px;">Access Employee Portal</a>
+                                                    <a href="{{ route('login') }}" style="display: inline-block; padding: 14px 35px; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 6px;">Access Employee Portal</a>
                                                 </td>
                                             </tr>
                                         </table>
@@ -232,8 +231,8 @@
                                             <tr>
                                                 <td style="padding: 15px;">
                                                     <p style="color: #475569; font-size: 14px; margin: 0; line-height: 1.6;">
-                                                        <strong>Portal URL:</strong> <a href="{{ $loginUrl ?? '#' }}" style="color: #2563eb; text-decoration: none;">{{ $loginUrl ?? 'https://portal.company.com/login' }}</a><br>
-                                                        <strong>Help Desk:</strong> {{ $helpDeskEmail ?? 'support@company.com' }} | {{ $helpDeskPhone ?? '+1 (555) 123-4567' }}<br>
+                                                        <strong>Portal URL:</strong> <a href="{{ route('login') }}" style="color: #2563eb; text-decoration: none;">{{ route('login') }}</a><br>
+                                                        <strong>Help Desk:</strong> {{ settingData('email_address') ?? 'support@company.com' }} | {{ settingData('phone_number') }}<br>
                                                         <strong>IT Support Hours:</strong> Monday - Friday, 9:00 AM - 6:00 PM
                                                     </p>
                                                 </td>
@@ -249,8 +248,8 @@
                                         <p style="color: #1e293b; font-size: 16px; font-weight: 600; margin: 0 0 3px 0;">HR Department</p>
                                         <p style="color: #64748b; font-size: 14px; margin: 0;">Human Resources Team</p>
                                         <p style="color: #2563eb; font-size: 14px; margin: 5px 0 0 0;">
-                                            <a href="mailto:{{ $companyEmail ?? 'hr@company.com' }}" style="color: #2563eb; text-decoration: none;">{{ $companyEmail ?? 'hr@company.com' }}</a> |
-                                            <a href="#" style="color: #2563eb; text-decoration: none;">Employee Portal</a>
+                                            <a href="mailto:{{ settingData('email_address') ?? 'hr@company.com' }}" style="color: #2563eb; text-decoration: none;">{{ settingData('email_address') ?? 'hr@company.com' }}</a> |
+                                            <a href="{{ route('login') }}" style="color: #2563eb; text-decoration: none;">Employee Portal</a>
                                         </p>
                                     </td>
                                 </tr>
@@ -266,7 +265,7 @@
                                     <td align="center" style="padding-bottom: 15px;">
                                         <p style="color: #64748b; font-size: 14px; margin: 0; line-height: 1.5;">
                                             This email contains confidential information. If you received this by mistake,<br>
-                                            please contact {{ $companyEmail ?? 'hr@company.com' }} immediately and delete this email.
+                                            please contact {{ settingData('email_address') ?? 'hr@company.com' }} immediately and delete this email.
                                         </p>
                                     </td>
                                 </tr>
@@ -292,8 +291,8 @@
                                 <tr>
                                     <td align="center" style="padding-top: 15px;">
                                         <p style="color: #94a3b8; font-size: 12px; margin: 0;">
-                                            &copy; {{ date('Y') }} {{ $companyName ?? 'Your Company Name' }}. All rights reserved.<br>
-                                            {{ $companyAddress ?? '123 Business Avenue, Suite 100, City, State 12345' }}
+                                            &copy; {{ date('Y') }} {{ settingData('company_name') ?? 'Your Company Name' }}. All rights reserved.<br>
+                                            {{ settingData('company_address') ?? '123 Business Avenue, Suite 100, City, State 12345' }}
                                         </p>
                                     </td>
                                 </tr>

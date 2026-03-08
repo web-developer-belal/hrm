@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use Illuminate\Http\Request;
 
 class EmailController extends Controller
@@ -128,31 +129,9 @@ class EmailController extends Controller
 
     public function employeeCredentialsEmail()
     {
-        $data = [
-            // Company Information
-            'companyName' => 'ABC Corporation',
-            'companyEmail' => 'hr@abccorporation.com',
-            'companyAddress' => '123 Business Avenue, Suite 100, New York, NY 10001',
+       $employee=Employee::first();
 
-            // Employee Information
-            'employeeName' => 'Michael Johnson',
-            'employeeId' => 'EMP-2026-0789',
-            'department' => 'Information Technology',
-            'position' => 'Senior Software Developer',
-            'joiningDate' => 'March 15, 2026',
-            'employmentType' => 'Full-Time',
-
-            // Login Credentials
-            'username' => 'michael.johnson@abccorporation.com',
-            'temporaryPassword' => 'Temp@7890',
-
-            // Login Details
-            'loginUrl' => 'https://portal.abccorporation.com/login',
-            'helpDeskEmail' => 'itsupport@abccorporation.com',
-            'helpDeskPhone' => '+1 (555) 987-6543',
-        ];
-
-        return view('emails.employee', $data);
+        return view('emails.employee', compact('employee'));
     }
 
     public function sendEmployeeCredentialsEmail(Request $request)
