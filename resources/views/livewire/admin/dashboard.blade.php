@@ -34,10 +34,10 @@
     <!-- /Breadcrumb -->
 
 
-    <div class="grid grid-cols-1 xxl:grid-cols-12  gap-x-6">
+    <div class="">
 
         <!-- Widget Info -->
-        <div class="xxl:col-span-8 flex">
+        <div class="flex">
             <div class="grid grid-cols-1 md:grid-cols-12 w-full gap-x-6">
                 <div class="md:col-span-3 flex mb-6">
                     <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white flex-1">

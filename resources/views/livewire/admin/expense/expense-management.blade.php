@@ -21,7 +21,12 @@
         </div>
         <div class="flex my-xl-auto right-content items-center flex-wrap gap-2">
             <div class="mb-2">
-                <button @click="modalOpen = true; $wire.resetForm()" class="btn btn-primary">Add Expense </button>
+                <a href="{{ route('admin.expenses.type') }}"
+                    class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">Expense Type</a>
+            </div>
+            <div class="mb-2">
+                <button @click="modalOpen = true; $wire.resetForm()" class="btn btn-primary"><i
+                        class="ti ti-circle-plus me-2"></i> Add Expense </button>
             </div>
 
         </div>
@@ -62,6 +67,8 @@
                                     <button wire:click="deleteExpense({{ $exp->id }})"
                                         onclick="confirm('Are you sure?') || event.stopImmediatePropagation()"
                                         class="btn btn-danger btn-sm">Delete</button>
+                                    <a href="{{ route('admin.expenses.show', $exp->id) }}"
+                                        class="btn btn-info btn-sm">Details</a>
                                 </td>
                             </tr>
                         @endforeach
@@ -79,16 +86,16 @@
             <h3 class="text-lg font-semibold mb-4">{{ $isEditMode ? 'Edit Expense' : 'Add Expense' }}</h3>
             <div class="space-y-2">
 
-                <x-form.select label="Select Branch" name="branch_id" :isRequired="true" :live="true"
-                    :search="true" :options="$branch_id_options" placeholder="Select Branch" />
-
                 <x-form.select label="Select Expense Type" name="expense_type_id" :isRequired="true" :options="$types"
-                    placeholder="Select Expense Type" />
+                    placeholder="Select Expense Type" :live="true" />
 
                 <x-form.input label="Expense Name" name="name" :isRequired="true" placeholder="Enter Expense Name" />
 
                 <x-form.input label="Amount" name="amount" :isRequired="true" type="number"
                     placeholder="Enter Amount" />
+
+                <x-form.textarea label="Note/Add Comment" name="note" :isRequired="false" type="text"
+                    placeholder="Note/Comment" />
 
                 <x-form.input label="Date" name="date" :isRequired="true" type="date"
                     placeholder="Select Date" />

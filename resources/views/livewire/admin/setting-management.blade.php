@@ -276,6 +276,10 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
+                                    <x-form.select label="Select branch" name="branch_id" :isRequired="true"
+                                        :error="true" :options="$branch_id_options" placeholder="Select Branch" :search="true" />
+                                </div>
+                                <div>
                                     <x-form.input label="Device Name" name="name" :isRequired="true"
                                         :error="true" placeholder="Enter Device Name" />
                                 </div>
@@ -324,6 +328,9 @@
                                     </th>
                                     <th
                                         class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                        Branch</th>
+                                    <th
+                                        class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                         Name</th>
                                     <th
                                         class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
@@ -347,6 +354,7 @@
                                         <td class="px-5 py-2.5 text-gray-500">
                                             {{ $loop->iteration }}
                                         </td>
+                                        <td class="px-5 py-2.5 text-gray-900">{{ $device->branch->name ?? '' }}</td>
                                         <td class="px-5 py-2.5 text-gray-900">{{ $device->name }}</td>
                                         <td class="px-5 py-2.5 text-gray-900">{{ $device->ip_address }}</td>
                                         <td class="px-5 py-2.5 text-gray-900">{{ $device->port }}</td>
@@ -392,6 +400,9 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        <div class="mt-2">
+                            {{ $devices->links() }}
+                        </div>
                     </div>
                 </div>
 

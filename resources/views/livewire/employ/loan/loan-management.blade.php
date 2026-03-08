@@ -22,7 +22,7 @@
             <div class="mb-2">
                 <a href="{{ route('employee.loan.create') }}"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">
-                    <i class="ti ti-circle-plus me-2"></i>New Loan
+                    <i class="ti ti-circle-plus me-2"></i>Apply Loan
                 </a>
             </div>
         </div>

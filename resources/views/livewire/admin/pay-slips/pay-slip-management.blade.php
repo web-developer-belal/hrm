@@ -92,7 +92,7 @@
                                     {{ $pay->branch->name ?? $pay->employee->branch->name }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $pay->year }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {{ \Carbon\Carbon::create()->month($pay->month)->format('F') }}</td>
+                                    {{ \Carbon\Carbon::create()->month((int)$pay->month)->format('F') }}</td>
 
                                 <td class="px-5 py-2.5">
                                     <a href="{{ route('admin.payroll.payslips.show', ['payslip' => $pay->id]) }}"

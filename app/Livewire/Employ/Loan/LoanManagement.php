@@ -19,8 +19,6 @@ class LoanManagement extends Component
     public function mount()
     {
         $this->employee = Auth::guard('employee')->user();
-
-        // Set dates to null for "All" (no filter)
         $this->startDate = null;
         $this->endDate = null;
     }

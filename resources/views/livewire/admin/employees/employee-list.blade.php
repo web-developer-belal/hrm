@@ -1,4 +1,14 @@
-<div>
+<div x-data="{
+    selectedEmployees: @entangle('selectedEmployees'),
+    selectAll: false,
+    toggleAll() {
+        if (this.selectAll) {
+            this.selectedEmployees = @json($employees->pluck('id')->toArray());
+        } else {
+            this.selectedEmployees = [];
+        }
+    }
+}">
     <!-- Breadcrumb -->
     <div class="md:flex block items-center justify-between page-breadcrumb mb-4">
         <div class="my-auto mb-2">
@@ -19,8 +29,13 @@
                 </ol>
             </nav>
         </div>
-        <div class="flex my-xl-auto right-content items-center flex-wrap ">
-
+        <div class="flex my-xl-auto right-content items-center flex-wrap gap-2">
+            <div class="mb-2" x-show="selectedEmployees.length > 0" x-cloak>
+                <button wire:click="exportEmployees" type="button"
+                    class="flex items-center bg-success text-sm font-medium py-2 rounded text-white px-3 hover:bg-success-900 hover:text-white">
+                    <i class="ti ti-file-export me-2"></i>Export Selected (<span x-text="selectedEmployees.length"></span>)
+                </button>
+            </div>
             <div class="mb-2">
                 <a href="{{ route('admin.employees.create') }}"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
@@ -56,12 +71,17 @@
                         <tr>
                             <th
                                 class="no-sort text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor hover:outline-none">
+                                <input type="checkbox" x-model="selectAll" @change="toggleAll()"
+                                    class="rounded border-gray-300 text-primary focus:ring-primary">
+                            </th>
+                            <th
+                                class="no-sort text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor hover:outline-none">
                                 SL
                             </th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Emp ID</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Name</th>
+                                Employee info</th>
 
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Branch</th>
@@ -80,6 +100,10 @@
                     <tbody class="bg-white divide-y divide-borderColor">
                         @foreach ($employees as $emp)
                             <tr class="even:bg-white dark:even-bg-white">
+                                <td class="px-5 py-2.5 text-gray-500">
+                                    <input type="checkbox" value="{{ $emp->id }}" x-model="selectedEmployees"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                </td>
                                 <td class="px-5 py-2.5 text-gray-500">
                                     {{ $loop->iteration }}
                                 </td>

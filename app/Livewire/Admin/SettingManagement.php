@@ -2,6 +2,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\AttendanceLog;
+use App\Models\Branch;
 use App\Models\Device;
 use App\Models\DeviceSyncHistories;
 use App\Models\Setting;
@@ -56,12 +57,29 @@ class SettingManagement extends Component
     public $port;
     public $status;
     public $device_id;
+    public $branch_id;
+
+    public $branch_id_options = [];
+    public $branch_id_search;
+
 
     public function mount(): void
     {
+        $this->branch_id_options = $this->loadBranch();
         $this->loadSettingsFromDatabase();
         $this->loadEnvSettings();
         $this->cacheSize = $this->getCurrentCacheSize();
+    }
+
+    public function loadBranch(){
+        return Branch::when($this->branch_id_search, function ($query) {
+            $query->where('name', 'like', '%' . $this->branch_id_search . '%');
+        })->where('status','active')->take(6)->pluck('name','id')->toArray();
+    }
+
+    public function updatedBranchIdSearch()
+    {
+        $this->branch_id_options = $this->loadBranch();
     }
 
     private function loadSettingsFromDatabase(): void
@@ -125,7 +143,7 @@ class SettingManagement extends Component
             }
 
             $storedLogo              = storeImage($this->company_logo, 'uploads/settings');
-            $this->company_logo_path = 'storage/' . $storedLogo;
+            $this->company_logo_path = $storedLogo;
             $this->company_logo      = null;
         }
 
@@ -135,7 +153,7 @@ class SettingManagement extends Component
             }
 
             $storedFavicon      = storeImage($this->favicon, 'uploads/settings');
-            $this->favicon_path = 'storage/' . $storedFavicon;
+            $this->favicon_path = $storedFavicon;
             $this->favicon      = null;
         }
 
@@ -223,6 +241,7 @@ class SettingManagement extends Component
             'ip_address' => ['required', 'ip'],
             'port'       => ['nullable', 'numeric'],
             'status'     => ['required', 'in:0,1'],
+            'branch_id'  => ['required', 'exists:branches,id'],
         ]);
 
         if ($this->device_id) {
@@ -234,7 +253,7 @@ class SettingManagement extends Component
             session()->flash('success', 'Device created successfully.');
         }
 
-        $this->reset(['name', 'ip_address', 'port', 'status', 'device_id']);
+        $this->reset(['name', 'ip_address', 'port', 'status', 'device_id', 'branch_id']);
         $this->dispatch('deviceFormClose');
     }
 
@@ -248,9 +267,10 @@ class SettingManagement extends Component
                 $this->ip_address = $device->ip_address;
                 $this->port       = $device->port;
                 $this->status     = $device->status;
+                $this->branch_id  = $device->branch_id;
             }
         } else {
-            $this->reset(['name', 'ip_address', 'port', 'status', 'device_id']);
+            $this->reset(['name', 'ip_address', 'port', 'status', 'device_id', 'branch_id']);
         }
         $this->dispatch('deviceFormOpen');
     }
@@ -401,7 +421,7 @@ class SettingManagement extends Component
     public function render()
     {
         $syncHistory = DeviceSyncHistories::with('device')->latest()->paginate(10, ['*'], 'sync_page');
-        $devices = Device::latest()->get();
+        $devices = Device::latest()->paginate(10, ['*'], 'device_page');
         return view('livewire.admin.setting-management', [
             'syncHistory' => $syncHistory,
             'devices' => $devices,

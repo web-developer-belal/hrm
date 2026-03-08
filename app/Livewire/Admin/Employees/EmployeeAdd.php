@@ -19,6 +19,7 @@ class EmployeeAdd extends Component
     public $isEditMode = false;
     public $emp;
     public $employee_id;
+    public $isInitializing = true;
 
     // Form fields
     public $first_name;
@@ -46,6 +47,7 @@ class EmployeeAdd extends Component
     public $bank_notes;
     public $status = 0;
     public $email;
+    public $mfs_account;
 
     public $password = '123456';
 
@@ -73,12 +75,12 @@ class EmployeeAdd extends Component
     public function mount($emp = null)
     {
         $this->loadBranchOptions();
-        $this->loadDepartmentOptions();
-        $this->loadDesignationOptions();
 
         if ($emp) {
             $this->isEditMode               = true;
             $emp                            = Employee::findOrFail($emp);
+
+            // dd($emp->toArray());
             $this->emp                      = $emp;
             $this->employee_id              = $emp->id;
             $this->first_name               = $emp->first_name;
@@ -106,49 +108,82 @@ class EmployeeAdd extends Component
             $this->bank_notes               = $emp->bank_notes;
             $this->oldPhoto                 = $emp->photo;
             $this->status                   = $emp->status;
+            $this->email                    = $emp->email;
+            $this->mfs_account              = $emp->mfs_account;
+            $this->loadDepartmentOptions();
+            $this->loadDesignationOptions();
         }
+
+        $this->isInitializing = false;
     }
 
     // Searchable dropdown loaders
     protected function loadBranchOptions()
     {
         $this->branch_id_options = Branch::query()
+            ->whereHas('departments')
             ->where('status', 'active')
             ->when($this->branch_id_search, fn($q) =>
                 $q->where('name', 'like', "%{$this->branch_id_search}%")
             )
-            ->limit(10)
+            ->limit(5)
             ->pluck('name', 'id')
             ->toArray();
     }
 
     protected function loadDepartmentOptions()
     {
-        $query = Department::query()->where('status', 'active');
+        $query = Department::query()->whereHas('branch')->where('status', 'active');
 
         if ($this->branch_id) {
             $query->where('branch_id', $this->branch_id);
         }
 
-        $this->department_id_options = $query
+        $options = $query
             ->when($this->department_id_search, fn($q) =>
                 $q->where('name', 'like', "%{$this->department_id_search}%")
             )
-            ->limit(10)
+            ->limit(5)
             ->pluck('name', 'id')
             ->toArray();
+
+        // Ensure selected value is included
+        if ($this->department_id && !isset($options[$this->department_id])) {
+            $selected = Department::find($this->department_id);
+            if ($selected) {
+                $options[$this->department_id] = $selected->name;
+            }
+        }
+
+        $this->department_id_options = $options;
     }
 
     protected function loadDesignationOptions()
     {
-        $this->designation_id_options = Designation::query()
+        if(!$this->department_id) {
+            $this->designation_id_options = [];
+            return;
+        }
+        
+        $options = Designation::query()
             ->where('status', 'active')
+            ->where('department_id', $this->department_id)
             ->when($this->designation_id_search, fn($q) =>
                 $q->where('name', 'like', "%{$this->designation_id_search}%")
             )
-            ->limit(10)
+            ->limit(5)
             ->pluck('name', 'id')
             ->toArray();
+
+        // Ensure selected value is included
+        if ($this->designation_id && !isset($options[$this->designation_id])) {
+            $selected = Designation::find($this->designation_id);
+            if ($selected) {
+                $options[$this->designation_id] = $selected->name;
+            }
+        }
+
+        $this->designation_id_options = $options;
     }
 
     // Live updating searches
@@ -160,7 +195,21 @@ class EmployeeAdd extends Component
     {$this->loadDesignationOptions();}
 
     public function updatedBranchId()
-    {$this->loadDepartmentOptions();}
+    {
+        if (!$this->isInitializing) {
+            $this->department_id = null;
+            $this->designation_id = null;
+        }
+        $this->loadDepartmentOptions();
+    }
+
+    public function updatedDepartmentId()
+    {
+        if (!$this->isInitializing) {
+            $this->designation_id = null;
+        }
+        $this->loadDesignationOptions();
+    }
 
     // Save employee
     public function saveEmployee()
@@ -232,6 +281,56 @@ class EmployeeAdd extends Component
             $emp->update($fileUpdates);
         }
 
+    }
+
+    // File removal methods
+    public function photoRemoveFile($path)
+    {
+        if ($this->isEditMode && $this->emp) {
+            deleteImage($path);
+            $this->emp->update(['photo' => null]);
+            $this->oldPhoto = null;
+        }
+    }
+
+    public function resumeRemoveFile($path)
+    {
+        if ($this->isEditMode && $this->emp) {
+            deleteDocument($path);
+            $this->emp->update(['resume' => null]);
+        }
+    }
+
+    public function offer_letterRemoveFile($path)
+    {
+        if ($this->isEditMode && $this->emp) {
+            deleteDocument($path);
+            $this->emp->update(['offer_letter' => null]);
+        }
+    }
+
+    public function joining_letterRemoveFile($path)
+    {
+        if ($this->isEditMode && $this->emp) {
+            deleteDocument($path);
+            $this->emp->update(['joining_letter' => null]);
+        }
+    }
+
+    public function contract_agreementRemoveFile($path)
+    {
+        if ($this->isEditMode && $this->emp) {
+            deleteDocument($path);
+            $this->emp->update(['contract_agreement' => null]);
+        }
+    }
+
+    public function Id_proofRemoveFile($path)
+    {
+        if ($this->isEditMode && $this->emp) {
+            deleteDocument($path);
+            $this->emp->update(['Id_proof' => null]);
+        }
     }
 
     public function render()

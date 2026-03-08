@@ -54,6 +54,45 @@ class Dashboard extends Component
         $this->dispatch('update-chart');
     }
 
+    public function statusChange($leaveId, $status)
+    {
+        // dd($leaveId);
+
+        $leave = Leave::findOrFail($leaveId);
+        $leave->update([
+            'status' => $status,
+            // 'approved_by'=>Auth::user()->id,
+        ]);
+
+        if ($status === 'approved') {
+            $this->updateAttendanceForLeave($leave);
+        } elseif (in_array($status, ['rejected', 'pending'])) {
+            $this->revertAttendanceForLeave($leave);
+        }
+
+        flash()->success('Leave status change updated successfully.');
+    }
+
+    private function updateAttendanceForLeave($leave)
+    {
+        Attendance::where('employee_id', $leave->employee_id)
+            ->whereBetween('date', [$leave->from_date, $leave->to_date])
+            ->update([
+                'status'     => 'leave',
+                'updated_at' => now(),
+            ]);
+    }
+
+    private function revertAttendanceForLeave($leave)
+    {
+        Attendance::where('employee_id', $leave->employee_id)
+            ->whereBetween('date', [$leave->from_date, $leave->to_date])
+            ->update([
+                'status'     => 'absent',
+                'updated_at' => now(),
+            ]);
+    }
+
     public function render()
     {
         $dateFilter = fn($q, $column = 'date') =>
@@ -116,10 +155,10 @@ class Dashboard extends Component
         // Attendance array for Doughnut chart
         $attendance = [
             'total_attendance' => $totalAttendance,
-            'present' => $state['total_present'],
-            'late'    => $state['total_late'],
-            'on_time' => $state['total_on_time'],
-            'absent'  => $state['total_absent']
+            'present'          => $state['total_present'],
+            'late'             => $state['total_late'],
+            'on_time'          => $state['total_on_time'],
+            'absent'           => $state['total_absent'],
         ];
         // Month-wise Leave chart
         $months        = collect(range(1, 12));

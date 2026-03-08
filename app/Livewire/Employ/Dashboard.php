@@ -118,10 +118,12 @@ class Dashboard extends Component
         $today = Carbon::today();
         $now   = Carbon::now();
 
-        $attendance = Attendance::where('date', $today)->first();
+        $attendance = Attendance::where('employee_id', $this->employee->id)
+            ->whereDate('date', $today)
+            ->first();
 
         if (! $attendance) {
-            flash()->error('Not found attendance');
+            flash()->info('Not found attendance');
             return;
         }
 
@@ -139,8 +141,11 @@ class Dashboard extends Component
             }
 
             $attendance->save();
+            flash()->success('Punched in successfully.');
         }
-
+            else {
+                flash()->warning('You have already punched in today.');
+            }
         $this->loadTodayAttendance();
     }
 
@@ -162,8 +167,11 @@ class Dashboard extends Component
             }
 
             $attendance->save();
+            flash()->success('Punched out successfully.');
         }
-
+        else {
+            flash()->warning('You have not punched in today or already punched out.');
+        }
         $this->loadTodayAttendance();
     }
 

@@ -1,11 +1,13 @@
 <?php
 namespace App\Livewire\Admin\Employees;
 
+use App\Exports\Employee\EmployeeList as EmployeeListExport;
 use App\Models\Branch;
 use App\Models\Department;
 use App\Models\Employee;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EmployeeList extends Component
 {
@@ -17,6 +19,7 @@ class EmployeeList extends Component
     public $departments_options = [];
     public $departments_search;
     public $search;
+    public $selectedEmployees = [];
 
     public function mount()
     {
@@ -78,6 +81,17 @@ class EmployeeList extends Component
             'status' => $currentStatus == 0 ? 1 : 0,
         ]);
         flash()->success('Employee Status Change successfully.');
+    }
+
+    public function exportEmployees()
+    {
+        if (empty($this->selectedEmployees)) {
+            flash()->error('Please select at least one employee to export.');
+            return;
+        }
+
+        $fileName = 'employee-list-' . date('Y-m-d-His') . '.xlsx';
+        return Excel::download(new EmployeeListExport($this->selectedEmployees), $fileName);
     }
 
     public function render()

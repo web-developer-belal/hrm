@@ -46,15 +46,15 @@
                         placeholder="Enter Roster Name" />
 
                     <!-- Branch -->
-                    <x-form.select label="Select Branch" name="branch_id" :isRequired="true" :error="true"
+                    <x-form.select placeholder="Select Branch" label="Select Branch" name="branch_id" :isRequired="true" :error="true"
                         :options="$branch_id_options" :search="true" />
 
                     <!-- Department (Optional) -->
-                    <x-form.select label="Select Department" name="department_id" :isRequired="false" :error="true"
+                    <x-form.select placeholder="Select Department" label="Select Department" name="department_id" :isRequired="false" :error="true"
                         :options="$department_id_options" :search="true" />
 
                     <!-- Shift -->
-                    <x-form.select label="Select Shift" name="shift_id" :isRequired="true" :error="true"
+                    <x-form.select placeholder="Select Shift" label="Select Shift" name="shift_id" :isRequired="true" :error="true" :live="true"
                         :options="$shift_id_options" :search="true" />
 
                  
@@ -70,6 +70,7 @@
 
                     <!-- Employees -->
                     <x-form.select
+                        placeholder="Select Employees"
                         label="Select Employee"
                         name="employees"
                         :isRequired="true"

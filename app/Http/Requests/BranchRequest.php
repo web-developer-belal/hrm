@@ -23,7 +23,7 @@ class BranchRequest extends FormRequest
     {
         return [
            'name' => 'required|string|max:255',
-           'address' => 'required|string|max:500',
+           'address' => 'nullable|string|max:500',
            'contact' => 'nullable|string|max:20',
            'status' => 'required|in:active,inactive',
         ];
@@ -35,7 +35,6 @@ class BranchRequest extends FormRequest
             'name.required' => 'The branch name is required.',
             'name.string' => 'The branch name must be a string.',
             'name.max' => 'The branch name may not be greater than 255 characters.',
-            'address.required' => 'The address is required.',
             'address.string' => 'The address must be a string.',
             'address.max' => 'The address may not be greater than 500 characters.',
             'contact.string' => 'The contact must be a string.',

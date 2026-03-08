@@ -296,11 +296,17 @@
                             @if (!$todayAttendance || !$todayAttendance->clock_in)
                                 <button wire:click="punchIn" type="button"
                                     class="btn btn-primary font-medium me-2 mt-2 w-full">
+                                    <span wire:loading wire:target="punchIn">
+                                        <i class="ti ti-loader animate-spin"></i>
+                                    </span>
                                     Punch In
                                 </button>
                             @elseif(!$todayAttendance->clock_out)
                                 <button wire:click="punchOut" type="button"
                                     class="btn btn-primary font-medium me-2 mt-2 w-full">
+                                   <span wire:loading wire:target="punchOut">
+                                        <i class="ti ti-loader animate-spin"></i>
+                                    </span>
                                     Punch Out
                                 </button>
                             @else

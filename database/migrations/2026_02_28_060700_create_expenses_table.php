@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->date('date');
             $table->decimal('amount');
+            $table->text('note')->nullable();
             $table->timestamps();
 
             $table->index(['date','branch_id','expense_type_id']);

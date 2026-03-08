@@ -1,10 +1,12 @@
 <?php
 namespace App\Livewire\Admin\Payroll;
 
+use App\Exports\Employee\EmployeeBankDetails;
 use App\Models\Branch;
 use App\Models\Payroll;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PayrollList extends Component
 {
@@ -44,6 +46,16 @@ class PayrollList extends Component
         }
 
         return redirect()->route('admin.payroll.export', ['payrolls' => implode(',', $this->selectedPayroll)]);
+    }
+
+    public function exportDisbursementSheet($mfs = false)
+    {
+        if (empty($this->selectedPayroll)) {
+            flash()->error('No payrolls selected for export.');
+            return;
+        }
+         $fileName = 'Employee-Account-Details-' . date('Y-m-d-His') . '.xlsx';
+        return Excel::download(new EmployeeBankDetails($this->selectedPayroll,$mfs), $fileName);
     }
 
     public function render()

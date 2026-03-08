@@ -1,7 +1,6 @@
 <?php
 namespace App\Livewire\Admin\Expense;
 
-use App\Models\Branch;
 use App\Models\Expense;
 use App\Models\ExpenseType;
 use Livewire\Component;
@@ -17,10 +16,8 @@ class ExpenseManagement extends Component
     public $name;
     public $amount;
     public $date;
-    public $branch_id_search;
-
-    public $branch_id_options = [];
-    public $types             = [];
+    public $types = [];
+    public $note;
 
     public $isEditMode         = false;
     protected $paginationTheme = 'tailwind';
@@ -33,38 +30,24 @@ class ExpenseManagement extends Component
             'name'            => 'required|string|max:255',
             'amount'          => 'required|numeric|min:0',
             'date'            => 'required|date',
+            'note'            => 'nullable|string',
         ];
     }
 
     public function mount()
     {
-        $this->loadBranchOptions();
+        $this->types = ExpenseType::pluck('name', 'id')->toArray();
     }
 
-    public function loadBranchOptions()
+    public function updatedExpenseTypeId()
     {
-        $this->branch_id_options = Branch::whereHas('expenseTypes')->where('status', 'active')->when($this->branch_id_search, function ($query) {
-            $query->where('name', 'like', '%' . $this->branch_id_search . '%');
-        })
-            ->pluck('name', 'id')
-            ->toArray();
-    }
+        $this->branch_id = ExpenseType::where('id', $this->expense_type_id)->value('branch_id');
 
-    public function updatedBranchIdSearch()
-    {
-        $this->loadBranchOptions();
-    }
-
-    public function updatedBranchId()
-    {
-        $this->expense_type_id = null;
-        $this->types           = ExpenseType::where('branch_id', $this->branch_id)->pluck('name', 'id')->prepend('Select Type', '')->toArray();
     }
 
     public function resetForm()
     {
-        $this->reset(['expenseId', 'branch_id', 'expense_type_id', 'name', 'amount', 'date', 'isEditMode']);
-        $this->types = [];
+        $this->reset(['expenseId', 'branch_id', 'expense_type_id', 'name', 'amount', 'date', 'note', 'isEditMode']);
     }
 
     public function editExpense($id)
@@ -77,7 +60,6 @@ class ExpenseManagement extends Component
         $this->amount          = $exp->amount;
         $this->date            = $exp->date->format('Y-m-d');
         $this->isEditMode      = true;
-        $this->updatedBranchId();
     }
 
     public function saveExpense()
@@ -91,6 +73,7 @@ class ExpenseManagement extends Component
                 'name'            => $this->name,
                 'amount'          => $this->amount,
                 'date'            => $this->date,
+                'note'            => $this->note,
             ]);
             flash()->success('Expense updated successfully.');
         } else {
@@ -100,6 +83,7 @@ class ExpenseManagement extends Component
                 'name'            => $this->name,
                 'amount'          => $this->amount,
                 'date'            => $this->date,
+                'note'            => $this->note,
             ]);
             flash()->success('Expense created successfully.');
         }

@@ -56,7 +56,7 @@
                                 Name</th>
                           
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Address</th>
+                                Branch Info</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Status</th>
 
