@@ -25,7 +25,7 @@
             <div class="mb-2">
                 <a href="{{ route('employee.complain') }}"
                     class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">
-                    <i class="ti ti-circle-plus me-2"></i>Complain
+                    <i class="ti ti-arrow-back-up me-2"></i>Complain
                 </a>
             </div>
         </div>

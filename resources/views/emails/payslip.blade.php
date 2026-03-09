@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Payslip Email</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>{{ $payroll->employee->gender=='male'?'Mr. ':($payroll->employee->gender=='female'?'Ms. ':'').$payroll->employee->first_name }} Payslip</title>
 </head>
 <body style="margin: 10px; padding: 10px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6;">
     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f3f4f6; padding: 40px 20px;">
@@ -20,10 +19,10 @@
                                 <tr>
                                     <td align="center">
                                         <div style="background-color: rgba(255, 255, 255, 0.15); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;">
-                                            <span style="color: #ffffff; font-size: 32px; font-weight: 700;">{{ $companyInitials ?? 'C' }}</span>
+                                            <span style="color: #ffffff; font-size: 32px; font-weight: 700;">{{ settingData('company_name') }}</span>
                                         </div>
-                                        <h1 style="color: #ffffff; font-size: 28px; font-weight: 600; margin: 0 0 5px;">{{ $companyName ?? 'Your Company' }}</h1>
-                                        <p style="color: #e0e7ff; font-size: 14px; margin: 0;">Payslip for the month of {{ $month ?? 'March' }} {{ $year ?? '2026' }}</p>
+                                        <h1 style="color: #ffffff; font-size: 28px; font-weight: 600; margin: 0 0 5px;">{{ settingData('company_name') }}</h1>
+                                        <p style="color: #e0e7ff; font-size: 14px; margin: 0;">Payslip for the month of {{ \Carbon\Carbon::create()->month((int)$payroll->month)->format('F') }} {{ \Carbon\Carbon::create()->year((int)$payroll->year)->format('Y') }}</p>
                                     </td>
                                 </tr>
                             </table>
@@ -49,7 +48,7 @@
                                                     <span style="color: #6b7280; font-size: 14px;">Employee Name:</span>
                                                 </td>
                                                 <td width="50%" style="padding: 8px 0;">
-                                                    <span style="color: #111827; font-size: 16px; font-weight: 600;">{{ $employeeName ?? 'John Doe' }}</span>
+                                                    <span style="color: #111827; font-size: 16px; font-weight: 600;">{{ $payroll->employee->full_name }}</span>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -57,7 +56,7 @@
                                                     <span style="color: #6b7280; font-size: 14px;">Employee ID:</span>
                                                 </td>
                                                 <td width="50%" style="padding: 8px 0;">
-                                                    <span style="color: #111827; font-size: 16px;">{{ $employeeId ?? 'EMP-2026-0123' }}</span>
+                                                    <span style="color: #111827; font-size: 16px;">{{ $payroll->employee->employee_code }}</span>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -65,7 +64,7 @@
                                                     <span style="color: #6b7280; font-size: 14px;">Department:</span>
                                                 </td>
                                                 <td width="50%" style="padding: 8px 0;">
-                                                    <span style="color: #111827; font-size: 16px;">{{ $department ?? 'Information Technology' }}</span>
+                                                    <span style="color: #111827; font-size: 16px;">{{ $payroll->employee->department->name ?? '' }}</span>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -73,7 +72,7 @@
                                                     <span style="color: #6b7280; font-size: 14px;">Designation:</span>
                                                 </td>
                                                 <td width="50%" style="padding: 8px 0;">
-                                                    <span style="color: #111827; font-size: 16px;">{{ $designation ?? 'Senior Software Engineer' }}</span>
+                                                    <span style="color: #111827; font-size: 16px;">{{ $payroll->employee->designation->name ?? '' }}</span>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -81,7 +80,15 @@
                                                     <span style="color: #6b7280; font-size: 14px;">Pay Period:</span>
                                                 </td>
                                                 <td width="50%" style="padding: 8px 0;">
-                                                    <span style="color: #111827; font-size: 16px;">{{ $payPeriod ?? '01 Mar 2026 - 31 Mar 2026' }}</span>
+                                                    <span style="color: #111827; font-size: 16px;">{{ $payroll->pay_period ?? '01 Mar 2026 - 31 Mar 2026' }}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width="50%" style="padding: 8px 0;">
+                                                    <span style="color: #6b7280; font-size: 14px;">Pay Month:</span>
+                                                </td>
+                                                <td width="50%" style="padding: 8px 0;">
+                                                    <span style="color: #111827; font-size: 16px;">{{ \Carbon\Carbon::createFromDate($payroll->year, $payroll->month)->format('F Y') }}</span>
                                                 </td>
                                             </tr>
                                         </table>
@@ -105,31 +112,27 @@
                                         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse;">
                                             <tr style="background-color: #f0fdf4; border-bottom: 2px solid #059669;">
                                                 <td style="padding: 12px 15px; color: #065f46; font-weight: 600; font-size: 15px;">Description</td>
-                                                <td style="padding: 12px 15px; color: #065f46; font-weight: 600; font-size: 15px; text-align: right;">Amount ({{ $currency ?? '$' }})</td>
+                                                <td style="padding: 12px 15px; color: #065f46; font-weight: 600; font-size: 15px; text-align: right;">Amount (৳)</td>
                                             </tr>
                                             <tr style="border-bottom: 1px solid #e5e7eb;">
                                                 <td style="padding: 12px 15px; color: #374151;">Basic Salary</td>
-                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($basicSalary ?? 5000, 2) }}</td>
+                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($payroll->basic_salary ?? 0, 2) }}</td>
                                             </tr>
                                             <tr style="border-bottom: 1px solid #e5e7eb; background-color: #f9fafb;">
-                                                <td style="padding: 12px 15px; color: #374151;">Housing Allowance</td>
-                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($housingAllowance ?? 1500, 2) }}</td>
+                                                <td style="padding: 12px 15px; color: #374151;">Attendance Bonus</td>
+                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($payroll->attendance_bonus ?? 0, 2) }}</td>
                                             </tr>
                                             <tr style="border-bottom: 1px solid #e5e7eb;">
-                                                <td style="padding: 12px 15px; color: #374151;">Transport Allowance</td>
-                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($transportAllowance ?? 500, 2) }}</td>
+                                                <td style="padding: 12px 15px; color: #374151;">Overtime Pay</td>
+                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($payroll->total_ot ?? 0, 2) }}</td>
                                             </tr>
                                             <tr style="border-bottom: 1px solid #e5e7eb; background-color: #f9fafb;">
-                                                <td style="padding: 12px 15px; color: #374151;">Meal Allowance</td>
-                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($mealAllowance ?? 300, 2) }}</td>
-                                            </tr>
-                                            <tr style="border-bottom: 1px solid #e5e7eb;">
-                                                <td style="padding: 12px 15px; color: #374151;">Performance Bonus</td>
-                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($performanceBonus ?? 750, 2) }}</td>
+                                                <td style="padding: 12px 15px; color: #374151;">Positive Adjustments</td>
+                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($payroll->positive_adjustments ?? 0, 2) }}</td>
                                             </tr>
                                             <tr style="background-color: #f0fdf4;">
                                                 <td style="padding: 15px; color: #065f46; font-weight: 700; font-size: 16px;">Total Earnings</td>
-                                                <td style="padding: 15px; color: #065f46; font-weight: 700; font-size: 18px; text-align: right;">{{ number_format($totalEarnings ?? 8050, 2) }}</td>
+                                                <td style="padding: 15px; color: #065f46; font-weight: 700; font-size: 18px; text-align: right;">{{ number_format($payroll->gross_salary ?? 0, 2) }}</td>
                                             </tr>
                                         </table>
                                     </td>
@@ -152,27 +155,27 @@
                                         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse;">
                                             <tr style="background-color: #fef2f2; border-bottom: 2px solid #b91c1c;">
                                                 <td style="padding: 12px 15px; color: #991b1b; font-weight: 600; font-size: 15px;">Description</td>
-                                                <td style="padding: 12px 15px; color: #991b1b; font-weight: 600; font-size: 15px; text-align: right;">Amount ({{ $currency ?? '$' }})</td>
+                                                <td style="padding: 12px 15px; color: #991b1b; font-weight: 600; font-size: 15px; text-align: right;">Amount (৳)</td>
                                             </tr>
                                             <tr style="border-bottom: 1px solid #e5e7eb;">
-                                                <td style="padding: 12px 15px; color: #374151;">Income Tax</td>
-                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($incomeTax ?? 850, 2) }}</td>
-                                            </tr>
-                                            <tr style="border-bottom: 1px solid #e5e7eb; background-color: #f9fafb;">
-                                                <td style="padding: 12px 15px; color: #374151;">Social Security</td>
-                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($socialSecurity ?? 320, 2) }}</td>
-                                            </tr>
-                                            <tr style="border-bottom: 1px solid #e5e7eb;">
-                                                <td style="padding: 12px 15px; color: #374151;">Health Insurance</td>
-                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($healthInsurance ?? 250, 2) }}</td>
+                                                <td style="padding: 12px 15px; color: #374151;">Late Deduction</td>
+                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($payroll->late_deduction ?? 0, 2) }}</td>
                                             </tr>
                                             <tr style="border-bottom: 1px solid #e5e7eb; background-color: #f9fafb;">
                                                 <td style="padding: 12px 15px; color: #374151;">Loan Deduction</td>
-                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($loanDeduction ?? 0, 2) }}</td>
+                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($payroll->loan_deduction ?? 0, 2) }}</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                                <td style="padding: 12px 15px; color: #374151;">Absent Deduction</td>
+                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($payroll->absent_deduction ?? 0, 2) }}</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid #e5e7eb; background-color: #f9fafb;">
+                                                <td style="padding: 12px 15px; color: #374151;">Negative Adjustments</td>
+                                                <td style="padding: 12px 15px; color: #374151; text-align: right;">{{ number_format($payroll->negative_adjustments ?? 0, 2) }}</td>
                                             </tr>
                                             <tr style="background-color: #fef2f2;">
                                                 <td style="padding: 15px; color: #991b1b; font-weight: 700; font-size: 16px;">Total Deductions</td>
-                                                <td style="padding: 15px; color: #991b1b; font-weight: 700; font-size: 18px; text-align: right;">{{ number_format($totalDeductions ?? 1420, 2) }}</td>
+                                                <td style="padding: 15px; color: #991b1b; font-weight: 700; font-size: 18px; text-align: right;">{{ number_format($payroll->total_deduction ?? 0, 2) }}</td>
                                             </tr>
                                         </table>
                                     </td>
@@ -191,11 +194,11 @@
                                             <tr>
                                                 <td width="60%">
                                                     <p style="color: #e0e7ff; font-size: 16px; margin: 0 0 5px;">Net Payable Amount</p>
-                                                    <p style="color: #ffffff; font-size: 32px; font-weight: 700; margin: 0;">{{ $currency ?? '$' }}{{ number_format($netPay ?? 6630, 2) }}</p>
+                                                    <p style="color: #ffffff; font-size: 32px; font-weight: 700; margin: 0;">৳{{ number_format($payroll->net_salary ?? 0, 2) }}</p>
                                                 </td>
                                                 <td width="40%" align="right">
-                                                    <p style="color: #e0e7ff; font-size: 14px; margin: 0;">Payment Date</p>
-                                                    <p style="color: #ffffff; font-size: 18px; font-weight: 600; margin: 0;">{{ $paymentDate ?? '31 Mar 2026' }}</p>
+                                                    <p style="color: #e0e7ff; font-size: 14px; margin: 0;">Payment Month</p>
+                                                    <p style="color: #ffffff; font-size: 18px; font-weight: 600; margin: 0;">{{ date('F Y', mktime(0, 0, 0, $payroll->month ?? date('m'), 1, $payroll->year ?? date('Y'))) }}</p>
                                                 </td>
                                             </tr>
                                         </table>
@@ -206,7 +209,7 @@
                     </tr>
 
                     <!-- Payment Details & Bank Info -->
-                    <tr>
+                    {{-- <tr>
                         <td style="padding: 20px 30px 30px;">
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f9fafb; border-radius: 12px;">
                                 <tr>
@@ -246,7 +249,7 @@
                                 </tr>
                             </table>
                         </td>
-                    </tr>
+                    </tr> --}}
 
                     <!-- Year to Date Summary -->
                     <tr>
@@ -258,10 +261,11 @@
                                             <tr>
                                                 <td align="center">
                                                     <p style="color: #4b5563; font-size: 14px; margin: 0;">
-                                                        <span style="font-weight: 600;">Year to Date (YTD) Summary:</span>
-                                                        Gross: {{ $currency ?? '$' }}{{ number_format($ytdGross ?? 45250, 2) }} |
-                                                        Taxes: {{ $currency ?? '$' }}{{ number_format($ytdTaxes ?? 7650, 2) }} |
-                                                        Net: {{ $currency ?? '$' }}{{ number_format($ytdNet ?? 37600, 2) }}
+                                                        <span style="font-weight: 600;">Attendance Summary:</span>
+                                                        Present: {{ $payroll->present_days ?? 0 }} days |
+                                                        Absent: {{ $payroll->absent_days ?? 0 }} days |
+                                                        Leave: {{ $payroll->leave_days ?? 0 }} days |
+                                                        Late: {{ $payroll->late_days ?? 0 }} days
                                                     </p>
                                                 </td>
                                             </tr>
@@ -294,7 +298,7 @@
                                 <tr>
                                     <td align="center" style="padding-bottom: 15px;">
                                         <p style="color: #64748b; font-size: 14px; margin: 0 0 10px;">
-                                            <span style="font-weight: 600;">{{ $companyName ?? 'Your Company' }}</span> | HR Management System
+                                            <span style="font-weight: 600;">{{ settingData('company_name') }}</span> | HR Management System
                                         </p>
                                     </td>
                                 </tr>
@@ -320,9 +324,9 @@
                                 <tr>
                                     <td align="center" style="padding-top: 20px;">
                                         <p style="color: #94a3b8; font-size: 12px; margin: 0;">
-                                            &copy; {{ date('Y') }} {{ $companyName ?? 'Your Company' }}. All rights reserved.<br>
-                                            {{ $companyAddress ?? '123 Business Avenue, Suite 100, City, State 12345' }}<br>
-                                            <span style="color: #2563eb;">{{ $companyEmail ?? 'hr@company.com' }}</span> | Tel: {{ $companyPhone ?? '+1 (555) 123-4567' }}
+                                            &copy; {{ date('Y') }} {{ settingData('company_name') }}. All rights reserved.<br>
+                                            {{ settingData('company_address') }}<br>
+                                            <span style="color: #2563eb;">{{ settingData('email_address') }}</span> | Tel: {{ settingData('phone_number') }}
                                         </p>
                                     </td>
                                 </tr>

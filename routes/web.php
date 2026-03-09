@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\AdmsController;
+use App\Http\Controllers\EmailController;
+use App\Http\Controllers\SalaryReportController;
 use App\Http\Controllers\StorageFileDownloader;
-use App\Livewire\Admin\Attendance\AddManualAttendance;
-use App\Livewire\Admin\Attendance\AttendanceList;
 use App\Livewire\Admin\AttendancePolicy\AttendancePolicyAdd;
 use App\Livewire\Admin\AttendancePolicy\AttendancePolicyList;
+use App\Livewire\Admin\Attendance\AddManualAttendance;
+use App\Livewire\Admin\Attendance\AttendanceList;
 use App\Livewire\Admin\Branch\BranchForm;
 use App\Livewire\Admin\Branch\BranchManagement;
 use App\Livewire\Admin\Calender;
@@ -35,7 +37,6 @@ use App\Livewire\Admin\Notice\NoticeDetails;
 use App\Livewire\Admin\Notice\NoticeForm;
 use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeduction;
 use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeductionNew;
-use App\Livewire\Admin\Payroll\ExportPayRoll;
 use App\Livewire\Admin\Payroll\PayrollEngine;
 use App\Livewire\Admin\Payroll\PayrollList;
 use App\Livewire\Admin\PaySlips\PaySlipManagement;
@@ -47,19 +48,17 @@ use App\Livewire\Admin\Reports\LeaveReport;
 use App\Livewire\Admin\Reports\PayslipReport;
 use App\Livewire\Admin\RolesPermission\ActivityLog;
 use App\Livewire\Admin\RolesPermission\ManageUser;
+use App\Livewire\Admin\RolesPermission\Roles\ManageRoles;
+use App\Livewire\Admin\RolesPermission\Roles\RolesForm;
 use App\Livewire\Admin\RolesPermission\UserForm;
 use App\Livewire\Admin\Roster\RosterForm;
 use App\Livewire\Admin\Roster\RosterManagement;
+use App\Livewire\Admin\SettingManagement;
 use App\Livewire\Admin\Shift\ShiftForm;
 use App\Livewire\Admin\Shift\ShiftManagement;
 use App\Livewire\Admin\Transfer\TransferList;
 use App\Livewire\Admin\Transfer\TransferNew;
 use App\Livewire\Auth\AdminLogin;
-use App\Livewire\Admin\SettingManagement;
-use App\Http\Controllers\EmailController;
-use App\Http\Controllers\SalaryReportController;
-use App\Livewire\Admin\RolesPermission\Roles\ManageRoles;
-use App\Livewire\Admin\RolesPermission\Roles\RolesForm;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -87,7 +86,6 @@ Route::get('/email/notice/urgent', [EmailController::class, 'urgentNoticeEmail']
 Route::post('/email/send-notice', [EmailController::class, 'sendNoticeEmail'])->name('email.send-notice');
 
 Route::get('/salary-report', [SalaryReportController::class, 'index'])->name('salary.report');
-Route::get('/salary-report/pdf', [SalaryReportController::class, 'generatePDF'])->name('salary.pdf');
 Route::get('/salary-report/print', [SalaryReportController::class, 'print'])->name('salary.print');
 
 Route::get('admin/logout', function () {
@@ -178,7 +176,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('edit')->middleware('permission:employees.edit');
         Route::livewire('/details/{emp}', EmployeeDetails::class)
             ->name('details')->middleware('permission:employees.show');
-        
+
     });
 
     // Attendance Management
@@ -236,8 +234,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::livewire('/payroll/list', PayrollList::class)
             ->name('list')->middleware('permission:payroll.list.show');
 
-        Route::livewire('/payroll/export/{payrolls}', ExportPayRoll::class)
+        Route::get('/payroll/export/{payrolls}', [SalaryReportController::class, 'index'])
             ->name('export')->middleware('permission:payroll.export.show');
+
+        Route::get('/payroll/pdf/{payrolls}', [SalaryReportController::class, 'generatePDF'])->name('salary.pdf');
 
         Route::livewire('/adjustment/details/{loan}', LoanDetails::class)
             ->name('show')->middleware('permission:payroll.show');
@@ -256,7 +256,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('edit')->middleware('permission:complains.edit');
 
     });
-    
+
     Route::prefix('notices')->name('notice.')->group(function () {
         Route::livewire('/', ManageNotice::class)
             ->name('index')->middleware('permission:notices.show');
@@ -317,29 +317,29 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     // Profile
     Route::livewire('/profile', ManageProfile::class)
-            ->name('profile')->middleware('permission:profile.show');
+        ->name('profile')->middleware('permission:profile.show');
 
     // Roles and Permissions
-   Route::livewire('/users',ManageUser::class)
-            ->name('users')->middleware('permission:users.show');
-   Route::livewire('/user/create',UserForm::class)
-            ->name('user.create')->middleware('permission:users.create');
-   Route::livewire('/user/edit/{user}',UserForm::class)
-            ->name('user.edit')->middleware('permission:users.edit');
+    Route::livewire('/users', ManageUser::class)
+        ->name('users')->middleware('permission:users.show');
+    Route::livewire('/user/create', UserForm::class)
+        ->name('user.create')->middleware('permission:users.create');
+    Route::livewire('/user/edit/{user}', UserForm::class)
+        ->name('user.edit')->middleware('permission:users.edit');
 
     Route::livewire('/roles', ManageRoles::class)
-            ->name('roles')->middleware('permission:roles.show');
+        ->name('roles')->middleware('permission:roles.show');
 
     Route::livewire('/role/create', RolesForm::class)
-            ->name('role.create')->middleware('permission:roles.create');
+        ->name('role.create')->middleware('permission:roles.create');
     Route::livewire('/role/edit/{role}', RolesForm::class)
-            ->name('role.edit')->middleware('permission:roles.edit');
-            
+        ->name('role.edit')->middleware('permission:roles.edit');
+
     // Activity Log
     Route::livewire('/activity-log', ActivityLog::class)
         ->name('activity-log')->middleware('permission:activity-log.show');
 
-    Route::any('/mobile/get/data', [AdmsController::class,'receive'])->where('any', '.*');
-    Route::any('/mobile/get/request', [AdmsController::class,'getRequest'])->where('any', '.*');
+    Route::any('/mobile/get/data', [AdmsController::class, 'receive'])->where('any', '.*');
+    Route::any('/mobile/get/request', [AdmsController::class, 'getRequest'])->where('any', '.*');
 
 });

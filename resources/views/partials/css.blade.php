@@ -1,9 +1,9 @@
 <!-- Apple Touch Icon -->
-<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/img/apple-touch-icon.png') }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ customAsset(settingData('favicon_path')) }}">
 
 <!-- Favicon -->
-<link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/x-icon">
-<link rel="shortcut icon" href="{{ asset('assets/img/favicon.png') }}" type="image/x-icon">
+<link rel="icon" href="{{ customAsset(settingData('favicon_path')) }}" type="image/x-icon">
+<link rel="shortcut icon" href="{{ customAsset(settingData('favicon_path')) }}" type="image/x-icon">
 
 <!-- Theme Script js -->
 <script src="{{ asset('assets/js/theme-script.js') }}"></script>

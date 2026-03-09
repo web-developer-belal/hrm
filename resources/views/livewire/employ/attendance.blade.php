@@ -7,7 +7,7 @@
             <nav class="flex" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-2">
                     <li class="inline-flex items-center">
-                        <a href="index.html" class="inline-flex items-center text-xs text-gray-500 hover:text-primary">
+                        <a href="{{ route('employee.attendance') }}" class="inline-flex items-center text-xs text-gray-500 hover:text-primary">
                             <i class="ti ti-smart-home"></i>
                         </a>
                     </li>
@@ -27,105 +27,8 @@
 
     <!-- Employee Attendance  View -->
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 pb-5">
-        <div class="col-span-4 flex">
-            <div
-                class="card border-borderColor border-primary bg-custom-gradient border rounded-[5px] bg-white shadow-xs w-full">
-                <div class="card-body p-5">
-
-                    {{-- Current Date Time --}}
-                    <div class="text-center mb-4">
-                        <h6 class="text-gray-500 mb-2 font-medium">Attendance</h6>
-                        <h4>{{ now()->format('h:i A, d-M-Y') }}</h4>
-                    </div>
-
-                    {{-- Circular Total Hours --}}
-                    @php
-                        $workedSeconds = 0;
-
-                        if ($todayAttendance && $todayAttendance->clock_in) {
-                            $endTime = $todayAttendance->clock_out ?? now();
-                            $workedSeconds = \Carbon\Carbon::parse($todayAttendance->clock_in)->diffInSeconds(
-                                \Carbon\Carbon::parse($endTime),
-                            );
-                        }
-
-                        $hours = floor($workedSeconds / 3600);
-                        $minutes = floor(($workedSeconds % 3600) / 60);
-                        $seconds = $workedSeconds % 60;
-
-                        $formattedTime = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
-
-                        // Shift duration for percentage (assuming 9 hours shift)
-                        $shiftSeconds = 9 * 3600;
-                        $percentage = min(100, ($workedSeconds / $shiftSeconds) * 100);
-                        $rotation = ($percentage / 100) * 180;
-                    @endphp
-
-                    <div class="w-[130px] h-[130px] bg-white rounded-full leading-[38px] relative mx-auto mb-3"
-                        data-value="{{ round($percentage) }}">
-
-                        <span class="left-0 w-[50%] h-[100%] overflow-hidden absolute top-0 z-[1]">
-                            <span style="transform: rotate({{ $rotation }}deg);"
-                                class="left-[100%] rounded-tr-[80px] rounded-br-[80px] border-success border-l-0 origin-left
-                        w-full h-full bg-transparent border-4 border-solid absolute top-0">
-                            </span>
-                        </span>
-
-                        <span class="right-0 w-[50%] h-[100%] overflow-hidden absolute top-0 z-[1]">
-                            <span
-                                class="transform rotate-[180deg] absolute left-[-100%] rounded-tl-[80px] rounded-bl-[80px] border-success border-r-0 origin-right
-                        w-full h-full bg-transparent border-4 border-solid absolute top-0">
-                            </span>
-                        </span>
-
-                        <div
-                            class="absolute left-[50%] top-[50%] transform -translate-x-1/2 -translate-y-1/2 leading-normal text-center w-100">
-                            <span class="text-[13px] block mb-1">Total Hours</span>
-                            <h6>{{ $formattedTime }}</h6>
-                        </div>
-                    </div>
-
-                    <div class="text-center">
-
-                        {{-- Production Time --}}
-                        <div
-                            class="text-white font-medium inline-flex items-center py-1 px-2 rounded bg-dark leading-none mb-3">
-                            Production : {{ $hours }}h {{ $minutes }}m
-                        </div>
-
-                        {{-- Punch In Info --}}
-                        @if ($todayAttendance && $todayAttendance->clock_in)
-                            <h6 class="fw-medium flex items-center justify-center mb-4">
-                                <i class="ti ti-fingerprint text-primary me-1"></i>
-                                Punch In at {{ \Carbon\Carbon::parse($todayAttendance->clock_in)->format('h:i A') }}
-                            </h6>
-                        @endif
-
-                        {{-- Button Toggle --}}
-                        <div>
-                            @if (!$todayAttendance || !$todayAttendance->clock_in)
-                                <button wire:click="punchIn" type="button"
-                                    class="btn btn-primary font-medium me-2 mt-2 w-full">
-                                    Punch In
-                                </button>
-                            @elseif(!$todayAttendance->clock_out)
-                                <button wire:click="punchOut" type="button"
-                                    class="btn btn-primary font-medium me-2 mt-2 w-full">
-                                    Punch Out
-                                </button>
-                            @else
-                                <button type="button" class="btn btn-secondary font-medium me-2 mt-2 w-full"
-                                    disabled>
-                                    Completed
-                                </button>
-                            @endif
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-span-8 flex">
+       
+        <div class="col-span-12 flex">
             <div class="grid grid-cols-1 xl:grid-cols-12 gap-x-6 w-full">
                 <div class="xl:col-span-3 flex mb-6">
                     <div class="md:flex items-center justify-center gap-3 w-full">
@@ -234,12 +137,12 @@
                                 <div class="w-full">
                                     <span class="flex items-center mb-1"><i
                                             class="ti ti-point-filled text-success me-1"></i>Productive Hours</span>
-                                    <h3>08h 36m</h3>
+                                    <h3>{{ $attendanceData['productive_hours'] }}</h3>
                                 </div>
                                 <div class="w-full">
                                     <span class="flex items-center mb-1"><i
                                             class="ti ti-point-filled text-warning me-1"></i>Break hours</span>
-                                    <h3>22m 15s</h3>
+                                    <h3>{{ $attendanceData['break_hours'] }}</h3>
                                 </div>
                                 <div class="w-full">
                                     <span class="flex items-center mb-1"><i

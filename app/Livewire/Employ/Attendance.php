@@ -36,8 +36,6 @@ class Attendance extends Component
             'present' => 'Present',
             'absent' => 'Absent',
             'leave' => 'Leave',
-            'holiday' => 'Holiday',
-            'offday' => 'Off Day',
         ];
 
         // Don't set default dates - keep them null to show all data
@@ -100,6 +98,11 @@ class Attendance extends Component
 
         $totalOvertimeMinutes = ModelsAttendance::where('employee_id', $employeeId)
             ->sum('overtime_minutes');
+        
+        $totalBreakMinutes = ModelsAttendance::where('employee_id', $employeeId)
+            ->sum('in_grace_period_minutes') + 
+            ModelsAttendance::where('employee_id', $employeeId)
+            ->sum('out_grace_period_minutes');
 
         $totalWorkingMinutes = ModelsAttendance::where('employee_id', $employeeId)
             ->whereNotNull('clock_in')
@@ -109,14 +112,18 @@ class Attendance extends Component
                 return Carbon::parse($row->clock_in)
                     ->diffInMinutes(Carbon::parse($row->clock_out));
             });
+        
+        $productiveMinutes = max(0, $totalWorkingMinutes - $totalBreakMinutes);
 
         return [
-            'present'       => $present,
-            'absent'        => $absent,
-            'late'          => $late,
-            'on_time'       => $onTime,
-            'working_hours' => $this->formatMinutes($totalWorkingMinutes),
-            'overtime'      => $this->formatMinutes($totalOvertimeMinutes),
+            'present'           => $present,
+            'absent'            => $absent,
+            'late'              => $late,
+            'on_time'           => $onTime,
+            'working_hours'     => $this->formatMinutes($totalWorkingMinutes),
+            'productive_hours'  => $this->formatMinutes($productiveMinutes),
+            'break_hours'       => $this->formatMinutes($totalBreakMinutes),
+            'overtime'          => $this->formatMinutes($totalOvertimeMinutes),
         ];
     }
 
@@ -201,12 +208,23 @@ class Attendance extends Component
             })
             ->latest('date')
             ->paginate(10);
+        
+        // Calculate shift seconds for circular progress
+        $shiftSeconds = 9 * 3600; // 9 hour default shift
+        
+        if ($this->todayAttendance && $this->todayAttendance->shift_start_time) {
+            $shiftMinutes = Carbon::parse($this->todayAttendance->shift_start_time)
+                ->diffInMinutes(Carbon::parse($this->todayAttendance->shift_end_time));
+            $shiftSeconds = $shiftMinutes * 60;
+        }
 
         return view('livewire.employ.attendance', [
             'employee'        => $this->employee,
             'todayAttendance' => $this->todayAttendance,
             'attendances'     => $attendances,
             'attendanceData'  => $this->getAttendanceData(),
+            'todayAttendanceForCircle' => $this->todayAttendance,
+            'shiftSeconds' => $shiftSeconds,
         ]);
     }
 }

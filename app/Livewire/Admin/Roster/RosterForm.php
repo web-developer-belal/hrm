@@ -151,6 +151,7 @@ class RosterForm extends Component
     public function updatedDepartmentId()
     {
         $this->employees         = [];
+        $this->employees_search  = null;
         $this->employees_options = [];
 
         $this->loadEmployeesOptions();
@@ -159,11 +160,12 @@ class RosterForm extends Component
     protected function loadEmployeesOptions()
     {
         if (! $this->department_id) {
+            // dd($this->department_id);
             $this->employees_options = [];
             return;
         }
 
-        $this->employees_options = Employee::whereHas('department')->where('status', 'active')
+        $this->employees_options = Employee::where('status', 1)
             ->where('branch_id', $this->branch_id)
             ->where('department_id', $this->department_id)
             ->when($this->employees_search, function ($query) {

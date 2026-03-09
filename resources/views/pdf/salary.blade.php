@@ -103,6 +103,9 @@
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
+            .signature-section{
+                display: flex;
+            }
         }
         .print-button {
             margin: 10px 0;
@@ -126,13 +129,16 @@
     @if(!isset($print))
     <div class="print-button no-print">
         <button onclick="window.print()">Print Report</button>
-        <button onclick="window.location.href='{{ route('salary.pdf') }}'">Download PDF</button>
+        @isset($payrollIds)
+        <button onclick="window.location.href='{{ route('admin.payroll.salary.pdf', ['payrolls' => implode(',', $payrollIds)]) }}'">Download PDF</button>
+        @endisset
     </div>
     @endif
 
     <div class="header">
         <h1>{{ $companyName }}</h1>
-        <h2>Salary Report for the Month of {{ $month }} {{ $year }}</h2>
+        <h2>Salary Report - {{ $branchName }}</h2>
+        <h2>Month of {{ $month }} {{ $year }}</h2>
         <div class="cutting-line"></div>
         <div class="report-info">
             <span>Date: {{ $generatedDate }}</span>
@@ -144,30 +150,24 @@
         <thead>
             <tr>
                 <th rowspan="2">SI</th>
-                <th rowspan="2">Card No</th>
-                <th rowspan="2">Name</th>
-                <th rowspan="2">Designation</th>
-                <th rowspan="2">Current Total Salary</th>
-                <th rowspan="2">Main Salary</th>
+                <th rowspan="2">Employee Code<br>Name<br>Designation</th>
+                <th rowspan="2">Basic Salary</th>
                 <th rowspan="2">House Rent</th>
-                <th rowspan="2">Food</th>
-                <th rowspan="2">Transport</th>
+                <th rowspan="2">Medical Allowance</th>
+                <th rowspan="2">Gross Salary</th>
                 <th rowspan="2">Total Days</th>
-                <th rowspan="2">Total Working Days</th>
-                <th colspan="5">Leave</th>
-                <th rowspan="2">Absent Days</th>
-                <th rowspan="2">Total Absent Deduction</th>
-                <th rowspan="2">Attendance Salary</th>
-                <th rowspan="2">Total Salary & Bonus</th>
+                <th rowspan="2">Present Days</th>
+                <th colspan="3">Leave</th>
+                <th rowspan="2">Absent</th>
+                <th rowspan="2">Absent Deduction</th>
+                <th rowspan="2">Total Deduction</th>
                 <th colspan="3">Overtime</th>
-                <th rowspan="2">Total Salary</th>
+                <th rowspan="2">Net Salary</th>
             </tr>
             <tr>
-                <th>Weekly</th>
-                <th>Festival</th>
-                <th>Casual</th>
-                <th>Sick</th>
-                <th>Others</th>
+                <th>Off Day</th>
+                <th>Holiday</th>
+                <th>Leave</th>
                 <th>Hours</th>
                 <th>Rate</th>
                 <th>Taka</th>
@@ -177,55 +177,49 @@
             @foreach($employees as $employee)
             <tr>
                 <td>{{ $employee['si'] }}</td>
-                <td>{{ $employee['card_no'] }}</td>
-                <td class="text-left">{{ $employee['name'] }}</td>
-                <td class="text-left">{{ $employee['designation'] }}</td>
-                <td>{{ number_format($employee['current_total_salary']) }}</td>
-                <td>{{ number_format($employee['main_salary']) }}</td>
-                <td>{{ number_format($employee['house_rent']) }}</td>
-                <td>{{ number_format($employee['food']) }}</td>
-                <td>{{ number_format($employee['transport']) }}</td>
+                <td class="text-left">
+                    <strong>{{ $employee['employee_code'] }}</strong><br>
+                    {{ $employee['name'] }}<br>
+                    <small>{{ $employee['designation'] }}</small>
+                </td>
+                <td>{{ number_format($employee['basic_salary'], 2) }}</td>
+                <td>{{ number_format($employee['house_rent'], 2) }}</td>
+                <td>{{ number_format($employee['medical_allowance'], 2) }}</td>
+                <td>{{ number_format($employee['gross_salary'], 2) }}</td>
                 <td>{{ $employee['total_days'] }}</td>
-                <td>{{ $employee['total_working_days'] }}</td>
-                <td>{{ $employee['weekly_leave'] }}</td>
-                <td>{{ $employee['festival_leave'] }}</td>
-                <td>{{ $employee['casual_leave'] }}</td>
-                <td>{{ $employee['sick_leave'] }}</td>
-                <td>{{ $employee['others_leave'] }}</td>
+                <td>{{ $employee['present_days'] }}</td>
+                <td>{{ $employee['off_days'] }}</td>
+                <td>{{ $employee['holy_days'] }}</td>
+                <td>{{ $employee['leave_days'] }}</td>
                 <td>{{ $employee['absent_days'] }}</td>
-                <td>{{ number_format($employee['total_absent_deduction']) }}</td>
-                <td>{{ number_format($employee['attendance_salary']) }}</td>
-                <td>{{ number_format($employee['total_salary_bonus']) }}</td>
+                <td>{{ number_format($employee['absent_deduction'], 2) }}</td>
+                <td>{{ number_format($employee['total_deduction'], 2) }}</td>
                 <td>{{ $employee['overtime_hours'] }}</td>
-                <td>{{ number_format($employee['overtime_rate']) }}</td>
-                <td>{{ number_format($employee['overtime_taka']) }}</td>
-                <td><strong>{{ number_format($employee['total_salary']) }}</strong></td>
+                <td>{{ number_format($employee['overtime_rate'], 2) }}</td>
+                <td>{{ number_format($employee['overtime_taka'], 2) }}</td>
+                <td><strong>{{ number_format($employee['net_salary'], 2) }}</strong></td>
             </tr>
             @endforeach
 
             <!-- Summary Row -->
             <tr style="font-weight: bold; background-color: #e8e8e8;">
-                <td colspan="4" class="text-left">Total</td>
-                <td>{{ number_format(collect($employees)->sum('current_total_salary')) }}</td>
-                <td>{{ number_format(collect($employees)->sum('main_salary')) }}</td>
-                <td>{{ number_format(collect($employees)->sum('house_rent')) }}</td>
-                <td>{{ number_format(collect($employees)->sum('food')) }}</td>
-                <td>{{ number_format(collect($employees)->sum('transport')) }}</td>
+                <td colspan="2" class="text-left">Total</td>
+                <td>{{ number_format(collect($employees)->sum('basic_salary'), 2) }}</td>
+                <td>{{ number_format(collect($employees)->sum('house_rent'), 2) }}</td>
+                <td>{{ number_format(collect($employees)->sum('medical_allowance'), 2) }}</td>
+                <td>{{ number_format(collect($employees)->sum('gross_salary'), 2) }}</td>
                 <td>{{ collect($employees)->sum('total_days') }}</td>
-                <td>{{ collect($employees)->sum('total_working_days') }}</td>
-                <td>{{ collect($employees)->sum('weekly_leave') }}</td>
-                <td>{{ collect($employees)->sum('festival_leave') }}</td>
-                <td>{{ collect($employees)->sum('casual_leave') }}</td>
-                <td>{{ collect($employees)->sum('sick_leave') }}</td>
-                <td>{{ collect($employees)->sum('others_leave') }}</td>
+                <td>{{ collect($employees)->sum('present_days') }}</td>
+                <td>{{ collect($employees)->sum('off_days') }}</td>
+                <td>{{ collect($employees)->sum('holy_days') }}</td>
+                <td>{{ collect($employees)->sum('leave_days') }}</td>
                 <td>{{ collect($employees)->sum('absent_days') }}</td>
-                <td>{{ number_format(collect($employees)->sum('total_absent_deduction')) }}</td>
-                <td>{{ number_format(collect($employees)->sum('attendance_salary')) }}</td>
-                <td>{{ number_format(collect($employees)->sum('total_salary_bonus')) }}</td>
-                <td>{{ collect($employees)->sum('overtime_hours') }}</td>
-                <td>{{ number_format(collect($employees)->avg('overtime_rate')) }}</td>
-                <td>{{ number_format(collect($employees)->sum('overtime_taka')) }}</td>
-                <td><strong>{{ number_format(collect($employees)->sum('total_salary')) }}</strong></td>
+                <td>{{ number_format(collect($employees)->sum('absent_deduction'), 2) }}</td>
+                <td>{{ number_format(collect($employees)->sum('total_deduction'), 2) }}</td>
+                <td>{{ number_format(collect($employees)->sum('overtime_hours'), 2) }}</td>
+                <td>{{ number_format(collect($employees)->avg('overtime_rate'), 2) }}</td>
+                <td>{{ number_format(collect($employees)->sum('overtime_taka'), 2) }}</td>
+                <td><strong>{{ number_format(collect($employees)->sum('net_salary'), 2) }}</strong></td>
             </tr>
         </tbody>
     </table>
@@ -234,20 +228,17 @@
         <div class="signature-box">
             <div class="signature-line"></div>
             <div class="signature-title">Prepared By</div>
-            <div>{{ $preparedBy }}</div>
-            <div style="font-size: 8px;">Department of IT</div>
+           
+        </div>
+        <div class="signature-box">
+            <div class="signature-line"></div>
+            <div class="signature-title">Paid By</div>
+           
         </div>
         <div class="signature-box">
             <div class="signature-line"></div>
             <div class="signature-title">Granted By</div>
-            <div>{{ $grantedBy }}</div>
-            <div style="font-size: 8px;">Department of Account</div>
-        </div>
-        <div class="signature-box">
-            <div class="signature-line"></div>
-            <div class="signature-title">Granted By</div>
-            <div>{{ $grantedBy }}</div>
-            <div style="font-size: 8px;">Authorized Signature</div>
+            
         </div>
     </div>
 

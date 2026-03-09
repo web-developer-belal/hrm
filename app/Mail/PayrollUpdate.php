@@ -12,12 +12,14 @@ use Illuminate\Queue\SerializesModels;
 class PayrollUpdate extends Mailable
 {
     use Queueable, SerializesModels;
-
+    
+    public $payroll;
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($payroll)
     {
+        $this->payroll = $payroll;
         //
     }
 
@@ -27,7 +29,7 @@ class PayrollUpdate extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Payroll Update',
+            subject:$this->payroll->employee->gender=='male'?'Mr. ':($this->payroll->employee->gender=='female'?'Ms. ':'').$this->payroll->employee->first_name.' Payroll Has Been Generated',
         );
     }
 
@@ -37,7 +39,7 @@ class PayrollUpdate extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.payslip',
         );
     }
 
