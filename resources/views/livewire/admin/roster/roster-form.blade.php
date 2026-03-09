@@ -50,8 +50,8 @@
                         :options="$branch_id_options" :search="true" />
 
                     <!-- Department (Optional) -->
-                    <x-form.select placeholder="Select Department" label="Select Department" name="department_id" :isRequired="false" :error="true"
-                        :options="$department_id_options" :search="true" />
+                    <x-form.select wire:key="department-select-{{ $branch_id ?? 'none' }}" placeholder="Select Department" label="Select Department" name="department_id" :isRequired="false" :error="true"
+                        :options="$department_id_options" :search="true" :live="true" />
 
                     <!-- Shift -->
                     <x-form.select placeholder="Select Shift" label="Select Shift" name="shift_id" :isRequired="true" :error="true" :live="true"
@@ -70,11 +70,13 @@
 
                     <!-- Employees -->
                     <x-form.select
+                        wire:key="employee-select-{{ $branch_id ?? 'none' }}-{{ $department_id ?? 'none' }}"
                         placeholder="Select Employees"
                         label="Select Employee"
                         name="employees"
                         :isRequired="true"
                         :error="true"
+                        :live="true"
                         :search="true"
                         :options="$employees_options"
                         :isMultiple="true" />

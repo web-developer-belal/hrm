@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Payroll;
 
+use App\Mail\PayrollUpdate;
 use App\Models\Attendance;
 use App\Models\AttendancePolicy;
 use App\Models\Employee;
@@ -11,6 +12,7 @@ use App\Models\PayrollAdjustment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PayrollService
 {
@@ -152,7 +154,7 @@ class PayrollService
                 'is_generated'         => true,
                 'approval_stage'       => 'branch_hr',
             ]);
-
+            Mail::to($employee->email)->queue(new PayrollUpdate($payroll));
             DB::commit();
             return $payroll;
 

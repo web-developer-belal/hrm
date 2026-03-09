@@ -4,9 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Loan Management Information</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Loan Application Status Update</title>
 </head>
+@php
+    $employee = $loan->employee;
+    $employeeName = trim(($employee->first_name ?? '') . ' ' . ($employee->last_name ?? ''));
+    $salutation = ($employee->gender ?? '') === 'male' ? 'Mr.' : (($employee->gender ?? '') === 'female' ? 'Ms.' : '');
+    $displayName = trim($salutation . ' ' . ($employeeName !== '' ? $employeeName : 'Employee'));
+
+    $statusKey = strtolower((string) ($loan->status ?? 'pending'));
+    $statusLabel = ucfirst($statusKey);
+
+    $statusBgColor = $statusKey === 'approved' ? '#ecfdf5' : ($statusKey === 'pending' ? '#fffbeb' : ($statusKey === 'rejected' ? '#fef2f2' : '#eff6ff'));
+    $statusBorderColor = $statusKey === 'approved' ? '#059669' : ($statusKey === 'pending' ? '#d97706' : ($statusKey === 'rejected' ? '#dc2626' : '#2563eb'));
+    $statusTextColor = $statusKey === 'approved' ? '#065f46' : ($statusKey === 'pending' ? '#92400e' : ($statusKey === 'rejected' ? '#991b1b' : '#1e40af'));
+
+    $currencySymbol = $currency ?? '৳';
+    $installments = max((int) ($loan->installments ?? 0), 0);
+    $paidInstallments = $loan->installments_data ? $loan->installments_data->where('is_paid', 1)->count() : 0;
+    $remainingInstallments = max($installments - $paidInstallments, 0);
+
+    $firstInstallment = $loan->installments_data
+        ? $loan->installments_data->sortBy(function ($item) {
+            return sprintf('%04d-%02d', $item->year, $item->month);
+        })->first()
+        : null;
+
+    $firstPaymentDate = $firstInstallment
+        ? date('F 1, Y', mktime(0, 0, 0, (int) $firstInstallment->month, 1, (int) $firstInstallment->year))
+        : 'N/A';
+
+    $startMonthLabel = !empty($loan->start_month) ? date('F Y', strtotime($loan->start_month)) : 'N/A';
+@endphp
 <body style="margin: 10px; padding: 10px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7fa;">
     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f7fa; padding: 40px 20px;">
         <tr>
@@ -18,7 +47,7 @@
                             <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                 <tr>
                                     <td align="center">
-                                        <img src="{{ asset('images/logo-white.png') }}" alt="{{ $companyName ?? 'Company Logo' }}" style="width: 60px; height: auto; margin-bottom: 15px;" onerror="this.style.display='none'">
+                                        <img src="{{ customAsset(settingData('company_logo_path')) }}" alt="{{ settingData('company_name') }}" style="width: 60px; height: auto; margin-bottom: 15px;" onerror="this.style.display='none'">
                                         <h1 style="color: #ffffff; font-size: 28px; font-weight: 600; margin: 10px 0 5px; line-height: 1.3;">Loan Management Information</h1>
                                         <p style="color: #d1fae5; font-size: 16px; margin: 0;">Your loan application has been processed</p>
                                     </td>
@@ -34,7 +63,7 @@
                                 <!-- Greeting -->
                                 <tr>
                                     <td style="padding-bottom: 25px;">
-                                        <p style="color: #374151; font-size: 18px; font-weight: 500; margin: 0;">Dear {{ $employeeName ?? 'Employee' }},</p>
+                                        <p style="color: #374151; font-size: 18px; font-weight: 500; margin: 0;">Dear {{ $displayName }},</p>
                                     </td>
                                 </tr>
 
@@ -42,7 +71,7 @@
                                 <tr>
                                     <td style="padding-bottom: 25px;">
                                         <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin: 0;">
-                                            We are pleased to inform you that your loan application has been <span style="color: #059669; font-weight: 600;">{{ strtolower($status ?? 'approved') }}</span>.
+                                            We are pleased to inform you that your loan application has been <span style="color: {{ $statusTextColor }}; font-weight: 600;">{{ strtolower($statusLabel) }}</span>.
                                             Below are the detailed information regarding your loan:
                                         </p>
                                     </td>
@@ -51,25 +80,25 @@
                                 <!-- Status Banner -->
                                 <tr>
                                     <td style="padding-bottom: 30px;">
-                                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: {{ $status == 'Approved' ? '#ecfdf5' : ($status == 'Pending' ? '#fffbeb' : ($status == 'Rejected' ? '#fef2f2' : '#eff6ff')) }}; border-radius: 8px; border-left: 4px solid {{ $status == 'Approved' ? '#059669' : ($status == 'Pending' ? '#d97706' : ($status == 'Rejected' ? '#dc2626' : '#2563eb')) }};">
+                                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: {{ $statusBgColor }}; border-radius: 8px; border-left: 4px solid {{ $statusBorderColor }};">
                                             <tr>
                                                 <td style="padding: 15px 20px;">
                                                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                         <tr>
                                                             <td width="30" style="vertical-align: middle;">
-                                                                @if($status == 'Approved')
+                                                                @if($statusKey == 'approved')
                                                                     <span style="font-size: 24px;">✅</span>
-                                                                @elseif($status == 'Pending')
+                                                                @elseif($statusKey == 'pending')
                                                                     <span style="font-size: 24px;">⏳</span>
-                                                                @elseif($status == 'Rejected')
+                                                                @elseif($statusKey == 'rejected')
                                                                     <span style="font-size: 24px;">❌</span>
                                                                 @else
                                                                     <span style="font-size: 24px;">ℹ️</span>
                                                                 @endif
                                                             </td>
                                                             <td style="vertical-align: middle;">
-                                                                <p style="color: {{ $status == 'Approved' ? '#065f46' : ($status == 'Pending' ? '#92400e' : ($status == 'Rejected' ? '#991b1b' : '#1e40af')) }}; font-size: 18px; font-weight: 600; margin: 0;">
-                                                                    Loan Status: {{ $status ?? 'Approved' }}
+                                                                <p style="color: {{ $statusTextColor }}; font-size: 18px; font-weight: 600; margin: 0;">
+                                                                    Loan Status: {{ $statusLabel }}
                                                                 </p>
                                                             </td>
                                                         </tr>
@@ -106,7 +135,7 @@
                                                             <td width="60%" style="padding: 12px 0; border-bottom: 1px dashed #e2e8f0;">
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
-                                                                        <td style="color: #0f172a; font-weight: 600; font-size: 15px;">{{ $branch ?? 'Head Office' }}</td>
+                                                                        <td style="color: #0f172a; font-weight: 600; font-size: 15px;">{{ $loan->branch->name ?? 'N/A' }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </td>
@@ -124,14 +153,14 @@
                                                             <td width="60%" style="padding: 12px 0; border-bottom: 1px dashed #e2e8f0;">
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
-                                                                        <td style="color: #0f172a; font-weight: 600; font-size: 15px;">{{ $employeeName ?? 'John Doe' }}</td>
+                                                                        <td style="color: #0f172a; font-weight: 600; font-size: 15px;">{{ $employeeName !== '' ? $employeeName : 'N/A' }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </td>
                                                         </tr>
 
                                                         <!-- Employee ID (Additional) -->
-                                                        @if(isset($employeeId))
+                                                        @if(!empty($employee->employee_code))
                                                         <tr>
                                                             <td width="40%" style="padding: 12px 0; border-bottom: 1px dashed #e2e8f0;">
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -143,7 +172,7 @@
                                                             <td width="60%" style="padding: 12px 0; border-bottom: 1px dashed #e2e8f0;">
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
-                                                                        <td style="color: #0f172a; font-weight: 500; font-size: 15px;">{{ $employeeId }}</td>
+                                                                        <td style="color: #0f172a; font-weight: 500; font-size: 15px;">{{ $employee->employee_code }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </td>
@@ -162,7 +191,7 @@
                                                             <td width="60%" style="padding: 12px 0; border-bottom: 1px dashed #e2e8f0;">
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
-                                                                        <td style="color: #0f172a; font-weight: 700; font-size: 18px; color: #059669;">{{ $currency ?? '$' }}{{ number_format($amount ?? 5000, 2) }}</td>
+                                                                        <td style="color: #0f172a; font-weight: 700; font-size: 18px; color: #059669;">{{ $currencySymbol }}{{ number_format($loan->amount ?? 0, 2) }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </td>
@@ -180,7 +209,7 @@
                                                             <td width="60%" style="padding: 12px 0; border-bottom: 1px dashed #e2e8f0;">
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
-                                                                        <td style="color: #0f172a; font-weight: 600; font-size: 15px;">{{ $installment ?? 12 }} Months</td>
+                                                                        <td style="color: #0f172a; font-weight: 600; font-size: 15px;">{{ $installments }} Months</td>
                                                                     </tr>
                                                                 </table>
                                                             </td>
@@ -198,7 +227,7 @@
                                                             <td width="60%" style="padding: 12px 0; border-bottom: 1px dashed #e2e8f0;">
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
-                                                                        <td style="color: #0f172a; font-weight: 600; font-size: 16px;">{{ $currency ?? '$' }}{{ number_format($emiAmount ?? 450.50, 2) }}</td>
+                                                                        <td style="color: #0f172a; font-weight: 600; font-size: 16px;">{{ $currencySymbol }}{{ number_format($loan->emi_amount ?? 0, 2) }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </td>
@@ -216,7 +245,7 @@
                                                             <td width="60%" style="padding: 12px 0; border-bottom: 1px dashed #e2e8f0;">
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
-                                                                        <td style="color: #0f172a; font-weight: 600; font-size: 16px;">{{ $currency ?? '$' }}{{ number_format($remainingAmount ?? 4550.00, 2) }}</td>
+                                                                        <td style="color: #0f172a; font-weight: 600; font-size: 16px;">{{ $currencySymbol }}{{ number_format($loan->remaining_amount ?? 0, 2) }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </td>
@@ -234,7 +263,7 @@
                                                             <td width="60%" style="padding: 12px 0; border-bottom: 1px dashed #e2e8f0;">
                                                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                                     <tr>
-                                                                        <td style="color: #0f172a; font-weight: 600; font-size: 15px;">{{ $startMonth ?? 'April 2026' }}</td>
+                                                                        <td style="color: #0f172a; font-weight: 600; font-size: 15px;">{{ $startMonthLabel }}</td>
                                                                     </tr>
                                                                 </table>
                                                             </td>
@@ -254,9 +283,9 @@
                                                                     <tr>
                                                                         <td>
                                                                             <span style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;
-                                                                                background-color: {{ $status == 'Approved' ? '#d1fae5' : ($status == 'Pending' ? '#fef3c7' : ($status == 'Rejected' ? '#fee2e2' : '#dbeafe')) }};
-                                                                                color: {{ $status == 'Approved' ? '#065f46' : ($status == 'Pending' ? '#92400e' : ($status == 'Rejected' ? '#991b1b' : '#1e40af')) }};">
-                                                                                {{ $status ?? 'Approved' }}
+                                                                                background-color: {{ $statusKey == 'approved' ? '#d1fae5' : ($statusKey == 'pending' ? '#fef3c7' : ($statusKey == 'rejected' ? '#fee2e2' : '#dbeafe')) }};
+                                                                                color: {{ $statusTextColor }};">
+                                                                                {{ $statusLabel }}
                                                                             </span>
                                                                         </td>
                                                                     </tr>
@@ -282,7 +311,7 @@
                                                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                         <tr>
                                                             <td style="padding: 5px 0; color: #1e3a8a; font-size: 14px; line-height: 1.6;">
-                                                                • First Payment Date: {{ $firstPaymentDate ?? 'May 1, 2026' }}
+                                                                • First Payment Date: {{ $firstPaymentDate }}
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -297,7 +326,12 @@
                                                         </tr>
                                                         <tr>
                                                             <td style="padding: 5px 0; color: #1e3a8a; font-size: 14px; line-height: 1.6;">
-                                                                • Total Interest: {{ $currency ?? '$' }}{{ number_format($totalInterest ?? 350.00, 2) }}
+                                                                • Installments Paid: {{ $paidInstallments }} of {{ $installments }}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="padding: 5px 0; color: #1e3a8a; font-size: 14px; line-height: 1.6;">
+                                                                • Remaining Installments: {{ $remainingInstallments }}
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -350,7 +384,7 @@
                                         <table cellpadding="0" cellspacing="0" border="0">
                                             <tr>
                                                 <td style="background-color: #059669; border-radius: 6px;">
-                                                    <a href="{{ $loanPortalUrl ?? '#' }}" style="display: inline-block; padding: 14px 35px; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 6px;">View Loan Details</a>
+                                                    <a href="{{ url('/') }}" style="display: inline-block; padding: 14px 35px; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 6px;">View Loan Details</a>
                                                 </td>
                                             </tr>
                                         </table>
@@ -364,7 +398,7 @@
                                         <p style="color: #1e293b; font-size: 16px; font-weight: 600; margin: 0 0 3px 0;">Finance Department</p>
                                         <p style="color: #64748b; font-size: 14px; margin: 0;">Loan Management Team</p>
                                         <p style="color: #059669; font-size: 14px; margin: 5px 0 0 0;">
-                                            <a href="mailto:{{ $financeEmail ?? 'finance@company.com' }}" style="color: #059669; text-decoration: none;">{{ $financeEmail ?? 'finance@company.com' }}</a> |
+                                            <a href="mailto:{{ settingData('email_address') }}" style="color: #059669; text-decoration: none;">{{ settingData('email_address') }}</a> |
                                             <a href="#" style="color: #059669; text-decoration: none;">Loan Portal</a>
                                         </p>
                                     </td>
@@ -407,8 +441,8 @@
                                 <tr>
                                     <td align="center" style="padding-top: 15px;">
                                         <p style="color: #94a3b8; font-size: 12px; margin: 0;">
-                                            &copy; {{ date('Y') }} {{ $companyName ?? 'Your Company Name' }}. All rights reserved.<br>
-                                            {{ $companyAddress ?? '123 Business Avenue, Suite 100, City, State 12345' }}
+                                            &copy; {{ date('Y') }} {{ settingData('company_name') }}. All rights reserved.<br>
+                                            {{ settingData('company_address') }}
                                         </p>
                                     </td>
                                 </tr>

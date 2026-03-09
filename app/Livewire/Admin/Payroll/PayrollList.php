@@ -40,12 +40,17 @@ class PayrollList extends Component
 
     public function exportSelected()
     {
+        if(!$this->branch){
+            flash()->error('Please select a branch to export payroll data.');
+            return;
+        }
         if (empty($this->selectedPayroll)) {
             flash()->error('No payrolls selected for export.');
             return;
         }
 
-        return redirect()->route('admin.payroll.export', ['payrolls' => implode(',', $this->selectedPayroll)]);
+        $payrollIds = implode(',', $this->selectedPayroll);
+        return redirect()->route('admin.payroll.export', ['payrolls' => $payrollIds]);
     }
 
     public function exportDisbursementSheet($mfs = false)
