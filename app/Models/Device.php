@@ -11,9 +11,11 @@ class Device extends Model
         'ip_address',
         'port',
         'status',
-        'branch_id'
+        'branch_id',
+        'no_sn',
+        'online',
     ];
-    
+
     public function branch()
     {
         return $this->belongsTo(Branch::class);

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('attendance_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('device_id')->nullable();
+            $table->string('device_sn')->nullable();
             $table->unsignedBigInteger('employee_id');
             $table->date('attendance_date');
             $table->time('attendance_time');

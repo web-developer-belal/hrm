@@ -178,7 +178,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('edit')->middleware('permission:employees.edit');
         Route::livewire('/details/{emp}', EmployeeDetails::class)
             ->name('details')->middleware('permission:employees.show');
-        
+
     });
 
     // Attendance Management
@@ -256,7 +256,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('edit')->middleware('permission:complains.edit');
 
     });
-    
+
     Route::prefix('notices')->name('notice.')->group(function () {
         Route::livewire('/', ManageNotice::class)
             ->name('index')->middleware('permission:notices.show');
@@ -334,12 +334,17 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('role.create')->middleware('permission:roles.create');
     Route::livewire('/role/edit/{role}', RolesForm::class)
             ->name('role.edit')->middleware('permission:roles.edit');
-            
+
     // Activity Log
     Route::livewire('/activity-log', ActivityLog::class)
         ->name('activity-log')->middleware('permission:activity-log.show');
 
-    Route::any('/mobile/get/data', [AdmsController::class,'receive'])->where('any', '.*');
-    Route::any('/mobile/get/request', [AdmsController::class,'getRequest'])->where('any', '.*');
+
+
+    // handshake
+Route::get('/iclock/cdata', [AdmsController::class, 'handshake']);
+Route::post('/iclock/cdata', [AdmsController::class, 'receiveRecords']);
+Route::get('/iclock/test', [AdmsController::class, 'test']);
+Route::get('/iclock/getrequest', [AdmsController::class, 'getrequest']);
 
 });

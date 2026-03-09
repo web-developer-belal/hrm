@@ -8,6 +8,7 @@ class AttendanceLog extends Model
 {
     protected $fillable=[
         'device_id',
+        'device_sn',
         'employee_id',
         'attendance_date',
         'attendance_time',

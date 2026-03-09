@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('branch_id')->constrained()->onDelete('cascade');
-            $table->string('name');
-            $table->string('ip_address');
+            $table->string('name')->nullable();
+            $table->string('ip_address')->nullable();
+            $table->string('no_sn')->nullable();
+            $table->dateTime('online')->nullable();
             $table->integer('port')->default(4370);
             $table->boolean('status')->default(true);
             $table->timestamps();
