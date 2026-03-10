@@ -56,8 +56,7 @@
                     <x-form.input label="Start Month" name="startMonth" :isRequired="true" :error="true"
                         type="date" />
 
-
-                    <x-form.textarea label="Note" name="note" :isRequired="false" :error="true" />
+                    <x-form.textarea label="Note" name="note" :isRequired="false" :error="true" :isEditor="true" placeholder="Enter note" />
 
 
 

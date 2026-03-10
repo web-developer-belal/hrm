@@ -26,9 +26,12 @@
                 <!-- Date -->
                 <x-form.input label="Date" name="date" type="date" :isRequired="true" />
 
-                <!-- Description -->
-                <x-form.textarea label="Describe your Complain" name="description" placeholder="Describe your complain"
-                    :isRequired="false" />
+                <div class="md:col-span-2">
+                    <!-- Description -->
+                    <x-form.textarea label="Describe your Complain" name="description"
+                        placeholder="Describe your complain" :isRequired="false" :isEditor="true" />
+                </div>
+
 
                 <!-- Documents -->
                 <x-form.file-upload title="Documents" label="Upload Files" name="documents" multiple

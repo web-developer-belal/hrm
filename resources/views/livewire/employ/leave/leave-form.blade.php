@@ -47,39 +47,34 @@
                 <form wire:submit.prevent="submitApplication" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
                     <div class="w-full">
-                        <label>Leave Type *</label>
-                        <select class="form-control" wire:change="setLeaveType($event.target.value)" required>
-                            <option value="">Select</option>
-                            @foreach ($leaveTypes as $type)
-                                <option value="{{ $type->id }}">{{ $type->name }}</option>
-                            @endforeach
-                        </select>
+                        <x-form.select label="Leave Type" name="leave_type_id" :options="$leaveTypes" :live="true"
+                            :isRequired="true" />
                     </div>
                     <div class="w-full">
-                        <label>Leave Balance</label>
-                        <input class="form-control" readonly value="{{ $leave_balance }}">
+                        <x-form.input label="Leave Balance" name="leave_balance" :isReadonly="true" />
                     </div>
 
 
                     <div class="w-full">
-                        <label>From Date</label>
-                        <input type="date" class="form-control" wire:change="setFromDate($event.target.value)"
-                            required>
+                        <x-form.input label="Leave Balance" name="leave_balance" :isReadonly="true" />
+                    </div>
+
+
+                    <div class="w-full">
+                        <x-form.input label="From Date" type="date" name="from_date" :live="true"
+                            :isRequired="true" />
                     </div>
 
                     <div class="w-full">
-                        <label>To Date</label>
-                        <input type="date" class="form-control" wire:change="setToDate($event.target.value)"
-                            required>
+                        <x-form.input label="To Date" type="date" name="to_date" :live="true"
+                            :isRequired="true" />
                     </div>
 
                     <div class="w-full">
-                        <label>Total Days</label>
-                        <input class="form-control" readonly value="{{ $total_days }}">
+                        <x-form.input label="Total Days" name="total_days" :isReadonly="true" />
                     </div>
-                    <div class="w-full">
-                        <label>Reason</label>
-                        <textarea class="form-control" wire:input="setDescription($event.target.value)"></textarea>
+                    <div class="md:col-span-2">
+                        <x-form.textarea label="Reason" name="description" :isEditor="true" />
                     </div>
 
 

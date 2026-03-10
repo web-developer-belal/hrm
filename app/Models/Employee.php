@@ -41,13 +41,14 @@ class Employee extends Authenticatable
         'Id_proof',
         'email',
         'password',
-        'mfs_account'
-
+        'mfs_account',
+        'has_ot'
     ];
 
     protected $casts = [
         'date_of_birth' => 'date',
         'joining_date'  => 'date',
+        'has_ot' => 'boolean',
     ];
 
     /* =====================

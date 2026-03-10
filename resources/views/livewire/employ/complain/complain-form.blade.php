@@ -57,11 +57,14 @@
                         placeholder="Enter complain Subject" />
                     <x-form.input label="Date" name="date" :isRequired="true" :error="true" type="date" />
 
+                    <div class="md:col-span-2">
+                        <x-form.textarea label="Describe your Complain" name="description" :isRequired="false"
+                            :error="true" placeholder="Describe your complain" :isEditor="true" /> 
+                    </div>
 
-                    <x-form.textarea label="Describe your Complain" name="description" :isRequired="false"
-                        :error="true" placeholder="Describe your complain" />
 
-                    <x-form.file-upload title="Documents" label="Upload Files" multiple accept=".pdf,.doc,.docx,.jpg,.png" name="documents" />
+                    <x-form.file-upload title="Documents" label="Upload Files" multiple
+                        accept=".pdf,.doc,.docx,.jpg,.png" name="documents" />
 
                     <!-- Submit Button -->
                     <div class="text-end md:col-span-2">

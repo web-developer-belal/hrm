@@ -10,7 +10,7 @@ use Livewire\Component;
 class LeaveForm extends Component
 {
     public $employee;
-   
+
     public $leaveTypes;
 
     public $leave_type_id;
@@ -24,31 +24,28 @@ class LeaveForm extends Component
     public function mount()
     {
         $this->employee   = Auth::guard('employee')->user();
-        $this->leaveTypes = LeaveType::all();
+        $this->leaveTypes = LeaveType::all()->pluck('name', 'id')->prepend('Select Leave Type', '')->toArray();
 
     }
 
-    public function setLeaveType($id)
+    public function updatedEmployeeId()
     {
-        $this->leave_type_id = $id;
         $this->recalculateBalance();
     }
 
-    public function setFromDate($value)
+    public function updatedLeaveTypeId()
     {
-        $this->from_date = $value;
+        $this->recalculateBalance();
+    }
+
+    public function updatedFromDate()
+    {
         $this->calculateDays();
     }
 
-    public function setToDate($value)
+    public function updatedToDate()
     {
-        $this->to_date = $value;
         $this->calculateDays();
-    }
-
-    public function setDescription($value)
-    {
-        $this->description = $value;
     }
 
     public function recalculateBalance()
@@ -98,7 +95,7 @@ class LeaveForm extends Component
         ]);
 
         if (! $this->leave_type_id) {
-            $this->addError('employee_id', 'Employee and leave type required.');
+            $this->addError('leave_type_id', 'Employee and leave type required.');
             return;
         }
 
@@ -113,11 +110,11 @@ class LeaveForm extends Component
             'from_date'     => $this->from_date,
             'to_date'       => $this->to_date,
             'total_days'    => $this->total_days,
-            'descriptions'  => $this->description,
+            'description'   => $this->description,
             'status'        => 'Pending',
         ]);
 
-        session()->flash('success', 'Leave application submitted.');
+        flash()->success('Leave application submitted.');
 
         $this->reset([
             'leave_type_id',

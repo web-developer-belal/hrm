@@ -8,12 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Branch extends Model
 {
     use HasFactory;
+    
     protected $fillable = [
         'name',
         'contact',
         'address',
         'status',
+        'branch_group_id'
     ];
+
+    public function branchGroup()
+    {
+        return $this->belongsTo(BranchGroup::class);
+    }
 
     public function departments()
     {

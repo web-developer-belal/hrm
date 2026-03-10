@@ -22,7 +22,8 @@
         <div class="flex my-xl-auto right-content items-center flex-wrap gap-2">
             <div class="mb-2">
                 <a href="{{ route('admin.expenses.type') }}"
-                    class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">Expense Type</a>
+                    class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">Expense
+                    Type</a>
             </div>
             <div class="mb-2">
                 <button @click="modalOpen = true; $wire.resetForm()" class="btn btn-primary"><i
@@ -62,13 +63,21 @@
                                 <td class="px-4 py-2">{{ number_format($exp->amount, 2) }}</td>
                                 <td class="px-4 py-2">{{ $exp->date->format('d-M-Y') }}</td>
                                 <td class="px-4 py-2 space-x-2">
-                                    <button wire:click="editExpense({{ $exp->id }})" @click="modalOpen = true"
-                                        class="btn btn-warning btn-sm">Edit</button>
-                                    <button wire:click="deleteExpense({{ $exp->id }})"
-                                        onclick="confirm('Are you sure?') || event.stopImmediatePropagation()"
-                                        class="btn btn-danger btn-sm">Delete</button>
-                                    <a href="{{ route('admin.expenses.show', $exp->id) }}"
-                                        class="btn btn-info btn-sm">Details</a>
+                                    <div class="flex">
+                                        <button wire:click="editExpense({{ $exp->id }})" @click="modalOpen = true"
+                                            class="size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900">
+                                            <i class="ti ti-edit"></i>
+                                        </button>
+                                        <button wire:click="deleteExpense({{ $exp->id }})"
+                                            onclick="confirm('Are you sure?') || event.stopImmediatePropagation()"
+                                            class="size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900">
+                                            <i class="ti ti-trash"></i>
+                                        </button>
+                                        <a href="{{ route('admin.expenses.show', $exp->id) }}"
+                                            class="size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900">
+                                            <i class="ti ti-eye"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

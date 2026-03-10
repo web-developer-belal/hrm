@@ -39,6 +39,9 @@
             </div>
             <div class="card-body p-5">
                 <form wire:submit.prevent="save" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+                    <x-form.select label="Group" name="branch_group_id" :error="true"
+                        :options="$groups" />
+
                     <x-form.input label="Branch Name" name="name" :isRequired="true" :error="true"
                         placeholder="Enter Branch Name" />
                     <x-form.input label="Contact" name="contact" :isRequired="true" :error="true"

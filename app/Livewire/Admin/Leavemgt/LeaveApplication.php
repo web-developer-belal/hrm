@@ -1,7 +1,6 @@
 <?php
 namespace App\Livewire\Admin\Leavemgt;
 
-use App\Models\Branch;
 use App\Models\Employee;
 use App\Models\Leave;
 use App\Models\LeaveType;
@@ -25,49 +24,51 @@ class LeaveApplication extends Component
     public $total_days = 0;
     public $description;
 
-    public $branches      = [];
-    public $departments   = [];
-    public $shifts        = [];
-    public $employeesData = [];
-    
-    public function mount($roster = null)
-    {
-        $this->branches = Branch::where('status', 'active')->pluck('name', 'id')->prepend('Select Branch', '')->toArray();
+    public $departments         = [];
+    public $shifts              = [];
+    public $employee_id_options = [];
+    public $employee_id_search  = '';
 
+    public function mount()
+    {
         $this->employees  = Employee::all();
-        $this->leaveTypes = LeaveType::all();
-
-        $this->employeesData = Employee::pluck('first_name', 'id')->prepend('Select Employee', '')->toArray();
-
+        $this->leaveTypes = LeaveType::all()->pluck('name', 'id')->prepend('Select Leave Type', '')->toArray();
+        $this->loadEmployeeOptions();
     }
 
-    public function setEmployee($id)
+    private function loadEmployeeOptions()
     {
-        $this->employee_id = $id;
+        $this->employee_id_options = Employee::where('status', 1)->when($this->employee_id_search, function ($q) {
+            $q->where('first_name', 'like', '%' . $this->employee_id_search . '%')
+                ->orWhere('last_name', 'like', '%' . $this->employee_id_search . '%')
+                ->orWhere('employee_code', 'like', '%' . $this->employee_id_search . '%');
+        })->take(6)->get()->mapWithKeys(function ($employee) {
+            return [$employee->id => $employee->full_name . ' (' . $employee->employee_code . ')'];
+        })->toArray();
+    }
+
+    public function updatedEmployeeIdSearch()
+    {
+        $this->loadEmployeeOptions();
+    }
+    public function updatedEmployeeId()
+    {
         $this->recalculateBalance();
     }
 
-    public function setLeaveType($id)
+    public function updatedLeaveTypeId()
     {
-        $this->leave_type_id = $id;
         $this->recalculateBalance();
     }
 
-    public function setFromDate($value)
+    public function updatedFromDate()
     {
-        $this->from_date = $value;
         $this->calculateDays();
     }
 
-    public function setToDate($value)
+    public function updatedToDate()
     {
-        $this->to_date = $value;
         $this->calculateDays();
-    }
-
-    public function setDescription($value)
-    {
-        $this->description = $value;
     }
 
     public function recalculateBalance()
@@ -111,7 +112,7 @@ class LeaveApplication extends Component
     public function submitApplication()
     {
 
-        $validated = $this->validate([
+        $this->validate([
             'from_date' => 'required|date',
             'to_date'   => 'required|date|after_or_equal:from_date',
         ]);
@@ -136,7 +137,7 @@ class LeaveApplication extends Component
             'status'        => 'Pending',
         ]);
 
-        session()->flash('success', 'Leave application submitted.');
+        flash()->success('Leave application submitted.');
 
         $this->reset([
             'employee_id',

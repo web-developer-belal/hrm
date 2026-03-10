@@ -10,6 +10,7 @@ use App\Livewire\Admin\Attendance\AddManualAttendance;
 use App\Livewire\Admin\Attendance\AttendanceList;
 use App\Livewire\Admin\Branch\BranchForm;
 use App\Livewire\Admin\Branch\BranchManagement;
+use App\Livewire\Admin\Branch\GroupManagement;
 use App\Livewire\Admin\Calender;
 use App\Livewire\Admin\Complain\ComplainAdd;
 use App\Livewire\Admin\Complain\ComplainList;
@@ -35,6 +36,8 @@ use App\Livewire\Admin\Loan\LoanList;
 use App\Livewire\Admin\Notice\ManageNotice;
 use App\Livewire\Admin\Notice\NoticeDetails;
 use App\Livewire\Admin\Notice\NoticeForm;
+use App\Livewire\Admin\Ot\OtForm;
+use App\Livewire\Admin\Ot\OtManagement;
 use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeduction;
 use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeductionNew;
 use App\Livewire\Admin\Payroll\PayrollEngine;
@@ -114,6 +117,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('create')->middleware('permission:branches.create');
         Route::livewire('/edit/{branch}', BranchForm::class)
             ->name('edit')->middleware('permission:branches.edit');
+        Route::livewire('/groups', GroupManagement::class)
+            ->name('groups')->middleware('permission:branches-groups.show');
     });
 
     // Department Management
@@ -295,6 +300,16 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('add')->middleware('permission:attendance-policy.add');
         Route::livewire('/attendance/edit/{policyID}', AttendancePolicyAdd::class)
             ->name('edit')->middleware('permission:attendance-policy.edit');
+    });
+
+    // Ot Management
+    Route::prefix('ot')->name('ot.')->group(function () {
+        Route::livewire('/', OtManagement::class)
+            ->name('index')->middleware('permission:ot.show');
+        Route::livewire('/create', OtForm::class)
+            ->name('create')->middleware('permission:ot.create');
+        Route::livewire('/edit/{ot}', OtForm::class)
+            ->name('edit')->middleware('permission:ot.edit');
     });
 
     // Reports

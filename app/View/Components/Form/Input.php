@@ -19,6 +19,7 @@ class Input extends Component
         public bool $isRequired = false,
         public bool $error = true,
         public bool $live = false,
+        public bool $isReadonly = false,
     )
     {}
 

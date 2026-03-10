@@ -26,6 +26,7 @@ class BranchRequest extends FormRequest
            'address' => 'nullable|string|max:500',
            'contact' => 'nullable|string|max:20',
            'status' => 'required|in:active,inactive',
+           'branch_group_id' => 'nullable|exists:branch_groups,id',
         ];
     }
 
@@ -41,6 +42,7 @@ class BranchRequest extends FormRequest
             'contact.max' => 'The contact may not be greater than 20 characters.',
             'status.required' => 'The status is required.',
             'status.enum' => 'The status must be either active or inactive.',
+            'branch_group_id.exists' => 'The selected branch group is invalid.',
         ];
     }
 }

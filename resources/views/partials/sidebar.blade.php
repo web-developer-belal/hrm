@@ -81,6 +81,17 @@
                         </li>
                         @endif
 
+                         {{-- Groups --}}
+                        @if(auth()->user()->hasPermission('branches.groups.show'))
+                        <li class="mb-[5px]">
+                            <a href="{{ route('admin.branches.groups') }}"
+                                class="relative flex item-center w-full p-2 text-sm leading-normal font-medium {{ request()->routeIs('admin.branches.groups') ? 'text-primary bg-dark-transparent' : 'text-gray-900 group hover:bg-dark-transparent hover:text-gray-900' }} transition-all duration-500 ease-in-out rounded-[5px]">
+                                <i class="ti ti-users {{ request()->routeIs('admin.branches.groups') ? 'text-primary' : 'text-gray-500 group-hover:text-gray-900' }}"></i>
+                                <span class="ms-2">Groups</span>
+                            </a>
+                        </li>
+                        @endif
+
                         {{-- HR Management --}}
                         @php
                             $hrRoutes = [
@@ -143,6 +154,44 @@
                                 @if(auth()->user()->hasPermission('complains.show'))
                                 <li><a href="{{ route('admin.complain.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.complain.index') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Complain</a></li>
+                                @endif
+                            </ul>
+                        </li>
+                        @endif
+
+                        {{-- Ot --}}
+                        @php
+                            $otRoutes = [
+                                'admin.ot.create' => 'ot.create',
+                                'admin.ot.index' => 'ot.show',
+                                'admin.ot.edit' => 'ot.edit',
+                            ];
+                            $showOt = false;
+                            foreach ($otRoutes as $route => $perm) {
+                                if (auth()->user()->hasPermission($perm)) {
+                                    $showOt = true;
+                                    break;
+                                }
+                            }
+                            $isOtActive = request()->routeIs(array_keys($otRoutes));
+                        @endphp
+                        @if($showOt)
+                        <li class="submenu mb-[5px]">
+                            <a href="javascript:void(0);"
+                                class="relative flex item-center w-full p-2 text-sm leading-normal font-medium {{ $isOtActive ? 'text-primary bg-dark-transparent' : 'text-gray-900 group hover:bg-dark-transparent hover:text-gray-900' }} transition-all duration-500 ease-in-out rounded-[5px]">
+                                <i class="ti ti-clock {{ $isOtActive ? 'text-primary' : 'text-gray-500 group-hover:text-gray-900' }}"></i>
+                                <span class="ms-2">Ot Management</span>
+                                <span class="menu-arrow absolute top-1/2 -translate-y-1/2 right-2.5 flex items-center w-4 h-4"></span>
+                            </a>
+                            <ul class="relative mt-2 before:absolute before:top-0 before:left-3.5 before:w-[1.5px] before:h-full before:bg-gray-100"
+                                style="display: {{ $isOtActive ? 'block' : 'none' }};">
+                                @if(auth()->user()->hasPermission('ot.create'))
+                                <li><a href="{{ route('admin.ot.create') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.ot.create') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Add OT</a></li>
+                                @endif
+                                @if(auth()->user()->hasPermission('ot.show'))
+                                <li><a href="{{ route('admin.ot.index') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.ot.index') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">OT List</a></li>
                                 @endif
                             </ul>
                         </li>

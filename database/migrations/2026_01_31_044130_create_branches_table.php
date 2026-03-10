@@ -15,14 +15,16 @@ return new class extends Migration
             $table->id();
 
             $table->string('name');
+            $table->bigInteger('branch_group_id')->unsigned()->nullable();
             $table->string('contact')->nullable();
             $table->text('address')->nullable();
-            $table->enum('status', ['active', 'inactive'])->default('active'); 
+            $table->enum('status', ['active', 'inactive'])->default('active');
 
             $table->timestamps();
 
             $table->index('name');
             $table->index('status');
+            $table->foreign('branch_group_id')->references('id')->on('branch_groups')->nullOnDelete();
         });
 
     }
