@@ -7,6 +7,7 @@ use App\Models\AttendancePolicy;
 use App\Models\Employee;
 use App\Models\Loan;
 use App\Models\LoanInstallment;
+use App\Models\Ot;
 use App\Models\Payroll;
 use App\Models\PayrollAdjustment;
 use Carbon\Carbon;
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Mail;
 
 class PayrollService
 {
+    protected const STANDARD_HOURS_PER_DAY = 8;
+
     public function generateForEmployee($employee, $year, $month, $totalDays)
     {
         if (Payroll::where('employee_id', $employee->id)
@@ -75,9 +78,34 @@ class PayrollService
             $absentDeduction = $dailySalary * $totalAbsentForDeduction;
 
             // OT Calculation - overtime_minutes is stored as INTEGER (total minutes)
-            $totalOvertimeMinutes = $attendances->sum('overtime_minutes');
-            $overTimeHour         = round($totalOvertimeMinutes / 60, 2);
-            $totalOt              = $overTimeHour * 50; // OT Rate
+            $otConfig = Ot::query()
+                ->where('branch_group_id', $employee->branch?->branch_group_id)
+                ->latest('id')
+                ->first();
+
+            $totalOt = 0;
+            if ($employee->has_ot && $otConfig) {
+                $regularOvertimeMinutes = $attendances
+                    ->whereNotIn('status', ['holiday', 'offday'])
+                    ->sum('overtime_minutes');
+
+                $holidayOvertimeMinutes = $attendances
+                    ->whereIn('status', ['holiday', 'offday'])
+                    ->sum('overtime_minutes');
+
+                $payableOvertimeMinutes = $regularOvertimeMinutes;
+                if ($otConfig->off_day_counting) {
+                    $payableOvertimeMinutes += $holidayOvertimeMinutes;
+                }
+
+                $overTimeHour  = round($payableOvertimeMinutes / 60, 2);
+                $otRatePerHour = $this->resolveOtRatePerHour(
+                    $otConfig,
+                    $totalPlusSalary,
+                    $totalDays
+                );
+                $totalOt = round($overTimeHour * $otRatePerHour, 2);
+            }
 
             // Loan EMI - This modifies the Loan table, so Transaction is critical here!
             $loan = Loan::where('employee_id', $employee->id)
@@ -90,13 +118,13 @@ class PayrollService
                 $loan->remaining_amount -= $loanDeduction;
                 $loan->save();
 
-                 LoanInstallment::create([
-                'loan_id' => $loan->id,
-                'year' => $year,
-                'month' => $month,
-                'amount' => $loanDeduction,
-                'is_paid' => 1,   // 1 for paid, 0 for pending
-            ]);
+                LoanInstallment::create([
+                    'loan_id' => $loan->id,
+                    'year'    => $year,
+                    'month'   => $month,
+                    'amount'  => $loanDeduction,
+                    'is_paid' => 1, // 1 for paid, 0 for pending
+                ]);
             }
 
             // Adjustments
@@ -203,5 +231,44 @@ class PayrollService
         }
 
         return $count;
+    }
+
+    /**
+     * Generate payroll for all employees in a specific branch group
+     */
+    public function generateForBranchGroup($branchGroupId, $year, $month, $totalDays)
+    {
+        $employees = Employee::query()
+            ->where('status', 1)
+            ->whereHas('branch', function ($q) use ($branchGroupId) {
+                $q->where('branch_group_id', $branchGroupId);
+            })
+            ->get();
+
+        $count = 0;
+
+        foreach ($employees as $employee) {
+            $result = $this->generateForEmployee($employee, $year, $month, $totalDays);
+            if ($result) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    protected function resolveOtRatePerHour($otConfig, float $totalPlusSalary, int $totalDays): float
+    {
+        if (! $otConfig) {
+            return 0;
+        }
+
+        if ($otConfig->rate_type === 'percentage') {
+            $monthlyWorkHours = max($totalDays * self::STANDARD_HOURS_PER_DAY, 1);
+            $baseHourlyRate   = $totalPlusSalary / $monthlyWorkHours;
+            return round($baseHourlyRate * ((float) $otConfig->rate / 100), 2);
+        }
+
+        return (float) $otConfig->rate;
     }
 }

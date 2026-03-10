@@ -1,5 +1,5 @@
-<div class="w-full">
-    @if ($label)
+<div class="w-full flex flex-col {{ $type === 'checkbox' ? 'justify-end' : '' }}">
+    @if ($label && $type !== 'checkbox')
         <label class="form-label flex gap-2">{{ $label }} @if ($isRequired)
                 <span class="text-red-500">*</span>
             @endif
@@ -17,6 +17,16 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
+        </div>
+    @elseif ($type === 'checkbox')
+        <div class="form-check">
+            <input type="checkbox" class="text-primary rounded border-borderColor {{ $class ?? '' }}"
+                @if ($live) wire:model.live="{{ $name }}" @else wire:model="{{ $name }}" @endif />
+            @if ($label)
+                <label class="form-check-label" for="">
+                    {{ $label }}
+                </label>
+            @endif
         </div>
     @else
         <input type="{{ $type }}" class="form-control {{ $class ?? '' }}"

@@ -2,106 +2,63 @@
 
 namespace App\Livewire\Admin\Ot;
 
-use App\Models\Branch;
-use App\Models\Department;
-use App\Models\Employee;
+use App\Models\BranchGroup;
+use App\Models\Ot;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class OtManagement extends Component
 {
     use WithPagination;
-    public $branch;
-    public $branch_options = [];
-    public $branch_search;
-    public $departments        = [];
-    public $departments_options = [];
-    public $departments_search;
-    public $search;
-    public $selectedEmployees = [];
+    
+    public $search = '';
+    public $branch_group_id = '';
+    public $rate_type = '';
+    public $status = '';
+    public $branch_group_options = [];
+    public $selectedOts = [];
 
     public function mount()
     {
-        $this->loadBranches();
+        $this->loadBranchGroupOptions();
     }
 
-    protected function loadBranches(): void
+    protected function loadBranchGroupOptions(): void
     {
-        $this->branch_options = Branch::query()
-            ->where('status', 'active')
-            ->when($this->branch_search, fn($q) =>
-                $q->where('name', 'like', '%' . $this->branch_search . '%')
-            )
-            ->limit(5)
-            ->pluck('name', 'id')
-            ->prepend('Select Branch','')
-            ->toArray();
-
-        $this->loadDepartments();
+        $this->branch_group_options = BranchGroup::pluck('name', 'id')->toArray();
     }
 
-    protected function loadDepartments(): void
+    public function statusToggle($otId): void
     {
-        if (! $this->branch) {
-            $this->departments_options = [];
-            return;
-        }
-
-        $this->departments_options = Department::where('branch_id', $this->branch)
-            ->where('status', 'active')
-            ->when($this->departments_search, fn($q) =>
-                $q->where('name', 'like', '%' . $this->departments_search . '%')
-            )
-            ->limit(5)
-            ->pluck('name', 'id')
-            ->toArray();
+        $ot = Ot::findOrFail($otId);
+        $ot->update(['status' => !$ot->status]);
+        session()->flash('success', 'Status updated successfully.');
     }
 
-    public function updatedBranchSearch(): void
+    public function deleteOt($otId): void
     {
-        $this->loadBranches();
+        Ot::findOrFail($otId)->delete();
+        session()->flash('success', 'OT deleted successfully.');
     }
-
-    public function updatedDepartmentsSearch(): void
-    {
-        $this->loadDepartments();
-    }
-    public function updatedBranch(): void
-    {
-        $this->departments = [];
-        $this->loadDepartments();
-    }
-
- 
-
-    // public function exportEmployees()
-    // {
-    //     if (empty($this->selectedEmployees)) {
-    //         flash()->error('Please select at least one employee to export.');
-    //         return;
-    //     }
-    // }
 
     public function render()
     {
-        $query = Employee::with(['branch', 'department', 'designation'])
+        $query = Ot::with(['group'])
             ->when($this->search, function ($q) {
-                $q->where(function ($query) {
-                    $query->where('first_name', 'like', '%' . $this->search . '%')
-                        ->orWhere('last_name', 'like', '%' . $this->search . '%')
-                        ->orWhere('contact_number', 'like', '%' . $this->search . '%')
-                        ->orWhere('email', 'like', '%' . $this->search . '%')
-                        ->orWhere('employee_code', 'like', '%' . $this->search . '%');
-                });
+                $q->where('name', 'like', '%' . $this->search . '%');
             })
-            ->when($this->branch, function ($q) {
-                $q->where('branch_id', $this->branch);
+            ->when($this->branch_group_id, function ($q) {
+                $q->where('branch_group_id', $this->branch_group_id);
             })
-            ->when($this->departments, function ($q) {
-                $q->whereIn('department_id', (array) $this->departments);
+            ->when($this->rate_type, function ($q) {
+                $q->where('rate_type', $this->rate_type);
+            })
+            ->when($this->status !== '', function ($q) {
+                $q->where('status', (bool)$this->status);
             });
+
         return view('livewire.admin.ot.ot-management', [
-            'ots' => $query->paginate(10),
+            'ots' => $query->paginate(15),
         ]);
     }
 }

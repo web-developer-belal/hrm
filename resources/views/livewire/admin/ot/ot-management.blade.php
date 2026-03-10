@@ -1,18 +1,18 @@
 <div x-data="{
-    selectedEmployees: @entangle('selectedEmployees'),
+    selectedOts: @entangle('selectedOts'),
     selectAll: false,
     toggleAll() {
         if (this.selectAll) {
-            this.selectedEmployees = @json($ots->pluck('id')->toArray());
+            this.selectedOts = @json($ots->pluck('id')->toArray());
         } else {
-            this.selectedEmployees = [];
+            this.selectedOts = [];
         }
     }
 }">
     <!-- Breadcrumb -->
     <div class="md:flex block items-center justify-between page-breadcrumb mb-4">
         <div class="my-auto mb-2">
-            <h2 class="mb-1">Ot Management</h2>
+            <h2 class="mb-1">OT Management</h2>
             <nav class="flex" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-2">
                     <li class="inline-flex items-center">
@@ -24,24 +24,17 @@
                     <li>
                         <span class="text-default">/</span>
                     </li>
-                    <li class="text-xs text-default">Ot Management</li>
-
+                    <li class="text-xs text-default">OT Management</li>
                 </ol>
             </nav>
         </div>
         <div class="flex my-xl-auto right-content items-center flex-wrap gap-2">
-            <div class="mb-2" x-show="selectedEmployees.length > 0" x-cloak>
-                <button wire:click="exportEmployees" type="button"
-                    class="flex items-center bg-success text-sm font-medium py-2 rounded text-white px-3 hover:bg-success-900 hover:text-white">
-                    <i class="ti ti-file-export me-2"></i>Export Selected (<span x-text="selectedEmployees.length"></span>)
-                </button>
-            </div>
             <div class="mb-2">
                 <a href="{{ route('admin.ot.create') }}"
-                    class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white"><i
-                        class="ti ti-circle-plus me-2"></i>Add OT</a>
+                    class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">
+                    <i class="ti ti-circle-plus me-2"></i>Add OT
+                </a>
             </div>
-
         </div>
     </div>
     <!-- /Breadcrumb -->
@@ -49,18 +42,23 @@
     <!-- OT List -->
     <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white">
         <div
-            class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3 ">
+            class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3">
             <h5>OT List</h5>
-            <div class="my-xl-auto right-content grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="my-xl-auto right-content grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div class="">
-                    <x-form.input name="search" placeholder="Search here .." :live="true" />
+                    <x-form.input name="search" placeholder="Search OT name..." :live="true" />
                 </div>
                 <div class="">
-                    <x-form.select name="branch" placeholder="Select branch" :live="true" :option="$branch_options" :search="true" />
+                    <x-form.select name="branch_group_id" placeholder="Select Branch Group" 
+                        :options="$branch_group_options" :live="true" />
                 </div>
                 <div class="">
-                    <x-form.select name="departments" placeholder="Select department" :live="true"
-                        :option="$departments_options" :isMultiple="true" :search="true" />
+                    <x-form.select name="rate_type" placeholder="Select Rate Type" :live="true"
+                        :options="['fixed' => 'Fixed', 'percentage' => 'Percentage']" />
+                </div>
+                <div class="">
+                    <x-form.select name="status" placeholder="Select Status" :live="true"
+                        :options="['' => 'All', '1' => 'Active', '0' => 'Inactive']" />
                 </div>
             </div>
         </div>
@@ -70,84 +68,93 @@
                     <thead class="thead-light">
                         <tr>
                             <th
-                                class="no-sort text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor hover:outline-none">
-                                <input type="checkbox" x-model="selectAll" @change="toggleAll()"
-                                    class="rounded border-gray-300 text-primary focus:ring-primary">
-                            </th>
-                            <th
-                                class="no-sort text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor hover:outline-none">
+                                class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 SL
                             </th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Emp ID</th>
+                                OT Name
+                            </th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Employee info</th>
-
+                                Branch Group
+                            </th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Branch</th>
+                                Rate
+                            </th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Department</th>
-                            
+                                Rate Type
+                            </th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Status</th>
-                           
+                                Off Day Counting
+                            </th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Status
+                            </th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Actions
+                            </th>
                         </tr>
                     </thead>
 
                     <tbody class="bg-white divide-y divide-borderColor">
-                        @foreach ($ots as $emp)
-                            <tr class="even:bg-white dark:even-bg-white">
+                        @forelse ($ots as $ot)
+                            <tr class="even:bg-white dark:even-bg-white hover:bg-gray-50">
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    <input type="checkbox" value="{{ $emp->id }}" x-model="selectedEmployees"
-                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    {{ ($ots->currentPage() - 1) * $ots->perPage() + $loop->iteration }}
+                                </td>
+                                <td class="px-5 py-2.5 text-gray-900 font-medium">
+                                    {{ $ot->name }}
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $loop->iteration }}
+                                    {{ $ot->group->name ?? 'N/A' }}
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $emp->employee_code }}
+                                    {{ number_format($ot->rate, 2) }}
                                 </td>
-                                <td class="px-5 py-2.5 text-gray-500 p-3">
-                                    <div class="flex items-center file-name-icon">
-                                        <a href="{{ route('admin.employees.details', ['emp' => $emp->id]) }}"
-                                            class="size-8 rounded-full border border-borderColor">
-                                            <img src="{{ customAsset($emp->photo, true, 'emp', $emp->first_name) }}"
-                                                class="rounded-full size-8 img-fluid" alt="img">
+                                <td class="px-5 py-2.5 text-gray-500">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $ot->rate_type == 'fixed' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
+                                        {{ ucfirst($ot->rate_type) }}
+                                    </span>
+                                </td>
+                                <td class="px-5 py-2.5 text-gray-500">
+                                    <span class="inline-flex items-center">
+                                        @if ($ot->off_day_counting)
+                                            <i class="ti ti-check text-success text-lg"></i>
+                                        @else
+                                            <i class="ti ti-x text-danger text-lg"></i>
+                                        @endif
+                                    </span>
+                                </td>
+                                <td class="px-5 py-2.5 text-gray-500">
+                                    <span wire:click="statusToggle({{ $ot->id }})"
+                                        class="bg-{{ $ot->status ? 'success' : 'warning' }} text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs cursor-pointer hover:opacity-90 transition">
+                                        <i class="ti ti-point-filled me-1"></i>
+                                        {{ $ot->status ? 'Active' : 'Inactive' }}
+                                    </span>
+                                </td>
+                                <td class="px-5 py-2.5 text-gray-500">
+                                    <div class="flex items-center gap-2">
+                                        <a href="{{ route('admin.ot.edit', $ot->id) }}"
+                                            class="inline-flex items-center justify-center size-8 rounded-full border border-borderColor hover:bg-primary hover:text-white transition"
+                                            title="Edit">
+                                            <i class="ti ti-edit text-lg"></i>
                                         </a>
-                                        <div class="ms-2 flex flex-col gap-1">
-                                            <h6 class="font-medium"><a
-                                                    href="{{ route('admin.employees.details', ['emp' => $emp->id]) }}"
-                                                    class="text-gray-900 hover:text-primary">{{ $emp->full_name }}</a>
-                                            </h6>
-                                            <span class="text-xs leading-normal"> {{ $emp->designation->name }}</span>
-                                            <span class="text-xs leading-normal"> {{ $emp->email }}</span>
-                                            <span class="text-xs leading-normal"> {{ $emp->contact_number }}</span>
-                                        </div>
+                                        <button wire:click="deleteOt({{ $ot->id }})" 
+                                            wire:confirm="Are you sure you want to delete this OT?"
+                                            class="inline-flex items-center justify-center size-8 rounded-full border border-borderColor hover:bg-danger hover:text-white transition"
+                                            title="Delete">
+                                            <i class="ti ti-trash text-lg"></i>
+                                        </button>
                                     </div>
                                 </td>
-
-                                <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $emp->branch->name }}
-                                </td>
-                                <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $emp->department->name }}
-                                </td>
-                                
-                                <td class="px-5 py-2.5 text-gray-500">
-
-                                    <span wire:click="statusToggle({{ $emp->id }})"
-                                        class="bg-{{ $emp->status == 1 ? 'success' : 'warning' }} text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs cursor-pointer">
-                                        <i class="ti ti-point-filled me-1">
-                                            {{ $emp->status == 1 ? 'Active' : 'Deactive' }}</i>
-                                    </span>
-
-                                </td>
-
                             </tr>
-                        @endforeach
-
+                        @empty
+                            <tr>
+                                <td colspan="8" class="px-5 py-8 text-center text-gray-500">
+                                    No OT records found
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
-
                 </table>
             </div>
         </div>
@@ -156,7 +163,6 @@
                 {{ $ots->links() }}
             </div>
         @endif
-
     </div>
-    <!-- /Employees List -->
+    <!-- /OT List -->
 </div>
