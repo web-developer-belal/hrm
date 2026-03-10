@@ -21,6 +21,7 @@ class Textarea extends Component
         public string $rows = '4',
         public string $cols = '30',
         public ?string $placeholder = null,
+        public bool $isEditor = false,
     )
     {}
 

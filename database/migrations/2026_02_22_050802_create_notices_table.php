@@ -25,7 +25,7 @@ return new class extends Migration
                 ->nullOnDelete();
 
             $table->string('title');
-            $table->mediumText('description')->nullable();
+            $table->longText('description')->nullable();
 
             $table->json('attachments')->nullable();
 

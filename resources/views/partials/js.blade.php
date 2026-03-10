@@ -49,3 +49,6 @@
 <script src="{{ asset('assets/js/theme-colorpicker.js') }}"></script>
 <script src="{{ asset('assets/js/script.js') }}"></script>
 <script src="{{ asset('js/employee-documents.js') }}" defer></script>
+
+{{-- Summernote JS --}}
+<script src="{{ asset('assets/summernote/summernote-lite.min.js') }}"></script>

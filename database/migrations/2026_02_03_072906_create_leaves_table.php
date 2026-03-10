@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('from_date');
             $table->date('to_date');
             $table->integer('total_days');
-            $table->mediumText('descriptions')->nullable();
+            $table->longText('descriptions')->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
 
             $table->foreignId('confirmed_by')

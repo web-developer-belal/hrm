@@ -61,7 +61,7 @@
                     {{-- Description --}}
                     <div class="md:col-span-2">
                         <x-form.textarea label="Notice Description" name="description" :isRequired="true"
-                            :error="true" placeholder="Enter Notice Details..." />
+                            :error="true" placeholder="Enter Notice Details..." :isEditor="true" />
                     </div>
 
                     {{-- Attachments --}}

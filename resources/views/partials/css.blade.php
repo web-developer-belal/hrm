@@ -41,4 +41,7 @@
 <!-- Main CSS -->
 <link rel="stylesheet" href="{{ asset('assets/dist/style.css') }}">
 
+{{-- Summernote css --}}
+<link rel="stylesheet" href="{{ asset('assets/summernote/summernote-lite.min.css') }}">
+
 {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
