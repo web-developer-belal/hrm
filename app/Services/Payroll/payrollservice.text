@@ -1,0 +1,99 @@
+PayrollService - Step-by-step flow
+
+1) Entry points
+- generateForBranch(branchId, periodStart, periodEnd)
+- generateForAllBranches(periodStart, periodEnd)
+- generateForBranchGroup(branchGroupId, periodStart, periodEnd)
+- Each entry point loops employees and calls generateForEmployee(...)
+
+2) Period normalization
+- Parse period_start and period_end with Carbon.
+- If start > end, swap them.
+- total_days = date difference + 1.
+
+3) Duplicate payroll guard
+- Before calculation, check payrolls table by:
+  employee_id + period_start + period_end.
+- If exists, skip this employee.
+
+4) Salary extraction
+- Read salaryData from employee.
+- Build totalPlusSalary from allowances and base components.
+- Build totalDeductionSalary from PF/Tax/Welfare type deductions.
+
+5) Attendance load (important)
+- Load attendance rows only where status IS NOT NULL.
+- Date range is [period_start, period_end].
+- This avoids counting roster pre-created rows with null status.
+
+6) Attendance metrics
+- leaveDays, absentDays, holyDays, offDays counted by status.
+- lateDays detected by status=late or late_minutes > 0.
+- totalWorkingDays = totalDays - offDays.
+
+7) Attendance policy apply
+- resolveAttendancePolicy() loads active policy:
+  branch-specific first, then global fallback.
+- calculateLateCutoffAbsentDays() applies cutoff rule:
+  if mark_absent_if_late=true and clock_in > late_cutoff_time,
+  that day is treated as extra absent.
+- Late penalty rule:
+  threshold = late_penalty_threshold_days (fallback late_deduction_count_days)
+  deductDays = late_penalty_deduct_days
+  latePenaltyDays = floor(effectiveLateDays / threshold) * deductDays
+
+8) Present/absent deduction
+- totalAbsentForDeduction = absentDays + lateCutoffAbsentDays + latePenaltyDays
+- presentDays adjusted accordingly.
+- dailySalary = totalPlusSalary / totalDays
+- absentDeduction = dailySalary * totalAbsentForDeduction
+
+9) OT calculation
+- Load latest OT config for employee branch_group.
+- OT applies only when:
+  employee.has_ot = true,
+  ot.include_in_payroll = true
+- Overtime minutes summed from attendance.
+- Holiday/offday overtime included only if off_day_counting=true.
+- OT hourly rate resolution:
+  a) designation-specific rate from ot_rates (highest priority)
+  b) fallback percentage/fixed from ot config (if fields exist)
+  c) otherwise 0
+
+10) Loan installment
+- If employee has running loan (remaining_amount > 0):
+  deduct EMI, update loan remaining, create loan_installments record.
+- installment year/month are derived from period_end.
+
+11) Payroll adjustments
+- Read additions/deductions/advances from payroll_adjustments
+  where date is between period_start and period_end.
+
+12) Payroll rules
+- resolvePayrollRules(): applies active rules by branch_group scope.
+- Supports rule condition and calc types.
+- Attendance Bonus rules are excluded from this generic bucket.
+- Generic output:
+  ruleBonusAmount, ruleDeductionAmount
+
+13) Attendance bonus from Payroll Rules
+- No static hardcoded bonus.
+- resolveAttendanceBonusFromRules() checks rules with name containing:
+  "Attendance Bonus"
+- Only applies when totalAbsentForDeduction == 0 and leaveDays == 0.
+- Amount is calculated by the same rule calc logic.
+
+14) Final totals
+- totalPositiveAdjustments = adjustmentsAddition + ruleBonusAmount
+- totalNegativeAdjustments = adjustmentsDeduction + adjustmentsAdvanced + ruleDeductionAmount
+- grossSalary = totalPlusSalary + totalOt + attendanceBonus + totalPositiveAdjustments
+- totalDeduction = totalDeductionSalary + absentDeduction + loanDeduction + totalNegativeAdjustments
+- netSalary = grossSalary - totalDeduction
+
+15) Payroll create + mail
+- Create payroll row with period_start/period_end and all computed fields.
+- Queue PayrollUpdate mail.
+
+16) Transaction safety
+- All payroll generation for one employee runs in DB transaction.
+- On exception: rollback + log error + return null.

@@ -306,7 +306,7 @@
                             <h5 class="text-lg font-semibold text-gray-800">Employee Documents</h5>
                             @php
                                 $documentCount = 0;
-                                $docFields = ['resume', 'offer_letter', 'joining_letter', 'contract_agreement', 'Id_proof'];
+                                $docFields = ['resume', 'offer_letter', 'joining_letter', 'contract_agreement', 'id_proof'];
                                 foreach($docFields as $field) {
                                     if(!empty($employee->$field) && Storage::disk('public')->exists('employees/documents/' . $employee->$field)) {
                                         $documentCount++;
@@ -326,7 +326,7 @@
                             ['name' => 'Offer Letter', 'field' => 'offer_letter', 'icon' => 'ti ti-file-description'],
                             ['name' => 'Joining Letter', 'field' => 'joining_letter', 'icon' => 'ti ti-file-check'],
                             ['name' => 'Contract', 'field' => 'contract_agreement', 'icon' => 'ti ti-file-signature'],
-                            ['name' => 'ID Proof', 'field' => 'Id_proof', 'icon' => 'ti ti-id']
+                            ['name' => 'ID Proof', 'field' => 'id_proof', 'icon' => 'ti ti-id']
                         ];
                     @endphp
 

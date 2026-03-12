@@ -4,15 +4,14 @@ namespace App\Livewire\Admin\Payroll;
 use App\Models\Branch;
 use App\Models\BranchGroup;
 use App\Services\Payroll\PayrollService;
-use Carbon\Carbon;
 use Livewire\Component;
 
 class PayrollEngine extends Component
 {
     public $branch_id;
     public $branch_group_id;
-    public $year;
-    public $month;
+    public $period_start;
+    public $period_end;
 
     public $branch_id_options = [];
     public $branch_group_id_options = [];
@@ -21,8 +20,8 @@ class PayrollEngine extends Component
 
     protected $rules = [
         'branch_id' => 'required',
-        'year'      => 'required|numeric',
-        'month'     => 'required|numeric|min:1|max:12',
+        'period_start' => 'required|date',
+        'period_end'   => 'required|date|after_or_equal:period_start',
     ];
 
     protected $payrollService;
@@ -36,8 +35,8 @@ class PayrollEngine extends Component
     {
         $this->loadBranches();
         $this->loadBranchGroups();
-        $this->year  = now()->year;
-        $this->month = now()->month;
+        $this->period_start = now()->startOfMonth()->toDateString();
+        $this->period_end   = now()->endOfMonth()->toDateString();
     }
 
     protected function loadBranches(): void
@@ -78,16 +77,13 @@ class PayrollEngine extends Component
     {
 
         $this->validate();
-        // dd($this->branch_id);
-        $totalDays = Carbon::create($this->year, $this->month, 1)->daysInMonth;
         $count     = $this->payrollService->generateForBranch(
             $this->branch_id,
-            $this->year,
-            $this->month,
-            $totalDays,
+            $this->period_start,
+            $this->period_end,
         );
 
-        flash()->success("$count payrolls generated for all branches.");
+        flash()->success("$count payrolls generated for selected branch.");
     }
 
     // Generate All Branches Salary
@@ -95,16 +91,13 @@ class PayrollEngine extends Component
     {
 
         $this->validate([
-            'year'  => 'required',
-            'month' => 'required',
+            'period_start' => 'required|date',
+            'period_end'   => 'required|date|after_or_equal:period_start',
         ]);
 
-        $totalDays = Carbon::create($this->year, $this->month, 1)->daysInMonth;
-
         $count = $this->payrollService->generateForAllBranches(
-            $this->year,
-            $this->month,
-            $totalDays,
+            $this->period_start,
+            $this->period_end,
         );
 
         flash()->success("$count payrolls generated for all branches.");
@@ -115,17 +108,14 @@ class PayrollEngine extends Component
     {
         $this->validate([
             'branch_group_id' => 'required|exists:branch_groups,id',
-            'year'            => 'required|numeric',
-            'month'           => 'required|numeric|min:1|max:12',
+            'period_start'    => 'required|date',
+            'period_end'      => 'required|date|after_or_equal:period_start',
         ]);
-
-        $totalDays = Carbon::create($this->year, $this->month, 1)->daysInMonth;
 
         $count = $this->payrollService->generateForBranchGroup(
             $this->branch_group_id,
-            $this->year,
-            $this->month,
-            $totalDays,
+            $this->period_start,
+            $this->period_end,
         );
 
         flash()->success("$count payrolls generated for selected branch group.");

@@ -69,10 +69,7 @@
                                 <li><a href="{{ route('admin.attendance.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.attendance.index') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Attendance Reports</a></li>
                                 @endif
-                                {{-- Overtime link has no route, keep as is (no permission) --}}
-                                <li><a href=""
-                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 text-gray-500 hover:text-primary">Overtime</a>
-                                </li>
+
                                 @if(auth()->user()->hasPermission('attendance-policy.show'))
                                 <li><a href="{{ route('admin.attendance-policy.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.attendance-policy.index') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Attendance Policy</a></li>
@@ -103,6 +100,10 @@
                                 'admin.transfer.new' => 'transfer.create',
                                 'admin.transfer.index' => 'transfer.show',
                                 'admin.complain.index' => 'complains.show',
+                                'admin.resignations.index'=>'resignations.show',
+                                'admin.resignations.details'=>'resignations.show',
+                                'admin.resignations.create'=>'resignations.create',
+                                'admin.resignations.edit'=>'resignations.edit',
                             ];
                             $showHr = false;
                             foreach ($hrRoutes as $route => $perm) {
@@ -155,6 +156,10 @@
                                 <li><a href="{{ route('admin.complain.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.complain.index') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Complain</a></li>
                                 @endif
+                                @if(auth()->user()->hasPermission('resignations.show'))
+                                <li><a href="{{ route('admin.resignations.index') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.resignations.index') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Resignation</a></li>
+                                @endif
                             </ul>
                         </li>
                         @endif
@@ -192,6 +197,10 @@
                                 @if(auth()->user()->hasPermission('ot.show'))
                                 <li><a href="{{ route('admin.ot.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.ot.index') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">OT List</a></li>
+                                @endif
+                                @if(auth()->user()->hasPermission('ot.payments.show'))
+                                <li><a href="{{ route('admin.ot.payments') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.ot.payments') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">OT Payments</a></li>
                                 @endif
                             </ul>
                         </li>
@@ -282,7 +291,8 @@
                                 'admin.adjustment.index' => 'adjustment.show',
                                 'admin.payroll.index' => 'payroll.show',
                                 'admin.payroll.list' => 'payroll.list.show',
-                                'admin.payroll.payslips' => 'payroll.show', // uses same permission
+                                'admin.payroll.payslips' => 'payroll.show', 
+                                'admin.payroll.rule.index' => 'payroll.rule.show',
                             ];
                             $showPayroll = false;
                             foreach ($payrollRoutes as $route => $perm) {
@@ -318,6 +328,10 @@
                                 @if(auth()->user()->hasPermission('payroll.show'))
                                 <li><a href="{{ route('admin.payroll.payslips') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.payroll.payslips') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Payslips</a></li>
+                                @endif
+                                @if(auth()->user()->hasPermission('payroll.rule.show'))
+                                <li><a href="{{ route('admin.payroll.rule.index') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.payroll.rule.index') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Bonus/Deduction</a></li>
                                 @endif
                             </ul>
                         </li>

@@ -15,7 +15,7 @@ class EmployeeList extends Component
     public $branch;
     public $branch_options = [];
     public $branch_search;
-    public $departments        = [];
+    public $departments         = [];
     public $departments_options = [];
     public $departments_search;
     public $search;
@@ -35,7 +35,7 @@ class EmployeeList extends Component
             )
             ->limit(5)
             ->pluck('name', 'id')
-            ->prepend('Select Branch','')
+            ->prepend('Select Branch', '')
             ->toArray();
 
         $this->loadDepartments();
@@ -92,6 +92,32 @@ class EmployeeList extends Component
 
         $fileName = 'employee-list-' . date('Y-m-d-His') . '.xlsx';
         return Excel::download(new EmployeeListExport($this->selectedEmployees), $fileName);
+    }
+    public function updateOt($action)
+    {
+        if ($action === '' || $action === null) {
+            return;
+        }
+
+        if (! in_array((string) $action, ['0', '1'], true)) {
+            flash()->error('Invalid OT action selected.');
+            return;
+        }
+
+        if (empty($this->selectedEmployees)) {
+            flash()->error('Please select at least one employee to update OT.');
+            return;
+        }
+
+        Employee::whereIn('id', $this->selectedEmployees)->update(['has_ot' => (bool) $action]);
+        flash()->success('OT updated successfully for selected employees.');
+    }
+
+    public function otToggle($id)
+    {
+        $employee = Employee::findOrFail($id);
+        $employee->update(['has_ot' => ! $employee->has_ot]);
+        flash()->success('Employee OT status updated successfully.');
     }
 
     public function render()

@@ -38,10 +38,13 @@ use App\Livewire\Admin\Notice\NoticeDetails;
 use App\Livewire\Admin\Notice\NoticeForm;
 use App\Livewire\Admin\Ot\OtForm;
 use App\Livewire\Admin\Ot\OtManagement;
+use App\Livewire\Ot\OtPaymentManagement;
 use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeduction;
 use App\Livewire\Admin\PayrollAdjustment\AdjustmentAdditionDeductionNew;
 use App\Livewire\Admin\Payroll\PayrollEngine;
 use App\Livewire\Admin\Payroll\PayrollList;
+use App\Livewire\Admin\Payroll\Rule\RuleFrom;
+use App\Livewire\Admin\Payroll\Rule\RuleManagement;
 use App\Livewire\Admin\PaySlips\PaySlipManagement;
 use App\Livewire\Admin\PaySlips\PaySlipsDetails;
 use App\Livewire\Admin\Profile\ManageProfile;
@@ -49,6 +52,8 @@ use App\Livewire\Admin\Reports\AttendanceReport;
 use App\Livewire\Admin\Reports\ExpenseReport;
 use App\Livewire\Admin\Reports\LeaveReport;
 use App\Livewire\Admin\Reports\PayslipReport;
+use App\Livewire\Admin\Resignation\ManageResignation;
+use App\Livewire\Admin\Resignation\ResigNationForm;
 use App\Livewire\Admin\RolesPermission\ActivityLog;
 use App\Livewire\Admin\RolesPermission\ManageUser;
 use App\Livewire\Admin\RolesPermission\Roles\ManageRoles;
@@ -250,6 +255,15 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('payslips')->middleware('permission:payroll.show');
         Route::livewire('/payslips/{payslip}', PaySlipsDetails::class)
             ->name('payslips.show')->middleware('permission:payroll.show');
+
+        Route::prefix('rules')->name('rule.')->group(function () {
+            Route::livewire('/', RuleManagement::class)
+                ->name('index')->middleware('permission:payroll.show');
+            Route::livewire('/create', RuleFrom::class)
+                ->name('create')->middleware('permission:payroll.show');
+            Route::livewire('/edit/{ruleId}', RuleFrom::class)
+                ->name('edit')->middleware('permission:payroll.show');
+        });
     });
     // Complaint Management
     Route::prefix('complain')->name('complain.')->group(function () {
@@ -310,6 +324,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('create')->middleware('permission:ot.create');
         Route::livewire('/edit/{ot}', OtForm::class)
             ->name('edit')->middleware('permission:ot.edit');
+        Route::livewire('/payments', OtPaymentManagement::class)
+            ->name('payments')->middleware('permission:ot.payments.show');
     });
 
     // Reports
@@ -322,6 +338,18 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('payslips')->middleware('permission:reports.payslips.show');
         Route::livewire('/expense', ExpenseReport::class)
             ->name('expense')->middleware('permission:reports.expense.show');
+    });
+
+    // Resignation Management
+    Route::prefix('resignations')->name('resignations.')->group(function () {
+        Route::livewire('/', ManageResignation::class)
+            ->name('index')->middleware('permission:resignations.show');
+        Route::livewire('/details/{resignation}', ManageResignation::class)
+            ->name('details')->middleware('permission:resignations.show');
+        Route::livewire('/create/', ResigNationForm::class)
+            ->name('create')->middleware('permission:resignations.create');
+        Route::livewire('/edit/{resignation}', ResigNationForm::class)
+            ->name('edit')->middleware('permission:resignations.edit');
     });
 
     // Settings

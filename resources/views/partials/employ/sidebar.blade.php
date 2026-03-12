@@ -99,6 +99,20 @@
                             </a>
                         </li>
 
+                        <!-- Resignation -->
+                        <li class="mb-[5px]">
+                            <a href="{{ route('employee.resignations.index') }}"
+                                class="relative flex items-center w-full p-2 text-sm font-medium rounded-[5px] transition-all duration-300
+        {{ request()->routeIs('employee.resignations.index') ? 'bg-dark-transparent text-gray-900 active' : 'text-gray-900 hover:bg-dark-transparent' }}">
+
+                                <i
+                                    class="ti ti-message-report
+            {{ request()->routeIs('employee.resignations.index') ? 'text-gray-900' : 'text-gray-500 group-hover:text-gray-900' }}">
+                                </i>
+                                <span class="ms-2">Resignation</span>
+                            </a>
+                        </li>
+
                         <!-- Loan -->
                         <li class="mb-[5px]">
                             <a href="{{ route('employee.loan') }}"

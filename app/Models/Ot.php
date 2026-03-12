@@ -7,19 +7,23 @@ class Ot extends Model
 {
     protected $fillable = [
         'name',
-        'rate_type',
-        'rate',
         'off_day_counting',
-        'branch_group_id'
+        'branch_group_id',
+        'include_in_payroll',
     ];
 
     protected $casts = [
-        'rate' => 'decimal:2',
         'off_day_counting' => 'boolean',
+        'include_in_payroll' => 'boolean',
     ];
     
     public function group()
     {
         return $this->belongsTo(BranchGroup::class);
+    }
+
+    public function rates()
+    {
+        return $this->hasMany(OtRate::class);
     }
 }

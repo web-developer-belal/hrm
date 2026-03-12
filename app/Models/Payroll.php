@@ -9,8 +9,8 @@ class Payroll extends Model
     protected $fillable = [
         'branch_id',
         'employee_id',
-        'year',
-        'month',
+        'period_start',
+        'period_end',
         'total_days',
         'total_working_days',
         'present_days',
@@ -44,6 +44,20 @@ class Payroll extends Model
         'approved_at'  => 'datetime',
         'is_locked'    => 'boolean',
         'is_generated' => 'boolean',
+        'per_day_salary' => 'decimal:2',
+        'basic_salary' => 'decimal:2',
+        'attendance_bonus' => 'decimal:2',
+        'total_ot' => 'decimal:2',
+        'late_deduction' => 'decimal:2',
+        'loan_deduction' => 'decimal:2',
+        'positive_adjustments' => 'decimal:2',
+        'negative_adjustments' => 'decimal:2',
+        'absent_deduction' => 'decimal:2',
+        'total_deduction' => 'decimal:2',
+        'gross_salary' => 'decimal:2',
+        'net_salary' => 'decimal:2',
+        'period_start' => 'date',
+        'period_end' => 'date',
     ];
 
     public function employee()

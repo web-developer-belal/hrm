@@ -43,7 +43,8 @@ return new class extends Migration {
             $table->string('offer_letter')->nullable();
             $table->string('joining_letter')->nullable();
             $table->string('contract_agreement')->nullable();
-            $table->string('Id_proof')->nullable();
+            $table->string('id_proof')->nullable();
+            $table->string('checkbook')->nullable();
             $table->boolean('has_ot')->default(false);
             $table->timestamps();
             $table->index('branch_id');

@@ -103,9 +103,9 @@
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Branch</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Year</th>
+                                Period Start</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Month</th>
+                                Period End</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Gross Salary</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
@@ -157,9 +157,9 @@
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500 cursor-pointer" @click="expandedRows.includes({{ $pay->id }}) ? expandedRows = expandedRows.filter(id => id !== {{ $pay->id }}) : expandedRows.push({{ $pay->id }})">
                                     {{ $pay->branch->name ?? $pay->employee->branch->name }}</td>
-                                <td class="px-5 py-2.5 text-gray-500 cursor-pointer" @click="expandedRows.includes({{ $pay->id }}) ? expandedRows = expandedRows.filter(id => id !== {{ $pay->id }}) : expandedRows.push({{ $pay->id }})">{{ $pay->year }}</td>
+                                <td class="px-5 py-2.5 text-gray-500 cursor-pointer" @click="expandedRows.includes({{ $pay->id }}) ? expandedRows = expandedRows.filter(id => id !== {{ $pay->id }}) : expandedRows.push({{ $pay->id }})">{{ optional($pay->period_start)->format('d-M-Y') }}</td>
                                 <td class="px-5 py-2.5 text-gray-500 cursor-pointer" @click="expandedRows.includes({{ $pay->id }}) ? expandedRows = expandedRows.filter(id => id !== {{ $pay->id }}) : expandedRows.push({{ $pay->id }})">
-                                    {{ \Carbon\Carbon::create()->month((int)$pay->month)->format('F') }}</td>
+                                    {{ optional($pay->period_end)->format('d-M-Y') }}</td>
                                 <td class="px-5 py-2.5 text-gray-500 font-semibold cursor-pointer" @click="expandedRows.includes({{ $pay->id }}) ? expandedRows = expandedRows.filter(id => id !== {{ $pay->id }}) : expandedRows.push({{ $pay->id }})">
                                     {{ number_format($pay->gross_salary, 2) }}</td>
                                 <td class="px-5 py-2.5 text-primary font-semibold cursor-pointer" @click="expandedRows.includes({{ $pay->id }}) ? expandedRows = expandedRows.filter(id => id !== {{ $pay->id }}) : expandedRows.push({{ $pay->id }})">

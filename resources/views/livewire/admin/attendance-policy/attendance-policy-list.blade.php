@@ -59,6 +59,14 @@
                                 Early Departure</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Late Deduction Count Days</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Late Cutoff Time</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Mark Absent If Late</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Late Penalty</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Auto Suspend (Absent)</th>
 
 
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
@@ -82,6 +90,14 @@
                                 <td class="px-5 py-2.5 text-gray-500">{{ $item->in_grace_period_minutes }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $item->out_grace_period_minutes }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $item->late_deduction_count_days }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->late_cutoff_time }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $item->mark_absent_if_late ? 'Yes' : 'No' }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">
+                                    {{ $item->late_penalty_threshold_days }} late = {{ $item->late_penalty_deduct_days }} day deduct
+                                </td>
+                                <td class="px-5 py-2.5 text-gray-500">
+                                    {{ $item->auto_suspend_on_continuous_absence ? 'Yes' : 'No' }} ({{ $item->continuous_absent_months_for_suspend }} months)
+                                </td>
 
 
                                 <td class="px-5 py-2.5 text-gray-500">
@@ -94,7 +110,7 @@
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">
                                     <div class="action-icon inline-flex">
-                                        <a href="{{ route('admin.attendace-policy.edit', ['policyID' => $item->id]) }}"
+                                        <a href="{{ route('admin.attendance-policy.edit', ['policyID' => $item->id]) }}"
                                             class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-edit"></i></a>
                                         <button wire:confirm="Are you sure to delete this attendance policy?"

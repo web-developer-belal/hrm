@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('branch_id');
             $table->foreignId('employee_id');
-            $table->integer('year');
-            $table->integer('month');
+            $table->date('period_start');
+            $table->date('period_end');
             $table->integer('total_days');
             $table->integer('total_working_days');
             $table->integer('present_days')->nullable();
@@ -44,7 +44,7 @@ return new class extends Migration
             $table->timestamp('approved_at')->nullable();
             $table->boolean('is_generated')->default(false);
             $table->string('approval_stage')->default('branch_hr')->comment('branch_hr, branch_manager, finance, completed');
-            $table->unique(['employee_id','year','month']);
+            $table->unique(['employee_id','period_start','period_end'], 'employee_period_unique');
             $table->timestamps();
         });
     }

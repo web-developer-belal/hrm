@@ -1,9 +1,11 @@
 <?php
 namespace App\Livewire\Admin\Attendance;
 
+use App\Models\AttendancePolicy;
 use App\Models\Branch;
 use App\Models\Department;
 use App\Models\Employee;
+use App\Models\Ot;
 use Carbon\Carbon;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -147,37 +149,144 @@ class AddManualAttendance extends Component
     {
         $this->validate();
         $employee = Employee::find($this->selectedEmployee);
+        $attendancePolicy = $this->resolveAttendancePolicy($employee);
         // get attendace date from attandence time
         $attendanceDate = \Carbon\Carbon::parse($this->attandenceTime)->toDateString();
+        $punchTime = Carbon::parse($this->attandenceTime);
         // get that date attendance record if exists
         $attendance = $employee->attendances()->whereDate('date', $attendanceDate)->first();
         if(! $attendance) {
+            $roster = $employee->rosters()
+                ->whereDate('start_date', '<=', $attendanceDate)
+                ->whereDate('end_date', '>=', $attendanceDate)
+                ->first();
+
             $attendance = $employee->attendances()->create([
                 'branch_id' => $employee->branch_id,
-                'roster_id' => $employee->rosters()->whereDate('start_date', '<=', $attendanceDate)->whereDate('end_date', '>=', $attendanceDate)->first()->id ?? null,
+                'roster_id' => $roster?->id,
                 'date' => $attendanceDate,
                 'shift_start_time' => $employee->shift?->start_time ?? null,
                 'shift_end_time' => $employee->shift?->end_time ?? null,
-                'clock_in' => $this->clockInOut === 'clock_in' ? Carbon::parse($this->attandenceTime) : null,
-                'clock_out' => $this->clockInOut === 'clock_out' ? Carbon::parse($this->attandenceTime) : null,
+                'in_grace_period_minutes' => (int) ($attendancePolicy?->in_grace_period_minutes ?? 0),
+                'out_grace_period_minutes' => (int) ($attendancePolicy?->out_grace_period_minutes ?? 0),
+                'clock_in' => $this->clockInOut === 'clock_in' ? $punchTime : null,
+                'clock_out' => $this->clockInOut === 'clock_out' ? $punchTime : null,
                 'status' => 'present',
                 'is_manually_edited' => true,
             ]);
-        } else {
+
             if($this->clockInOut === 'clock_in') {
-                $attendance->update([
-                    'clock_in' => Carbon::parse($this->attandenceTime),
-                    'is_manually_edited' => true,
-                ]);
+                $this->applyClockInPolicy($attendance, $attendancePolicy, $punchTime);
+            }
+
+            if($this->clockInOut === 'clock_out') {
+                $this->applyClockOutPolicy($attendance, $employee);
+            }
+        } else {
+            $attendance->in_grace_period_minutes = (int) ($attendancePolicy?->in_grace_period_minutes ?? 0);
+            $attendance->out_grace_period_minutes = (int) ($attendancePolicy?->out_grace_period_minutes ?? 0);
+
+            if($this->clockInOut === 'clock_in') {
+                $attendance->clock_in = $punchTime;
+                $this->applyClockInPolicy($attendance, $attendancePolicy, $punchTime);
             } else {
-                $attendance->update([
-                    'clock_out' => Carbon::parse($this->attandenceTime),
-                    'is_manually_edited' => true,
-                ]);
+                $attendance->clock_out = $punchTime;
+                $this->applyClockOutPolicy($attendance, $employee);
             }
         }
         flash()->success('Manual attendance added successfully!');
         return redirect()->route('admin.attendance.index');
+    }
+
+    protected function resolveAttendancePolicy(Employee $employee): ?AttendancePolicy
+    {
+        return AttendancePolicy::query()
+            ->where('status', 'active')
+            ->where(function ($q) use ($employee) {
+                $q->whereNull('branch_id')
+                    ->orWhere('branch_id', $employee->branch_id);
+            })
+            ->orderByRaw('CASE WHEN branch_id IS NULL THEN 1 ELSE 0 END')
+            ->latest('id')
+            ->first();
+    }
+
+    protected function applyClockInPolicy($attendance, ?AttendancePolicy $attendancePolicy, Carbon $punchTime): void
+    {
+        $attendance->is_manually_edited = true;
+
+        if (! $attendance->shift_start_time) {
+            $attendance->status = 'present';
+            $attendance->late_minutes = 0;
+            $attendance->save();
+            return;
+        }
+
+        $shiftStart = Carbon::parse($attendance->date)->setTimeFromTimeString($attendance->shift_start_time);
+        $graceShiftStart = $shiftStart->copy()->addMinutes((int) ($attendancePolicy?->in_grace_period_minutes ?? 0));
+
+        $attendance->late_minutes = 0;
+        if ($punchTime->gt($graceShiftStart)) {
+            $attendance->late_minutes = $graceShiftStart->diffInMinutes($punchTime);
+
+            $isAfterCutoff = false;
+            if ($attendancePolicy && $attendancePolicy->mark_absent_if_late && ! empty($attendancePolicy->late_cutoff_time)) {
+                $cutoffTime = strlen((string) $attendancePolicy->late_cutoff_time) === 5
+                    ? $attendancePolicy->late_cutoff_time . ':00'
+                    : $attendancePolicy->late_cutoff_time;
+
+                $cutoffDateTime = Carbon::parse($attendance->date)->setTimeFromTimeString($cutoffTime);
+                $isAfterCutoff = $punchTime->gt($cutoffDateTime);
+            }
+
+            $attendance->status = $isAfterCutoff ? 'absent' : 'late';
+        } else {
+            $attendance->status = 'present';
+        }
+
+        $attendance->save();
+    }
+
+    protected function applyClockOutPolicy($attendance, Employee $employee): void
+    {
+        $attendance->is_manually_edited = true;
+        $attendance->overtime_minutes = 0;
+
+        if (! $attendance->clock_out || ! $attendance->shift_end_time || ! $this->canCountOvertime($attendance, $employee)) {
+            $attendance->save();
+            return;
+        }
+
+        $shiftEnd = Carbon::parse($attendance->date)->setTimeFromTimeString($attendance->shift_end_time);
+        if ($attendance->clock_out->gt($shiftEnd)) {
+            $attendance->overtime_minutes = $shiftEnd->diffInMinutes($attendance->clock_out);
+        }
+
+        $attendance->save();
+    }
+
+    protected function canCountOvertime($attendance, Employee $employee): bool
+    {
+        if (! $employee->has_ot) {
+            return false;
+        }
+
+        $otConfig = Ot::query()
+            ->where('branch_group_id', $employee->branch?->branch_group_id)
+            ->latest('id')
+            ->first();
+
+        if (! $otConfig || ! $otConfig->include_in_payroll) {
+            return false;
+        }
+
+        if (! $otConfig->off_day_counting && in_array((string) $attendance->status, ['holiday', 'offday'], true)) {
+            return false;
+        }
+
+        return $otConfig->rates()
+            ->where('designation_id', $employee->designation_id)
+            ->exists();
     }
 
     public function render()

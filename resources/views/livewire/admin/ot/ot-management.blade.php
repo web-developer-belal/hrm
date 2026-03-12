@@ -87,8 +87,9 @@
                                 Off Day Counting
                             </th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Status
+                                Include in Payroll
                             </th>
+                            
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Actions
                             </th>
@@ -125,12 +126,15 @@
                                     </span>
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    <span wire:click="statusToggle({{ $ot->id }})"
-                                        class="bg-{{ $ot->status ? 'success' : 'warning' }} text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs cursor-pointer hover:opacity-90 transition">
-                                        <i class="ti ti-point-filled me-1"></i>
-                                        {{ $ot->status ? 'Active' : 'Inactive' }}
+                                    <span class="inline-flex items-center">
+                                        @if ($ot->include_in_payroll)
+                                            <i class="ti ti-check text-success text-lg"></i>
+                                        @else
+                                            <i class="ti ti-x text-danger text-lg"></i>
+                                        @endif
                                     </span>
                                 </td>
+                               
                                 <td class="px-5 py-2.5 text-gray-500">
                                     <div class="flex items-center gap-2">
                                         <a href="{{ route('admin.ot.edit', $ot->id) }}"

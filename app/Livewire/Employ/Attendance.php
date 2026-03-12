@@ -1,7 +1,9 @@
 <?php
 namespace App\Livewire\Employ;
 
+use App\Models\AttendancePolicy;
 use App\Models\Attendance as ModelsAttendance;
+use App\Models\Ot;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -151,13 +153,36 @@ class Attendance extends Component
         if (! $attendance->clock_in) {
             $attendance->clock_in = $now;
 
-            // Late calculation
-            $shiftStart = Carbon::parse($attendance->date->format('Y-m-d') . ' ' . $attendance->shift_start_time);
-            if ($now->gt($shiftStart)) {
-                $attendance->late_minutes = $shiftStart->diffInMinutes($now);
-                $attendance->status       = 'late';
+            $attendancePolicy = $this->resolveAttendancePolicy();
+            $attendance->in_grace_period_minutes = (int) ($attendancePolicy?->in_grace_period_minutes ?? 0);
+            $attendance->out_grace_period_minutes = (int) ($attendancePolicy?->out_grace_period_minutes ?? 0);
+
+            if ($attendance->shift_start_time) {
+                $shiftStart = Carbon::parse($attendance->date)
+                    ->setTimeFromTimeString($attendance->shift_start_time);
+                $graceShiftStart = $shiftStart->copy()->addMinutes((int) ($attendancePolicy?->in_grace_period_minutes ?? 0));
+
+                $attendance->late_minutes = 0;
+                if ($now->gt($graceShiftStart)) {
+                    $attendance->late_minutes = $graceShiftStart->diffInMinutes($now);
+
+                    $isAfterCutoff = false;
+                    if ($attendancePolicy && $attendancePolicy->mark_absent_if_late && ! empty($attendancePolicy->late_cutoff_time)) {
+                        $cutoffTime = strlen((string) $attendancePolicy->late_cutoff_time) === 5
+                            ? $attendancePolicy->late_cutoff_time . ':00'
+                            : $attendancePolicy->late_cutoff_time;
+
+                        $cutoffDateTime = Carbon::parse($attendance->date)->setTimeFromTimeString($cutoffTime);
+                        $isAfterCutoff = $now->gt($cutoffDateTime);
+                    }
+
+                    $attendance->status = $isAfterCutoff ? 'absent' : 'late';
+                } else {
+                    $attendance->status = 'present';
+                }
             } else {
                 $attendance->status = 'present';
+                $attendance->late_minutes = 0;
             }
 
             $attendance->save();
@@ -176,17 +201,56 @@ class Attendance extends Component
 
             $attendance->clock_out = Carbon::now();
 
-            $shiftEnd = Carbon::parse($attendance->date->format('Y-m-d') . ' ' . $attendance->shift_end_time);
+            $attendance->overtime_minutes = 0;
+            if ($attendance->shift_end_time && $attendance->clock_out && $this->canCountOvertime($attendance)) {
+                $shiftEnd = Carbon::parse($attendance->date)->setTimeFromTimeString($attendance->shift_end_time);
 
-            if ($attendance->clock_out->gt($shiftEnd)) {
-                $attendance->overtime_minutes =
-                $shiftEnd->diffInMinutes($attendance->clock_out);
+                if ($attendance->clock_out->gt($shiftEnd)) {
+                    $attendance->overtime_minutes = $shiftEnd->diffInMinutes($attendance->clock_out);
+                }
             }
 
             $attendance->save();
         }
 
         $this->loadTodayAttendance();
+    }
+
+    protected function resolveAttendancePolicy(): ?AttendancePolicy
+    {
+        return AttendancePolicy::query()
+            ->where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('branch_id')
+                    ->orWhere('branch_id', $this->employee->branch_id);
+            })
+            ->orderByRaw('CASE WHEN branch_id IS NULL THEN 1 ELSE 0 END')
+            ->latest('id')
+            ->first();
+    }
+
+    protected function canCountOvertime(ModelsAttendance $attendance): bool
+    {
+        if (! $this->employee->has_ot) {
+            return false;
+        }
+
+        $otConfig = Ot::query()
+            ->where('branch_group_id', $this->employee->branch?->branch_group_id)
+            ->latest('id')
+            ->first();
+
+        if (! $otConfig || ! $otConfig->include_in_payroll) {
+            return false;
+        }
+
+        if (! $otConfig->off_day_counting && in_array((string) $attendance->status, ['holiday', 'offday'], true)) {
+            return false;
+        }
+
+        return $otConfig->rates()
+            ->where('designation_id', $this->employee->designation_id)
+            ->exists();
     }
 
     public function render()

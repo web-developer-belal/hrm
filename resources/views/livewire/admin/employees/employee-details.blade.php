@@ -273,7 +273,7 @@
                                                 $offerletter = File::extension($employee->offer_letter);
                                                 $Joingletter = File::extension($employee->joining_letter);
                                                 $Contract = File::extension($employee->contract_agreement);
-                                                $idproof = File::extension($employee->Id_proof);
+                                                $idproof = File::extension($employee->id_proof);
 
                                             @endphp
                                             <div class="md:col-span-2">
@@ -324,7 +324,7 @@
                                                     ID Proof
                                                 </span>
                                                 <h6 class="flex items-center fw-medium mt-1">
-                                                    <a href="{{ documentAsset($employee->Id_proof) }}"
+                                                    <a href="{{ documentAsset($employee->id_proof) }}"
                                                         target="_blank" class="btn btn-info"> View
                                                         {{ getDocumentIcon($idproof) }}</a>
 

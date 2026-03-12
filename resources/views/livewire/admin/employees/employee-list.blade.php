@@ -30,10 +30,30 @@
             </nav>
         </div>
         <div class="flex my-xl-auto right-content items-center flex-wrap gap-2">
-            <div class="mb-2" x-show="selectedEmployees.length > 0" x-cloak>
+            <div class="mb-2 flex gap-2 items-center" x-show="selectedEmployees.length > 0" x-cloak>
+                <div x-data="{ openOtDropdown: false }" class="relative inline-block">
+                    <button type="button" @click="openOtDropdown = !openOtDropdown"
+                        class="flex items-center bg-warning text-sm font-medium py-2 rounded text-white px-3 hover:bg-warning-900 hover:text-white">
+                        <i class="ti ti-user-cog me-2"></i>Update OT
+                        <i class="ti ti-chevron-down ms-1"></i>
+                    </button>
+
+                    <div x-show="openOtDropdown" @click.outside="openOtDropdown = false" x-transition
+                        class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-borderColor z-10">
+                        <button wire:click="updateOt(1)" @click="openOtDropdown = false"
+                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="ti ti-check me-2 text-success"></i>Add To OT
+                        </button>
+                        <button wire:click="updateOt(0)" @click="openOtDropdown = false"
+                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-t border-borderColor">
+                            <i class="ti ti-x me-2 text-danger"></i>Remove From OT
+                        </button>
+                    </div>
+                </div>
                 <button wire:click="exportEmployees" type="button"
                     class="flex items-center bg-success text-sm font-medium py-2 rounded text-white px-3 hover:bg-success-900 hover:text-white">
-                    <i class="ti ti-file-export me-2"></i>Export Selected (<span x-text="selectedEmployees.length"></span>)
+                    <i class="ti ti-file-export me-2"></i>Export Selected (<span
+                        x-text="selectedEmployees.length"></span>)
                 </button>
             </div>
             <div class="mb-2">
@@ -56,7 +76,8 @@
                     <x-form.input name="search" placeholder="Search here .." :live="true" />
                 </div>
                 <div class="">
-                    <x-form.select name="branch" placeholder="Select branch" :live="true" :option="$branch_options" :search="true" />
+                    <x-form.select name="branch" placeholder="Select branch" :live="true" :option="$branch_options"
+                        :search="true" />
                 </div>
                 <div class="">
                     <x-form.select name="departments" placeholder="Select department" :live="true"
@@ -89,6 +110,8 @@
                                 Department</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Joining Date</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Has Ot</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Status</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
@@ -141,6 +164,15 @@
 
                                 <td class="px-5 py-2.5 text-gray-500">
 
+                                    <span wire:click="otToggle({{ $emp->id }})"
+                                        class="bg-{{ $emp->has_ot ? 'success' : 'warning' }} text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs cursor-pointer">
+                                        <i class="ti ti-point-filled me-1">
+                                            {{ $emp->has_ot ? 'Yes' : 'No' }}</i>
+                                    </span>
+
+                                </td>
+                                <td class="px-5 py-2.5 text-gray-500">
+
                                     <span wire:click="statusToggle({{ $emp->id }})"
                                         class="bg-{{ $emp->status == 1 ? 'success' : 'warning' }} text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs cursor-pointer">
                                         <i class="ti ti-point-filled me-1">
@@ -155,7 +187,7 @@
                                         <a href="{{ route('admin.employees.edit', ['emp' => $emp->id]) }}"
                                             class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-edit"></i></a>
-                                      
+
                                         <a href="{{ route('admin.employees.details', ['emp' => $emp->id]) }}"
                                             class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-eye"></i></a>

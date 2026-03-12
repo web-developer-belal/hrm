@@ -54,6 +54,18 @@
                         placeholder="Enter Exit Grace Time" />
                      <x-form.input label="Late Deduction Count Days" name="late_deduction_count_days" :is_required="false" :error="true"
                         placeholder="Enter Late Deduction Count Days" />
+                            <x-form.input label="Late Cutoff Time (After this mark absent)" type="time" name="late_cutoff_time" :is_required="true" :error="true"
+                                placeholder="Select Late Cutoff Time" />
+                            <x-form.select label="Mark Absent If Late" name="mark_absent_if_late" :is_required="true" :error="true"
+                                :options="[1 => 'Yes', 0 => 'No']" />
+                            <x-form.input label="Late Penalty Threshold Days" name="late_penalty_threshold_days" :is_required="true" :error="true"
+                                placeholder="Enter Late Penalty Threshold Days" />
+                            <x-form.input label="Late Penalty Deduct Days" name="late_penalty_deduct_days" :is_required="true" :error="true"
+                                placeholder="Enter Late Penalty Deduct Days" />
+                            <x-form.input label="Continuous Absent Months For Suspend" name="continuous_absent_months_for_suspend" :is_required="true" :error="true"
+                                placeholder="Enter Continuous Absent Months" />
+                            <x-form.select label="Auto Suspend On Continuous Absence" name="auto_suspend_on_continuous_absence" :is_required="true" :error="true"
+                                :options="[1 => 'Yes', 0 => 'No']" />
 
 
                     <x-form.select label="Status" name="status" :is_required="true" :error="true"

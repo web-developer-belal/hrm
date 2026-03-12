@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('branch_group_id')->nullable()->constrained('branch_groups')->nullOnDelete();
             $table->string('name');
-            $table->enum('rate_type', ['fixed', 'percentage'])->default('fixed');
-            $table->decimal('rate', 8, 2);
             $table->boolean('off_day_counting')->default(false);
+            $table->boolean('include_in_payroll')->default(false);
             $table->timestamps();
             $table->index('name');
         });

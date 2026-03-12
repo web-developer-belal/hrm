@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Payroll;
 use App\Exports\Employee\EmployeeBankDetails;
 use App\Models\Branch;
 use App\Models\Payroll;
+use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
@@ -72,11 +73,17 @@ class PayrollList extends Component
                   ->orWhere('last_name', 'like', '%' . $this->search . '%')->orWhere('employee_id', 'like', '%' . $this->search . '%');
             });
         })->when($this->date, function ($query) {
-            $date = explode('-', $this->date);
-            if (count($date) == 2) {
-                $year = trim($date[0]);
-                $month = trim($date[1]);
-                $query->where('year', $year)->where('month', $month);
+            $date = trim($this->date);
+
+            if (preg_match('/^\d{4}-\d{2}$/', $date)) {
+                $start = Carbon::createFromFormat('Y-m', $date)->startOfMonth()->toDateString();
+                $end = Carbon::createFromFormat('Y-m', $date)->endOfMonth()->toDateString();
+
+                $query->whereDate('period_start', '<=', $end)
+                    ->whereDate('period_end', '>=', $start);
+            } elseif (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+                $query->whereDate('period_start', '<=', $date)
+                    ->whereDate('period_end', '>=', $date);
             }
         })
         ->when($this->branch, function ($query) {

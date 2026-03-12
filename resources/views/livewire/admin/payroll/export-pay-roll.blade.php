@@ -15,8 +15,8 @@
                     <th>Emp ID</th>
                     <th>Name</th>
                     <th>Branch</th>
-                    <th>Year</th>
-                    <th>Month</th>
+                    <th>Period Start</th>
+                    <th>Period End</th>
 
                     {{-- Earnings --}}
                     <th>Basic Salary</th>
@@ -49,10 +49,8 @@
                             {{ $pay->employee->last_name ?? '' }}
                         </td>
                         <td>{{ $pay->branch->name ?? ($pay->employee->branch->name ?? '--') }}</td>
-                        <td>{{ $pay->year ?? '--' }}</td>
-                        <td>
-                            {{ $pay->month ? \Carbon\Carbon::create()->month($pay->month)->format('F') : '--' }}
-                        </td>
+                        <td>{{ $pay->period_start ? $pay->period_start->format('d-M-Y') : '--' }}</td>
+                        <td>{{ $pay->period_end ? $pay->period_end->format('d-M-Y') : '--' }}</td>
 
                         {{-- Earnings (Fake fallback if not exists) --}}
                         <td>{{ $pay->basic_salary ?? '10000' }}</td>

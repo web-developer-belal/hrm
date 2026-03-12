@@ -65,7 +65,7 @@ class EmployeeFactory extends Factory
             'offer_letter'             => null,
             'joining_letter'           => null,
             'contract_agreement'       => null,
-            'Id_proof'                 => null,
+            'id_proof'                 => null,
         ];
     }
 }

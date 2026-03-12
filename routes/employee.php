@@ -15,6 +15,8 @@ use App\Livewire\Employ\PaySlips;
 use App\Livewire\Employ\Profile;
 use App\Livewire\Employ\ViewNotice;
 use App\Livewire\Employ\PayslipDetails;
+use App\Livewire\Employ\Resignation\CreateApplication;
+use App\Livewire\Employ\Resignation\ManageResignation;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', Login::class)->name('login');
@@ -48,4 +50,14 @@ Route::middleware('employee')->prefix('employee')->name('employee.')->group(func
         ->name('loan.show');
     Route::livewire('profile', Profile::class)
         ->name('profile');
+
+        // Resignation Management
+    Route::prefix('resignations')->name('resignations.')->group(function () {
+        Route::livewire('/', ManageResignation::class)
+            ->name('index');
+        Route::livewire('/details/{resignation}', ManageResignation::class)
+            ->name('details');
+        Route::livewire('/create/', CreateApplication::class)
+            ->name('create');
+    });
 });

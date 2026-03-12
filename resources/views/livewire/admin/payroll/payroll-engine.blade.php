@@ -37,28 +37,18 @@
                         :error="true" :options="$branch_id_options" placeholder="Select Branch" />
 
                     <div class="w-full">
-                        <label>Year</label>
-                        <select wire:model="year" class="form-control" required>
-                            @for ($y = now()->year; $y >= 2020; $y--)
-                                <option value="{{ $y }}">{{ $y }}</option>
-                            @endfor
-                        </select>
-                        @error('year')
+                        <label>Period Start</label>
+                        <input type="date" wire:model="period_start" class="form-control" required>
+                        @error('period_start')
                             <small class="text-danger">
                                 {{ $message }}
                             </small>
                         @enderror
                     </div>
                     <div class="w-full">
-                        <label>Month</label>
-                        <select wire:model="month" class="form-control" required>
-                            @for ($m = 1; $m <= 12; $m++)
-                                <option value="{{ $m }}">
-                                    {{ \Carbon\Carbon::create()->month($m)->format('F') }}
-                                </option>
-                            @endfor
-                        </select>
-                        @error('month')
+                        <label>Period End</label>
+                        <input type="date" wire:model="period_end" class="form-control" required>
+                        @error('period_end')
                             <small class="text-danger">
                                 {{ $message }}
                             </small>
@@ -92,13 +82,9 @@
                         :error="true" :options="$branch_group_id_options" placeholder="Select Branch Group" />
 
                     <div class="w-full">
-                        <label>Year</label>
-                        <select wire:model="year" class="form-control" required>
-                            @for ($y = now()->year; $y >= 2020; $y--)
-                                <option value="{{ $y }}">{{ $y }}</option>
-                            @endfor
-                        </select>
-                        @error('year')
+                        <label>Period Start</label>
+                        <input type="date" wire:model="period_start" class="form-control" required>
+                        @error('period_start')
                             <small class="text-danger">
                                 {{ $message }}
                             </small>
@@ -106,15 +92,9 @@
                     </div>
 
                     <div class="w-full">
-                        <label>Month</label>
-                        <select wire:model="month" class="form-control" required>
-                            @for ($m = 1; $m <= 12; $m++)
-                                <option value="{{ $m }}">
-                                    {{ \Carbon\Carbon::create()->month($m)->format('F') }}
-                                </option>
-                            @endfor
-                        </select>
-                        @error('month')
+                        <label>Period End</label>
+                        <input type="date" wire:model="period_end" class="form-control" required>
+                        @error('period_end')
                             <small class="text-danger">
                                 {{ $message }}
                             </small>
@@ -142,28 +122,18 @@
 
 
                     <div class="w-full">
-                        <label>Year</label>
-                        <select wire:model="year" class="form-control" required>
-                            @for ($y = now()->year; $y >= 2020; $y--)
-                                <option value="{{ $y }}">{{ $y }}</option>
-                            @endfor
-                        </select>
-                        @error('year')
+                        <label>Period Start</label>
+                        <input type="date" wire:model="period_start" class="form-control" required>
+                        @error('period_start')
                             <small class="text-danger">
                                 {{ $message }}
                             </small>
                         @enderror
                     </div>
                     <div class="w-full">
-                        <label>Month</label>
-                        <select wire:model="month" class="form-control" required>
-                            @for ($m = 1; $m <= 12; $m++)
-                                <option value="{{ $m }}">
-                                    {{ \Carbon\Carbon::create()->month($m)->format('F') }}
-                                </option>
-                            @endfor
-                        </select>
-                        @error('month')
+                        <label>Period End</label>
+                        <input type="date" wire:model="period_end" class="form-control" required>
+                        @error('period_end')
                             <small class="text-danger">
                                 {{ $message }}
                             </small>

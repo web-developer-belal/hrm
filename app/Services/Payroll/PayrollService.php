@@ -10,7 +10,9 @@ use App\Models\LoanInstallment;
 use App\Models\Ot;
 use App\Models\Payroll;
 use App\Models\PayrollAdjustment;
+use App\Models\PayrollRule;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -19,11 +21,20 @@ class PayrollService
 {
     protected const STANDARD_HOURS_PER_DAY = 8;
 
-    public function generateForEmployee($employee, $year, $month, $totalDays)
+    public function generateForEmployee($employee, $periodStart, $periodEnd)
     {
+        $start = Carbon::parse($periodStart)->startOfDay();
+        $end = Carbon::parse($periodEnd)->endOfDay();
+
+        if ($start->gt($end)) {
+            [$start, $end] = [$end->copy()->startOfDay(), $start->copy()->endOfDay()];
+        }
+
+        $totalDays = $start->copy()->startOfDay()->diffInDays($end->copy()->startOfDay()) + 1;
+
         if (Payroll::where('employee_id', $employee->id)
-            ->where('year', $year)
-            ->where('month', $month)
+            ->whereDate('period_start', $start->toDateString())
+            ->whereDate('period_end', $end->toDateString())
             ->exists()) {
             return null;
         }
@@ -31,9 +42,6 @@ class PayrollService
         DB::beginTransaction();
 
         try {
-            $start = Carbon::create($year, $month)->startOfMonth();
-            $end   = Carbon::create($year, $month)->endOfMonth();
-
             // Salary Component Extraction
             $salary                   = $employee->salaryData;
             $basic_salary             = $salary->basic_salary ?? 0;
@@ -53,6 +61,7 @@ class PayrollService
 
             // Attendance Calculations
             $attendances = Attendance::where('employee_id', $employee->id)
+                ->whereNotNull('status')
                 ->whereBetween('date', [$start, $end])
                 ->get();
 
@@ -60,19 +69,28 @@ class PayrollService
             $absentDays = $attendances->where('status', 'absent')->count();
             $holyDays   = $attendances->where('status', 'holiday')->count();
             $offDays    = $attendances->where('status', 'offday')->count();
-            $lateDays   = $attendances->where('is_late', 1)->count();
+            $lateDays   = $attendances->filter(fn($attendance) =>
+                $attendance->status === 'late' || ((int) ($attendance->late_minutes ?? 0) > 0)
+            )->count();
 
-            $totalWorkingDays = $totalDays - $offDays;
-            $presentDays      = $totalDays - $leaveDays - $absentDays - $holyDays - $offDays;
+            $totalWorkingDays = max($totalDays - $offDays, 0);
 
-            // Late Deduction Policy
-            $attendancePolicy = AttendancePolicy::where('status', 'active')->first();
-            $lateDaysLimit    = ($attendancePolicy && $attendancePolicy->late_deduction_count_days > 0)
-                ? $attendancePolicy->late_deduction_count_days
-                : 999; // Avoid division by zero
+            $attendancePolicy = $this->resolveAttendancePolicy($employee);
+            $lateCutoffAbsentDays = $this->calculateLateCutoffAbsentDays($attendances, $attendancePolicy);
 
-            $extraAbsent             = floor($lateDays / $lateDaysLimit);
-            $totalAbsentForDeduction = $absentDays + $extraAbsent;
+            $effectiveLateDays = max($lateDays - $lateCutoffAbsentDays, 0);
+
+            // Late Deduction Policy (fallback to legacy field for backward compatibility)
+            $latePenaltyThresholdDays = (int) (($attendancePolicy?->late_penalty_threshold_days ?? 0) ?: ($attendancePolicy?->late_deduction_count_days ?? 0));
+            $latePenaltyDeductDays = (float) (($attendancePolicy?->late_penalty_deduct_days ?? 0) ?: 1);
+
+            $latePenaltyDays = 0;
+            if ($latePenaltyThresholdDays > 0) {
+                $latePenaltyDays = floor($effectiveLateDays / $latePenaltyThresholdDays) * $latePenaltyDeductDays;
+            }
+
+            $totalAbsentForDeduction = $absentDays + $lateCutoffAbsentDays + $latePenaltyDays;
+            $presentDays = max($totalDays - $leaveDays - $absentDays - $holyDays - $offDays - $lateCutoffAbsentDays, 0);
 
             $dailySalary     = round($totalPlusSalary / $totalDays, 2);
             $absentDeduction = $dailySalary * $totalAbsentForDeduction;
@@ -84,7 +102,7 @@ class PayrollService
                 ->first();
 
             $totalOt = 0;
-            if ($employee->has_ot && $otConfig) {
+            if ($employee->has_ot && $otConfig && $otConfig->include_in_payroll) {
                 $regularOvertimeMinutes = $attendances
                     ->whereNotIn('status', ['holiday', 'offday'])
                     ->sum('overtime_minutes');
@@ -101,6 +119,7 @@ class PayrollService
                 $overTimeHour  = round($payableOvertimeMinutes / 60, 2);
                 $otRatePerHour = $this->resolveOtRatePerHour(
                     $otConfig,
+                    $employee,
                     $totalPlusSalary,
                     $totalDays
                 );
@@ -120,8 +139,8 @@ class PayrollService
 
                 LoanInstallment::create([
                     'loan_id' => $loan->id,
-                    'year'    => $year,
-                    'month'   => $month,
+                    'year'    => $end->year,
+                    'month'   => $end->month,
                     'amount'  => $loanDeduction,
                     'is_paid' => 1, // 1 for paid, 0 for pending
                 ]);
@@ -129,35 +148,49 @@ class PayrollService
 
             // Adjustments
             $adjustmentsAdvanced = PayrollAdjustment::where('employee_id', $employee->id)->where('type', 'advance')
-                ->whereYear('date', $year)
-                ->whereMonth('date', $month)
+                ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
                 ->sum('amount');
             $adjustmentsAddition = PayrollAdjustment::where('employee_id', $employee->id)->where('type', 'addition')
-                ->whereYear('date', $year)
-                ->whereMonth('date', $month)
+                ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
                 ->sum('amount');
             $adjustmentsDeduction = PayrollAdjustment::where('employee_id', $employee->id)->where('type', 'deduction')
-                ->whereYear('date', $year)
-                ->whereMonth('date', $month)
+                ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
                 ->sum('amount');
 
-            // Attendance Bonus (no absent, no leave)
-            $attendanceBonus = 0;
-            if ($totalAbsentForDeduction == 0) {
-                $attendanceBonus = 500;
-            }
+            [$ruleBonusAmount, $ruleDeductionAmount] = $this->resolvePayrollRules(
+                $employee,
+                $start,
+                $end,
+                $presentDays,
+                $totalWorkingDays,
+                $basic_salary
+            );
 
-            $grossSalary = $totalPlusSalary + $totalOt + $attendanceBonus + $adjustmentsAddition;
+            $attendanceBonus = $this->resolveAttendanceBonusFromRules(
+                $employee,
+                $start,
+                $end,
+                $presentDays,
+                $totalWorkingDays,
+                $basic_salary,
+                $totalAbsentForDeduction,
+                $leaveDays
+            );
 
-            $totalDeduction = $totalDeductionSalary + $absentDeduction + $loanDeduction + $adjustmentsDeduction + $adjustmentsAdvanced;
+            $totalPositiveAdjustments = $adjustmentsAddition + $ruleBonusAmount;
+            $totalNegativeAdjustments = $adjustmentsDeduction + $adjustmentsAdvanced + $ruleDeductionAmount;
+
+            $grossSalary = $totalPlusSalary + $totalOt + $attendanceBonus + $totalPositiveAdjustments;
+
+            $totalDeduction = $totalDeductionSalary + $absentDeduction + $loanDeduction + $totalNegativeAdjustments;
 
             $netSalary = $grossSalary - $totalDeduction;
 
             $payroll = Payroll::create([
                 'branch_id'            => $employee->branch_id,
                 'employee_id'          => $employee->id,
-                'year'                 => $year,
-                'month'                => $month,
+                'period_start'         => $start->toDateString(),
+                'period_end'           => $end->toDateString(),
                 'total_days'           => $totalDays,
                 'total_working_days'   => $totalWorkingDays,
                 'present_days'         => $presentDays,
@@ -165,16 +198,16 @@ class PayrollService
                 'holy_days'            => $holyDays,
                 'leave_days'           => $leaveDays,
                 'absent_days'          => $absentDays,
-                'late_days'            => $lateDays,
-                'late_penalty_days'    => $extraAbsent,
+                'late_days'            => $effectiveLateDays,
+                'late_penalty_days'    => (int) round($latePenaltyDays),
                 'per_day_salary'       => $dailySalary,
                 'basic_salary'         => $basic_salary,
                 'attendance_bonus'     => $attendanceBonus,
                 'total_ot'             => $totalOt,
                 'late_deduction'       => 0,
                 'loan_deduction'       => $loanDeduction,
-                'positive_adjustments' => $adjustmentsAddition,
-                'negative_adjustments' => $adjustmentsDeduction + $adjustmentsAdvanced,
+                'positive_adjustments' => $totalPositiveAdjustments,
+                'negative_adjustments' => $totalNegativeAdjustments,
                 'absent_deduction'     => $absentDeduction,
                 'total_deduction'      => $totalDeduction,
                 'gross_salary'         => $grossSalary,
@@ -196,7 +229,7 @@ class PayrollService
     /**
      * Generate payroll for all employees in a specific branch
      */
-    public function generateForBranch($branchId, $year, $month, $totalDays)
+    public function generateForBranch($branchId, $periodStart, $periodEnd)
     {
         $employees = Employee::where('branch_id', $branchId)
             ->where('status', 1)
@@ -205,7 +238,7 @@ class PayrollService
         $count = 0;
 
         foreach ($employees as $employee) {
-            $result = $this->generateForEmployee($employee, $year, $month, $totalDays);
+            $result = $this->generateForEmployee($employee, $periodStart, $periodEnd);
             if ($result) {
                 $count++;
             }
@@ -217,14 +250,14 @@ class PayrollService
     /**
      * Generate payroll for all employees across all branches
      */
-    public function generateForAllBranches($year, $month, $totalDays)
+    public function generateForAllBranches($periodStart, $periodEnd)
     {
         $employees = Employee::where('status', 1)->get();
 
         $count = 0;
 
         foreach ($employees as $employee) {
-            $result = $this->generateForEmployee($employee, $year, $month, $totalDays);
+            $result = $this->generateForEmployee($employee, $periodStart, $periodEnd);
             if ($result) {
                 $count++;
             }
@@ -236,7 +269,7 @@ class PayrollService
     /**
      * Generate payroll for all employees in a specific branch group
      */
-    public function generateForBranchGroup($branchGroupId, $year, $month, $totalDays)
+    public function generateForBranchGroup($branchGroupId, $periodStart, $periodEnd)
     {
         $employees = Employee::query()
             ->where('status', 1)
@@ -248,7 +281,7 @@ class PayrollService
         $count = 0;
 
         foreach ($employees as $employee) {
-            $result = $this->generateForEmployee($employee, $year, $month, $totalDays);
+            $result = $this->generateForEmployee($employee, $periodStart, $periodEnd);
             if ($result) {
                 $count++;
             }
@@ -257,18 +290,181 @@ class PayrollService
         return $count;
     }
 
-    protected function resolveOtRatePerHour($otConfig, float $totalPlusSalary, int $totalDays): float
+    public function resolveOtRatePerHour($otConfig, $employee, float $totalPlusSalary, int $totalDays): float
     {
         if (! $otConfig) {
             return 0;
         }
 
-        if ($otConfig->rate_type === 'percentage') {
+        $designationRate = $otConfig->rates()
+            ->where('designation_id', $employee->designation_id)
+            ->value('rate');
+
+        if ($designationRate !== null) {
+            return (float) $designationRate;
+        }
+
+        if (isset($otConfig->rate_type) && $otConfig->rate_type === 'percentage' && isset($otConfig->rate)) {
             $monthlyWorkHours = max($totalDays * self::STANDARD_HOURS_PER_DAY, 1);
             $baseHourlyRate   = $totalPlusSalary / $monthlyWorkHours;
             return round($baseHourlyRate * ((float) $otConfig->rate / 100), 2);
         }
 
-        return (float) $otConfig->rate;
+        if (isset($otConfig->rate)) {
+            return (float) $otConfig->rate;
+        }
+
+        return 0;
+    }
+
+    protected function resolveAttendancePolicy($employee): ?AttendancePolicy
+    {
+        return AttendancePolicy::query()
+            ->where('status', 'active')
+            ->where(function ($q) use ($employee) {
+                $q->whereNull('branch_id')
+                    ->orWhere('branch_id', $employee->branch_id);
+            })
+            ->orderByRaw('CASE WHEN branch_id IS NULL THEN 1 ELSE 0 END')
+            ->latest('id')
+            ->first();
+    }
+
+    protected function calculateLateCutoffAbsentDays(Collection $attendances, ?AttendancePolicy $policy): int
+    {
+        if (! $policy || ! $policy->mark_absent_if_late || empty($policy->late_cutoff_time)) {
+            return 0;
+        }
+
+        $cutoff = strlen($policy->late_cutoff_time) === 5
+            ? $policy->late_cutoff_time . ':00'
+            : $policy->late_cutoff_time;
+
+        return $attendances
+            ->filter(function ($attendance) use ($cutoff) {
+                if (! $attendance->clock_in || ! in_array($attendance->status, ['present', 'late'], true)) {
+                    return false;
+                }
+
+                return $attendance->clock_in->format('H:i:s') > $cutoff;
+            })
+            ->count();
+    }
+
+    protected function resolvePayrollRules($employee, Carbon $periodStart, Carbon $periodEnd, int $presentDays, int $workingDays, float $basicSalary): array
+    {
+        $rules = PayrollRule::query()
+            ->where('is_active', true)
+            ->where(function ($q) use ($employee) {
+                $q->whereNull('branch_group_id')
+                    ->orWhere('branch_group_id', $employee->branch?->branch_group_id);
+            })
+            ->get();
+
+        $totalBonus = 0.0;
+        $totalDeduction = 0.0;
+
+        foreach ($rules as $rule) {
+            if ($this->isAttendanceBonusRule($rule)) {
+                continue;
+            }
+
+            if (! $this->isRuleApplicable($rule, $periodStart, $periodEnd, $presentDays)) {
+                continue;
+            }
+
+            $amount = $this->calculateRuleAmount($rule, $workingDays, $basicSalary);
+
+            if ($amount <= 0) {
+                continue;
+            }
+
+            if ($rule->type === 'deduction') {
+                $totalDeduction += $amount;
+            } else {
+                $totalBonus += $amount;
+            }
+        }
+
+        return [round($totalBonus, 2), round($totalDeduction, 2)];
+    }
+
+    protected function resolveAttendanceBonusFromRules(
+        $employee,
+        Carbon $periodStart,
+        Carbon $periodEnd,
+        int $presentDays,
+        int $workingDays,
+        float $basicSalary,
+        float $totalAbsentForDeduction,
+        int $leaveDays
+    ): float {
+        // Keep existing behavior: attendance bonus only when no absent/late penalty and no leave.
+        if ($totalAbsentForDeduction > 0 || $leaveDays > 0) {
+            return 0;
+        }
+
+        $rules = PayrollRule::query()
+            ->where('is_active', true)
+            ->where('type', 'bonus')
+            ->where(function ($q) use ($employee) {
+                $q->whereNull('branch_group_id')
+                    ->orWhere('branch_group_id', $employee->branch?->branch_group_id);
+            })
+            ->get();
+
+        $attendanceBonus = 0.0;
+
+        foreach ($rules as $rule) {
+            if (! $this->isAttendanceBonusRule($rule)) {
+                continue;
+            }
+
+            if (! $this->isRuleApplicable($rule, $periodStart, $periodEnd, $presentDays)) {
+                continue;
+            }
+
+            $attendanceBonus += $this->calculateRuleAmount($rule, $workingDays, $basicSalary);
+        }
+
+        return round($attendanceBonus, 2);
+    }
+
+    protected function isAttendanceBonusRule($rule): bool
+    {
+        return stripos((string) $rule->name, 'attendance bonus') !== false;
+    }
+
+    protected function isRuleApplicable($rule, Carbon $periodStart, Carbon $periodEnd, int $presentDays): bool
+    {
+        if ($rule->condition_type === 'min_present_days') {
+            return $presentDays >= (int) $rule->condition_present_days;
+        }
+
+        if ($rule->condition_type === 'date_range') {
+            if (! $rule->condition_from || ! $rule->condition_to) {
+                return false;
+            }
+
+            $from = Carbon::parse($rule->condition_from)->startOfDay();
+            $to = Carbon::parse($rule->condition_to)->endOfDay();
+
+            return $periodStart->lte($to) && $periodEnd->gte($from);
+        }
+
+        return true;
+    }
+
+    protected function calculateRuleAmount($rule, int $workingDays, float $basicSalary): float
+    {
+        if ($rule->calc_type === 'percentage') {
+            return round($basicSalary * ((float) $rule->value / 100), 2);
+        }
+
+        if ($rule->calc_type === 'per_day') {
+            return round((float) $rule->value * $workingDays, 2);
+        }
+
+        return round((float) $rule->value, 2);
     }
 }

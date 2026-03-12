@@ -67,7 +67,9 @@ class EmployeeAdd extends Component
     #[Validate('nullable|file|mimes:jpeg,png,webp,pdf,doc,docx|max:10240')]
     public $contract_agreement;
     #[Validate('nullable|file|mimes:jpeg,png,webp,pdf,doc,docx|max:10240')]
-    public $Id_proof;
+    public $id_proof;
+    #[Validate('nullable|file|mimes:jpeg,png,webp,pdf,doc,docx|max:10240')]
+    public $checkbook;
 
     // Dropdowns & search
     public $branch_id_options = [], $branch_id_search;
@@ -268,7 +270,8 @@ class EmployeeAdd extends Component
             'offer_letter'       => 'offer_letter-emps',
             'joining_letter'     => 'joining_letter-emps',
             'contract_agreement' => 'contract_agreement-emps',
-            'Id_proof'           => 'id_proof-emps',
+            'id_proof'           => 'id_proof-emps',
+            'checkbook'          => 'checkbook-emps',
         ];
 
         foreach ($documents as $field => $prefix) {
@@ -330,11 +333,19 @@ class EmployeeAdd extends Component
         }
     }
 
-    public function Id_proofRemoveFile($path)
+    public function id_proofRemoveFile($path)
     {
         if ($this->isEditMode && $this->emp) {
             deleteDocument($path);
-            $this->emp->update(['Id_proof' => null]);
+            $this->emp->update(['id_proof' => null]);
+        }
+    }
+
+    public function checkbookRemoveFile($path)
+    {
+        if ($this->isEditMode && $this->emp) {
+            deleteDocument($path);
+            $this->emp->update(['checkbook' => null]);
         }
     }
 

@@ -111,7 +111,8 @@
                     <x-form.file-upload label="Add Offer Letter" name="offer_letter" :error="true" :oldFiles="$isEditMode && $emp->offer_letter ? [$emp->offer_letter] : []" />
                     <x-form.file-upload label="Add Joining Letter" name="joining_letter" :error="true" :oldFiles="$isEditMode && $emp->joining_letter ? [$emp->joining_letter] : []" />
                     <x-form.file-upload label="Add Contract & Agreement" name="contract_agreement" :error="true" :oldFiles="$isEditMode && $emp->contract_agreement ? [$emp->contract_agreement] : []" />
-                    <x-form.file-upload label="Add ID Proof" name="Id_proof" :error="true" :oldFiles="$isEditMode && $emp->Id_proof ? [$emp->Id_proof] : []" />
+                    <x-form.file-upload label="Add ID Proof" name="id_proof" :error="true" :oldFiles="$isEditMode && $emp->id_proof ? [$emp->id_proof] : []" />
+                    <x-form.file-upload label="Add Checkbook" name="checkbook" :error="true" :oldFiles="$isEditMode && $emp->checkbook ? [$emp->checkbook] : []" />
 
                     <!-- Status -->
                     <x-form.select label="Status" name="status" :isRequired="true" :error="true"
