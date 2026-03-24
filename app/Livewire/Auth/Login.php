@@ -22,6 +22,11 @@ class Login extends Component
         ];
 
         if (Auth::guard('employee')->attempt($credentials)) {
+            if(Auth::guard('employee')->user()->status != '1') {
+                Auth::guard('employee')->logout();
+                flash()->error('Your account is inactive. Please contact support.');
+                return;
+            }
             return redirect()->route('employee.dashboard');
         }
 

@@ -79,7 +79,7 @@ class EmployeeAdd extends Component
     public function mount($emp = null)
     {
         $this->loadBranchOptions();
-        $this->password = rand(100000, 999999);
+        // $this->password = rand(100000, 999999);
         if ($emp) {
             $this->isEditMode = true;
             $emp              = Employee::findOrFail($emp);

@@ -78,7 +78,7 @@
                         </li>
                         @endif
 
-                         {{-- Groups --}}
+                         {{-- Groups
                         @if(auth()->user()->hasPermission('branches.groups.show'))
                         <li class="mb-[5px]">
                             <a href="{{ route('admin.branches.groups') }}"
@@ -87,7 +87,7 @@
                                 <span class="ms-2">Groups</span>
                             </a>
                         </li>
-                        @endif
+                        @endif --}}
 
                         {{-- HR Management --}}
                         @php
@@ -104,6 +104,7 @@
                                 'admin.resignations.details'=>'resignations.show',
                                 'admin.resignations.create'=>'resignations.create',
                                 'admin.resignations.edit'=>'resignations.edit',
+                                'admin.branches.groups' => 'branches.groups.show',
                             ];
                             $showHr = false;
                             foreach ($hrRoutes as $route => $perm) {
@@ -159,6 +160,10 @@
                                 @if(auth()->user()->hasPermission('resignations.show'))
                                 <li><a href="{{ route('admin.resignations.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.resignations.index') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Resignation</a></li>
+                                @endif
+                                @if(auth()->user()->hasPermission('branches.groups.show'))
+                                <li><a href="{{ route('admin.branches.groups') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.branches.groups') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Group</a></li>
                                 @endif
                             </ul>
                         </li>

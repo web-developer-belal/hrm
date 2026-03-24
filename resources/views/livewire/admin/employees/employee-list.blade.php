@@ -184,6 +184,12 @@
 
                                 <td class="px-5 py-2.5 text-gray-500">
                                     <div class="action-icon inline-flex">
+                                        <button type="button" wire:click="openSalaryModal({{ $emp->id }})"
+                                            class="me-2 size-6.5 flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"
+                                            title="Setup Salary">
+                                            <i class="ti ti-cash"></i>
+                                        </button>
+
                                         <a href="{{ route('admin.employees.edit', ['emp' => $emp->id]) }}"
                                             class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-edit"></i></a>
@@ -209,4 +215,193 @@
 
     </div>
     <!-- /Employees List -->
+
+    <!-- Salary Setup Modal -->
+    <div id="salarySetupModal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200">
+        <div data-modal-overlay class="absolute inset-0 bg-black/50"></div>
+
+        <div id="salarySetupPanel"
+            class="relative bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden transform scale-95 translate-y-3 transition-all duration-200">
+            <div class="px-5 py-4 border-b border-borderColor flex items-center justify-between">
+                <div>
+                    <h5 class="mb-1">Setup Employee Salary</h5>
+                    <p class="text-xs text-gray-500">{{ $salaryEmployeeName ?: 'Select an employee' }}</p>
+                </div>
+                <button type="button" data-close-modal
+                    class="size-8 flex items-center justify-center rounded-md hover:bg-gray-100 text-gray-600">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+
+            <form wire:submit.prevent="saveSalary" class="p-5 overflow-y-auto max-h-[calc(90vh-130px)]">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Basic Salary</label>
+                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.basic_salary"
+                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
+                        @error('salaryForm.basic_salary')
+                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">House Rent</label>
+                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.house_rent"
+                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
+                        @error('salaryForm.house_rent')
+                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Medical Allowance</label>
+                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.medical_allowance"
+                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
+                        @error('salaryForm.medical_allowance')
+                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Dear Allowance</label>
+                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.dear_allowance"
+                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
+                        @error('salaryForm.dear_allowance')
+                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Transport Allowance</label>
+                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.transport_allowance"
+                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
+                        @error('salaryForm.transport_allowance')
+                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">PF Employer Contribution</label>
+                        <input type="number" step="0.01" min="0"
+                            wire:model.defer="salaryForm.pf_employer_contribution"
+                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
+                        @error('salaryForm.pf_employer_contribution')
+                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Other Allowance</label>
+                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.other_allowance"
+                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
+                        @error('salaryForm.other_allowance')
+                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">PF Employee Contribution</label>
+                        <input type="number" step="0.01" min="0"
+                            wire:model.defer="salaryForm.pf_employee_contribution"
+                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
+                        @error('salaryForm.pf_employee_contribution')
+                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Welfare Contribution</label>
+                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.welfare_contribution"
+                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
+                        @error('salaryForm.welfare_contribution')
+                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Tax Deduction</label>
+                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.tax_deduction"
+                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
+                        @error('salaryForm.tax_deduction')
+                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="mt-5 pt-4 border-t border-borderColor flex items-center justify-end gap-2">
+                    <button type="button" data-close-modal
+                        class="px-4 py-2 rounded border border-borderColor text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="px-4 py-2 rounded bg-primary text-white hover:bg-primary-900 disabled:opacity-70"
+                        wire:loading.attr="disabled" wire:target="saveSalary">
+                        <span wire:loading.remove wire:target="saveSalary">Save Salary</span>
+                        <span wire:loading wire:target="saveSalary">Saving...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            if (window.__employeeSalaryModalInit) {
+                return;
+            }
+            window.__employeeSalaryModalInit = true;
+
+            var modal = document.getElementById('salarySetupModal');
+            var panel = document.getElementById('salarySetupPanel');
+            if (!modal || !panel) {
+                return;
+            }
+
+            var isOpen = false;
+
+            function openModal() {
+                if (isOpen) {
+                    return;
+                }
+                isOpen = true;
+
+                modal.classList.remove('pointer-events-none', 'opacity-0');
+                requestAnimationFrame(function() {
+                    panel.classList.remove('scale-95', 'translate-y-3');
+                });
+                document.body.classList.add('overflow-hidden');
+            }
+
+            function closeModal() {
+                if (!isOpen) {
+                    return;
+                }
+
+                panel.classList.add('scale-95', 'translate-y-3');
+                modal.classList.add('opacity-0');
+
+                window.setTimeout(function() {
+                    modal.classList.add('pointer-events-none');
+                    isOpen = false;
+                    document.body.classList.remove('overflow-hidden');
+                }, 200);
+            }
+
+            modal.addEventListener('click', function(event) {
+                if (event.target.hasAttribute('data-modal-overlay') || event.target.hasAttribute('data-close-modal')) {
+                    closeModal();
+                }
+            });
+
+            window.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeModal();
+                }
+            });
+
+            window.addEventListener('open-salary-modal', openModal);
+            window.addEventListener('close-salary-modal', closeModal);
+        })();
+    </script>
 </div>
