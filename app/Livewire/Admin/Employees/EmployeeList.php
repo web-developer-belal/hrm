@@ -23,18 +23,37 @@ class EmployeeList extends Component
     public $selectedEmployees = [];
     public $salaryEmployeeId;
     public $salaryEmployeeName = '';
-    public $salaryForm = [
-        'basic_salary' => null,
-        'house_rent' => null,
-        'medical_allowance' => null,
-        'dear_allowance' => null,
-        'transport_allowance' => null,
-        'pf_employer_contribution' => null,
-        'other_allowance' => null,
-        'pf_employee_contribution' => null,
-        'welfare_contribution' => null,
-        'tax_deduction' => null,
-    ];
+    public $basicSalary = 0;
+    public $houseRentPercent;
+    public $houseRentAmount;
+    public $medicalAllowancePercent;
+    public $medicalAllowanceAmount;
+    public $dearAllowancePercent;
+    public $dearAllowanceAmout;
+    public $transportAllowancePercent;
+    public $transportAllowanceAmount;
+    public $pfEployerContributionPercent;
+    public $pfEployerContributionAmount;
+    public $otherAllowancePercent;
+    public $otherAllowanceAmount;
+    public $pfEmployeeContributionPercent;
+    public $pfEmployeeContributionAmount;
+    public $welfareContributionPercnet;
+    public $welfareContributionAmount;
+    public $taxDeductionPercent;
+    public $taxDeductionAmount;
+
+    public $basic_salary = 0;
+    public $house_rent = 0;
+    public $medical_allowance = 0;
+    public $dear_allowance = 0;
+    public $transport_allowance = 0;
+    public $pf_employer_contribution = 0;
+    public $other_allowance = 0;
+    public $pf_employee_contribution = 0;
+    public $welfare_contribution = 0;
+    public $tax_deduction = 0;
+    public $totalSalary = 0;
 
     public function mount()
     {
@@ -144,37 +163,124 @@ class EmployeeList extends Component
 
         $salary = $employee->salaryData;
 
-        $this->salaryForm = [
-            'basic_salary' => $salary->basic_salary ?? null,
-            'house_rent' => $salary->house_rent ?? null,
-            'medical_allowance' => $salary->medical_allowance ?? null,
-            'dear_allowance' => $salary->dear_allowance ?? null,
-            'transport_allowance' => $salary->transport_allowance ?? null,
-            'pf_employer_contribution' => $salary->pf_employer_contribution ?? null,
-            'other_allowance' => $salary->other_allowance ?? null,
-            'pf_employee_contribution' => $salary->pf_employee_contribution ?? null,
-            'welfare_contribution' => $salary->welfare_contribution ?? null,
-            'tax_deduction' => $salary->tax_deduction ?? null,
-        ];
+        $this->basicSalary             = $salary->basic_salary ?? 0;
+        $this->houseRentAmount         = $salary->house_rent ?? 0;
+        $this->medicalAllowanceAmount  = $salary->medical_allowance ?? 0;
+        $this->dearAllowanceAmout      = $salary->dear_allowance ?? 0;
+        $this->transportAllowanceAmount = $salary->transport_allowance ?? 0;
+        $this->pfEployerContributionAmount = $salary->pf_employer_contribution ?? 0;
+        $this->otherAllowanceAmount    = $salary->other_allowance ?? 0;
+        $this->pfEmployeeContributionAmount = $salary->pf_employee_contribution ?? 0;
+        $this->welfareContributionAmount = $salary->welfare_contribution ?? 0;
+        $this->taxDeductionAmount      = $salary->tax_deduction ?? 0;
+
+        $this->houseRentPercent = null;
+        $this->medicalAllowancePercent = null;
+        $this->dearAllowancePercent = null;
+        $this->transportAllowancePercent = null;
+        $this->pfEployerContributionPercent = null;
+        $this->otherAllowancePercent = null;
+        $this->pfEmployeeContributionPercent = null;
+        $this->welfareContributionPercnet = null;
+        $this->taxDeductionPercent = null;
+
+        $this->recalculateSalaryFields();
 
         $this->resetValidation();
         $this->dispatch('open-salary-modal');
+    }
+
+    protected function recalculateSalaryFields(): void
+    {
+        $basic = (float) ($this->basicSalary ?: 0);
+
+        $this->basic_salary = $basic;
+        $this->house_rent = $this->houseRentAmount !== null && $this->houseRentAmount !== ''
+            ? (float) $this->houseRentAmount
+            : round($basic / 100 * (float) ($this->houseRentPercent ?: 0));
+        $this->medical_allowance = $this->medicalAllowanceAmount !== null && $this->medicalAllowanceAmount !== ''
+            ? (float) $this->medicalAllowanceAmount
+            : round($basic / 100 * (float) ($this->medicalAllowancePercent ?: 0));
+        $this->dear_allowance = $this->dearAllowanceAmout !== null && $this->dearAllowanceAmout !== ''
+            ? (float) $this->dearAllowanceAmout
+            : round($basic / 100 * (float) ($this->dearAllowancePercent ?: 0));
+        $this->transport_allowance = $this->transportAllowanceAmount !== null && $this->transportAllowanceAmount !== ''
+            ? (float) $this->transportAllowanceAmount
+            : round($basic / 100 * (float) ($this->transportAllowancePercent ?: 0));
+        $this->pf_employer_contribution = $this->pfEployerContributionAmount !== null && $this->pfEployerContributionAmount !== ''
+            ? (float) $this->pfEployerContributionAmount
+            : round($basic / 100 * (float) ($this->pfEployerContributionPercent ?: 0));
+        $this->other_allowance = $this->otherAllowanceAmount !== null && $this->otherAllowanceAmount !== ''
+            ? (float) $this->otherAllowanceAmount
+            : round($basic / 100 * (float) ($this->otherAllowancePercent ?: 0));
+        $this->pf_employee_contribution = $this->pfEmployeeContributionAmount !== null && $this->pfEmployeeContributionAmount !== ''
+            ? (float) $this->pfEmployeeContributionAmount
+            : round($basic / 100 * (float) ($this->pfEmployeeContributionPercent ?: 0));
+        $this->welfare_contribution = $this->welfareContributionAmount !== null && $this->welfareContributionAmount !== ''
+            ? (float) $this->welfareContributionAmount
+            : round($basic / 100 * (float) ($this->welfareContributionPercnet ?: 0));
+        $this->tax_deduction = $this->taxDeductionAmount !== null && $this->taxDeductionAmount !== ''
+            ? (float) $this->taxDeductionAmount
+            : round($basic / 100 * (float) ($this->taxDeductionPercent ?: 0));
+
+        $this->totalSalary = $this->basic_salary
+            + $this->house_rent
+            + $this->medical_allowance
+            + $this->dear_allowance
+            + $this->transport_allowance
+            + $this->pf_employer_contribution
+            + $this->other_allowance
+            - $this->pf_employee_contribution
+            - $this->welfare_contribution
+            - $this->tax_deduction;
+    }
+
+    public function updated($name): void
+    {
+        if (
+            $name === 'basicSalary'
+            || str_starts_with($name, 'houseRent')
+            || str_starts_with($name, 'medicalAllowance')
+            || str_starts_with($name, 'dearAllowance')
+            || str_starts_with($name, 'transportAllowance')
+            || str_starts_with($name, 'pfEployerContribution')
+            || str_starts_with($name, 'otherAllowance')
+            || str_starts_with($name, 'pfEmployeeContribution')
+            || str_starts_with($name, 'welfareContribution')
+            || str_starts_with($name, 'taxDeduction')
+        ) {
+            $this->recalculateSalaryFields();
+        }
+    }
+
+    public function closeSalaryModal(): void
+    {
+        $this->dispatch('close-salary-modal');
     }
 
     public function saveSalary(): void
     {
         $validated = $this->validate([
             'salaryEmployeeId' => ['required', 'exists:employees,id'],
-            'salaryForm.basic_salary' => ['nullable', 'numeric', 'min:0'],
-            'salaryForm.house_rent' => ['nullable', 'numeric', 'min:0'],
-            'salaryForm.medical_allowance' => ['nullable', 'numeric', 'min:0'],
-            'salaryForm.dear_allowance' => ['nullable', 'numeric', 'min:0'],
-            'salaryForm.transport_allowance' => ['nullable', 'numeric', 'min:0'],
-            'salaryForm.pf_employer_contribution' => ['nullable', 'numeric', 'min:0'],
-            'salaryForm.other_allowance' => ['nullable', 'numeric', 'min:0'],
-            'salaryForm.pf_employee_contribution' => ['nullable', 'numeric', 'min:0'],
-            'salaryForm.welfare_contribution' => ['nullable', 'numeric', 'min:0'],
-            'salaryForm.tax_deduction' => ['nullable', 'numeric', 'min:0'],
+            'basicSalary' => ['required', 'numeric', 'min:0'],
+            'houseRentPercent' => ['nullable', 'numeric', 'min:0'],
+            'houseRentAmount' => ['nullable', 'numeric', 'min:0'],
+            'medicalAllowancePercent' => ['nullable', 'numeric', 'min:0'],
+            'medicalAllowanceAmount' => ['nullable', 'numeric', 'min:0'],
+            'dearAllowancePercent' => ['nullable', 'numeric', 'min:0'],
+            'dearAllowanceAmout' => ['nullable', 'numeric', 'min:0'],
+            'transportAllowancePercent' => ['nullable', 'numeric', 'min:0'],
+            'transportAllowanceAmount' => ['nullable', 'numeric', 'min:0'],
+            'pfEployerContributionPercent' => ['nullable', 'numeric', 'min:0'],
+            'pfEployerContributionAmount' => ['nullable', 'numeric', 'min:0'],
+            'otherAllowancePercent' => ['nullable', 'numeric', 'min:0'],
+            'otherAllowanceAmount' => ['nullable', 'numeric', 'min:0'],
+            'pfEmployeeContributionPercent' => ['nullable', 'numeric', 'min:0'],
+            'pfEmployeeContributionAmount' => ['nullable', 'numeric', 'min:0'],
+            'welfareContributionPercnet' => ['nullable', 'numeric', 'min:0'],
+            'welfareContributionAmount' => ['nullable', 'numeric', 'min:0'],
+            'taxDeductionPercent' => ['nullable', 'numeric', 'min:0'],
+            'taxDeductionAmount' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         $employee = Employee::findOrFail($validated['salaryEmployeeId']);
@@ -184,16 +290,16 @@ class EmployeeList extends Component
             [
                 'branch_id' => $employee->branch_id,
                 'employee_id' => $employee->id,
-                'basic_salary' => $validated['salaryForm']['basic_salary'] ?? 0,
-                'house_rent' => $validated['salaryForm']['house_rent'] ?? 0,
-                'medical_allowance' => $validated['salaryForm']['medical_allowance'] ?? 0,
-                'dear_allowance' => $validated['salaryForm']['dear_allowance'] ?? 0,
-                'transport_allowance' => $validated['salaryForm']['transport_allowance'] ?? 0,
-                'pf_employer_contribution' => $validated['salaryForm']['pf_employer_contribution'] ?? 0,
-                'other_allowance' => $validated['salaryForm']['other_allowance'] ?? 0,
-                'pf_employee_contribution' => $validated['salaryForm']['pf_employee_contribution'] ?? 0,
-                'welfare_contribution' => $validated['salaryForm']['welfare_contribution'] ?? 0,
-                'tax_deduction' => $validated['salaryForm']['tax_deduction'] ?? 0,
+                'basic_salary' => $this->basic_salary,
+                'house_rent' => $this->house_rent,
+                'medical_allowance' => $this->medical_allowance,
+                'dear_allowance' => $this->dear_allowance,
+                'transport_allowance' => $this->transport_allowance,
+                'pf_employer_contribution' => $this->pf_employer_contribution,
+                'other_allowance' => $this->other_allowance,
+                'pf_employee_contribution' => $this->pf_employee_contribution,
+                'welfare_contribution' => $this->welfare_contribution,
+                'tax_deduction' => $this->tax_deduction,
             ]
         );
 

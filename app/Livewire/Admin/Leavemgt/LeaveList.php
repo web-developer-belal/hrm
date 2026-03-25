@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Leavemgt;
 use App\Models\Attendance;
 use App\Models\Branch;
 use App\Models\Leave;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -42,10 +43,14 @@ class LeaveList extends Component
         // dd($leaveId);
 
         $leave = Leave::findOrFail($leaveId);
-        $leave->update([
-            'status' => $status,
-            // 'approved_by'=>Auth::user()->id,
-        ]);
+        $leave->status = $status;
+        if(!empty($leave->approved_by) && $status === 'pending') {
+            $leave->approved_by = null;
+        } elseif(empty($leave->approved_by) && $status === 'approved') {
+            $leave->approved_by = Auth::id();
+        }
+        
+        $leave->save();
 
         if ($status === 'approved') {
             $this->updateAttendanceForLeave($leave);

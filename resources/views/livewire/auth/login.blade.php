@@ -24,12 +24,12 @@
                     </span>
                 @enderror
             </div>
-            <div class="mb-3">
+            <div class="mb-3" x-data="{ showPassword: false }">
                 <label class="block mb-1 text-sm leading-normal font-medium text-title">Password</label>
                 <div class="pass-group relative">
-                    <input type="password" wire:model='password'
+                    <input :type="showPassword ? 'text' : 'password'" wire:model='password'
                         class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                    <span class="ti toggle-password ti-eye-off absolute top-[10px] right-[10px] border-start-0"></span>
+                    <span :class="showPassword ? 'ti ti-eye' : 'ti ti-eye-off'" @click="showPassword = !showPassword" class="absolute top-[10px] right-[10px] border-start-0"></span>
                 </div>
                 @error('password')
                     <span class="text-red-500">

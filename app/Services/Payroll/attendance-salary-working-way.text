@@ -1,0 +1,386 @@
+================================================================
+  HOW ATTENDANCE & PAYROLL WORKS — PLAIN ENGLISH GUIDE
+  (For Non-Technical Readers)
+================================================================
+
+This document explains, step by step, how the system tracks attendance,
+calculates overtime, applies policies, and finally produces an employee's
+net salary (take-home pay) every payroll period.
+
+----------------------------------------------------------------
+SECTION 1 — DAILY ATTENDANCE (How the System Knows Who Came In)
+----------------------------------------------------------------
+
+Every working day the system creates one attendance record per employee.
+That record holds:
+
+  • date              — the calendar date
+  • shift_start_time  — when the employee's shift officially begins
+  • shift_end_time    — when the shift officially ends
+  • clock_in          — the time the employee actually punched in
+  • clock_out         — the time the employee actually punched out
+  • status            — see Section 2
+
+When an employee clicks "Punch In":
+
+  1. The system reads the current time and compares it to shift_start_time.
+  2. It also reads the Attendance Policy (Section 3) to find the
+     "in grace period" — extra minutes allowed before being marked late.
+  3. If the employee punches in BEFORE (shift start + grace minutes)
+     → status = "present"
+  4. If they punch in AFTER that window
+     → status = "late"  and  late_minutes is recorded
+  5. If a "late cutoff time" is configured and the employee punches in
+     AFTER that cutoff → status = "absent"
+
+When an employee clicks "Punch Out":
+
+  1. The system records clock_out.
+  2. It compares clock_out to shift_end_time.
+  3. If they left AFTER shift_end_time → overtime_minutes is stored
+     (how many extra minutes they worked past their shift end).
+
+
+----------------------------------------------------------------
+SECTION 2 — ATTENDANCE STATUS TYPES
+----------------------------------------------------------------
+
+Each attendance record gets exactly one status:
+
+  STATUS      MEANING
+  -------     -------------------------------------------------
+  present     Employee came on time.
+  late        Employee came in, but arrived later than allowed.
+  absent      Did not come, or arrived after the late-cutoff time.
+  leave       Employee was on approved leave for this day.
+  holiday     The date was a declared company holiday.
+  offday      Employee's scheduled day off (e.g., Friday/weekend).
+
+
+----------------------------------------------------------------
+SECTION 3 — ATTENDANCE POLICY (The Rules Set by Management)
+----------------------------------------------------------------
+
+An Attendance Policy is a named set of rules. A policy can be set for
+a specific branch, OR as a default for all branches, OR both (branch
+policy takes priority over the general one).
+
+Key settings inside a policy:
+
+  A) IN GRACE PERIOD (minutes)
+     Extra minutes after shift start that are still counted as "on time".
+     Example: Shift starts 09:00, grace = 10 min → punching in at 09:09
+     still counts as "present".
+
+  B) OUT GRACE PERIOD (minutes)
+     Extra minutes before shift end that are still counted as "on time"
+     for clock-out. (Informational — used as a soft window.)
+
+  C) LATE CUTOFF TIME
+     A hard time of day (e.g., 10:00 AM). If an employee punches in
+     AFTER this time, they are treated as ABSENT, not merely "late".
+     This is used when being very late is effectively the same as not
+     coming at all.
+
+  D) MARK ABSENT IF LATE (Yes/No toggle)
+     Enables the late-cutoff rule above. If switched off, no one is
+     ever auto-converted from "late" to "absent".
+
+  E) LATE PENALTY THRESHOLD (days)  +  LATE PENALTY DEDUCT DAYS
+     If an employee accumulates several "late" marks in a period, the
+     system converts a group of them into a salary deduction day.
+
+     Formula:
+       Penalty days = floor(late_days ÷ threshold) × deduct_days
+
+     Example: threshold = 3, deduct_days = 1
+       • 2 late days → 0 penalty days  (below threshold)
+       • 3 late days → 1 penalty day deducted from salary
+       • 6 late days → 2 penalty days deducted
+
+  F) AUTO SUSPEND ON CONTINUOUS ABSENCE
+     If enabled, and an employee is absent continuously for a set number
+     of months, the system can flag them for suspension.
+
+
+----------------------------------------------------------------
+SECTION 4 — SALARY STRUCTURE (What Makes Up an Employee's Pay)
+----------------------------------------------------------------
+
+Each employee has a personal salary record with these components:
+
+  ADDITIONS (money added to pay):
+  ┌─────────────────────────────┬──────────────────────────────────────┐
+  │ Basic Salary                │ The core base pay.                   │
+  │ House Rent Allowance (HRA)  │ Contribution toward housing.         │
+  │ Medical Allowance           │ Contribution toward health expenses.  │
+  │ Dear Allowance              │ Cost-of-living supplement.           │
+  │ Transport Allowance         │ Travel/commute contribution.         │
+  │ PF Employer Contribution    │ Company's share of provident fund.   │
+  │ Other Allowance             │ Any miscellaneous allowance.         │
+  └─────────────────────────────┴──────────────────────────────────────┘
+
+  DEDUCTIONS (money subtracted before payout):
+  ┌─────────────────────────────┬──────────────────────────────────────┐
+  │ PF Employee Contribution    │ Employee's own provident fund share. │
+  │ Welfare Contribution        │ Welfare fund deduction.              │
+  │ Tax Deduction               │ Applicable income tax.               │
+  └─────────────────────────────┴──────────────────────────────────────┘
+
+  Total Plus Salary = Basic + HRA + Medical + Dear + Transport
+                      + PF Employer + Other Allowance
+
+  Total Fixed Deductions = PF Employee + Welfare + Tax
+
+
+----------------------------------------------------------------
+SECTION 5 — PAYROLL PERIOD & WORKING DAY COUNTING
+----------------------------------------------------------------
+
+Payroll is generated for a date range (period_start → period_end).
+
+  Total Days        = Number of calendar days in the period.
+
+  Off Days          = Days with status "offday" (scheduled rest days).
+  Holiday Days      = Days with status "holiday".
+  Leave Days        = Days with status "leave".
+  Absent Days       = Days with status "absent".
+  Late Days         = Days where the employee was late
+                      (and NOT already counted as absent via cutoff).
+
+  Total Working Days = Total Days − Off Days
+                       (this is the denominator for per-day salary)
+
+  Present Days      = Total Days − Leave Days − Absent Days
+                      − Holiday Days − Off Days
+                      − (late days converted to absent via cutoff)
+
+  Per Day Salary    = Total Plus Salary ÷ Total Days
+                      (salary is spread across ALL calendar days,
+                       not just working days)
+
+
+----------------------------------------------------------------
+SECTION 6 — ABSENT DEDUCTION (Money Lost for Not Coming)
+----------------------------------------------------------------
+
+Three things can cause an absent-like deduction:
+
+  1. DIRECT ABSENT DAYS
+     Days where the employee simply did not come in (status = "absent").
+
+  2. LATE-CUTOFF ABSENT DAYS
+     Days where the employee arrived after the hard cutoff time and the
+     policy says to count them as absent.
+
+  3. LATE PENALTY DAYS
+     Days calculated from accumulated late marks (see Section 3-E).
+
+  Total Absent for Deduction = direct absent + late-cutoff absent
+                                + late penalty days
+
+  Absent Deduction (৳) = Per Day Salary × Total Absent for Deduction
+
+
+----------------------------------------------------------------
+SECTION 7 — OVERTIME (OT) (Extra Pay for Working Beyond Shift)
+----------------------------------------------------------------
+
+Overtime only applies to employees who have the "Has OT" flag enabled
+in their profile AND whose branch group has an OT configuration.
+
+  STEP 1 — Is OT included in payroll?
+    The OT config has a toggle "Include in Payroll". If it is OFF,
+    overtime is tracked but NOT paid this period.
+
+  STEP 2 — Separate regular vs holiday overtime
+    Regular OT  = overtime_minutes from normal working days
+    Holiday OT  = overtime_minutes from holidays/off days
+
+    If OT config has "Off Day Counting" ON → both types are paid.
+    If OFF → only regular OT is paid.
+
+  STEP 3 — Find the OT rate per hour
+    The system looks for a rate in this priority order:
+
+    a) Designation-specific rate: if the employee's designation has a
+       fixed hourly OT rate defined in the OT config → use that.
+
+    b) Percentage-based rate: if the config has a "percentage" type
+       rate, the system calculates:
+         Hourly base rate = Total Plus Salary ÷ (Total Days × 8 hours)
+         OT rate per hour = Hourly base rate × percentage
+
+    c) Flat rate: a fixed amount per OT hour defined in the config.
+
+  STEP 4 — Calculate total OT pay
+    OT Hours  = Total OT Minutes ÷ 60
+    Total OT  = OT Hours × OT Rate per Hour
+
+
+----------------------------------------------------------------
+SECTION 8 — ATTENDANCE BONUS (Reward for Perfect Attendance)
+----------------------------------------------------------------
+
+An "Attendance Bonus" is a special Payroll Rule (see Section 9) whose
+name contains the words "Attendance Bonus".
+
+It is paid ONLY if:
+  • The employee had ZERO absent deduction days (Section 6), AND
+  • The employee had ZERO leave days
+
+The bonus amount is calculated using the same rules engine as all
+other bonuses (see Section 9).
+
+
+----------------------------------------------------------------
+SECTION 9 — PAYROLL RULES (Automatic Bonuses & Deductions)
+----------------------------------------------------------------
+
+Administrators can define rules that automatically add or subtract
+amounts for all employees (or for a specific branch group).
+
+Each rule has:
+  • Type       — "bonus" (adds money) or "deduction" (removes money)
+  • Calc Type  — how the amount is calculated:
+      "fixed"      → a flat amount every time (e.g., ৳500)
+      "percentage" → a % of the employee's Basic Salary
+                     (e.g., 5% of basic = ৳500 if basic is ৳10,000)
+      "per_day"    → amount × Total Working Days
+                     (e.g., ৳20/day × 26 days = ৳520)
+  • Condition Type — when the rule fires:
+      "always"           → applies every payroll period
+      "min_present_days" → only if the employee was present at least N days
+      "date_range"       → only if the payroll period overlaps a date window
+
+  Total Rule Bonus      = sum of all matching bonus rules
+  Total Rule Deduction  = sum of all matching deduction rules
+
+
+----------------------------------------------------------------
+SECTION 10 — LOAN DEDUCTION (EMI Recovery)
+----------------------------------------------------------------
+
+If an employee has an active loan with a remaining balance:
+  • The EMI amount (monthly installment) is deducted from this payroll.
+  • The loan's remaining balance is reduced by that EMI amount.
+  • A loan installment record is created so the repayment history
+    is always visible.
+
+Only one active loan (with remaining amount > 0) is processed per
+payroll run.
+
+
+----------------------------------------------------------------
+SECTION 11 — MANUAL ADJUSTMENTS (One-Off Changes)
+----------------------------------------------------------------
+
+HR can post one-off manual adjustments for an employee for any period:
+
+  Type         Effect
+  --------     ------------------------------------------------
+  addition     Extra one-time pay (e.g., bonus, reimbursement)
+  deduction    Extra one-time cut (e.g., penalty, recovery)
+  advance      Salary advance that was given earlier is recovered
+
+All additions go into "Positive Adjustments".
+Deductions + Advances go into "Negative Adjustments".
+
+
+----------------------------------------------------------------
+SECTION 12 — FINAL SALARY CALCULATION (The Full Formula)
+----------------------------------------------------------------
+
+  ┌──────────────────────────────────────────────────────────┐
+  │  GROSS SALARY                                            │
+  │  = Total Plus Salary                                     │
+  │  + OT Pay                                                │
+  │  + Attendance Bonus                                      │
+  │  + Positive Adjustments  (manual additions + rule bonus) │
+  └──────────────────────────────────────────────────────────┘
+
+  ┌──────────────────────────────────────────────────────────┐
+  │  TOTAL DEDUCTION                                         │
+  │  = Fixed Deductions  (PF employee + welfare + tax)       │
+  │  + Absent Deduction  (absent days × per-day salary)      │
+  │  + Loan EMI                                              │
+  │  + Negative Adjustments (manual deduction/advance        │
+  │                          + rule deductions)              │
+  └──────────────────────────────────────────────────────────┘
+
+  NET SALARY (Take-Home Pay) = Gross Salary − Total Deduction
+
+
+  Concrete Example
+  ----------------
+  Employee: Basic 10,000 | HRA 3,000 | Medical 500 | Transport 500
+  Period: 30 days | Off Days: 4 | Absent: 1 | Late: 3 (threshold=3)
+
+  Total Plus Salary          = 14,000
+  Per Day Salary             = 14,000 ÷ 30 = 466.67
+
+  Late penalty days          = floor(3 ÷ 3) × 1 = 1 day
+  Total absent for deduction = 1 (absent) + 0 (cutoff) + 1 (penalty) = 2
+  Absent Deduction           = 2 × 466.67 = 933.34
+
+  OT: 120 minutes = 2 hours × 100/hr = 200
+  Attendance Bonus: 0  (had absent days, so not eligible)
+
+  Fixed Deductions (PF+Welfare+Tax) = 1,000
+  Loan EMI                          = 500
+
+  Gross Salary   = 14,000 + 200 + 0 + 0 = 14,200
+  Total Deduction= 1,000 + 933.34 + 500 + 0 = 2,433.34
+  NET SALARY     = 14,200 − 2,433.34 = 11,766.66
+
+
+----------------------------------------------------------------
+SECTION 13 — APPROVAL FLOW
+----------------------------------------------------------------
+
+Once a payroll record is generated it enters an approval workflow:
+
+  Stage 1: branch_hr
+    The HR officer at the branch reviews the payroll.
+
+  (Further stages such as accounts/management approval can be
+   configured and the record moves through them before payment
+   is released.)
+
+Until a payroll is approved and marked "paid", no money is disbursed
+and the record can be reviewed/corrected.
+
+
+----------------------------------------------------------------
+SECTION 14 — HOW PAYROLL IS TRIGGERED
+----------------------------------------------------------------
+
+Payroll can be generated in three ways:
+
+  1. For a SINGLE employee — HR selects one employee + date range.
+  2. For a BRANCH        — All active employees in one branch.
+  3. For ALL BRANCHES    — Every active employee in the system.
+  4. For a BRANCH GROUP  — All employees in branches that share the
+                           same branch group (used when OT/rules are
+                           group-based).
+
+The system prevents duplicate payroll: if a record already exists
+for the same employee and the same period, it is skipped.
+
+After generation, an email notification is automatically sent to
+the employee's registered email address.
+
+
+----------------------------------------------------------------
+QUICK REFERENCE — KEY FORMULAS
+----------------------------------------------------------------
+
+  Per Day Salary         = Total Plus Salary ÷ Total Calendar Days
+  Absent Deduction       = Per Day Salary × (absent + cutoff-absent + penalty days)
+  Late Penalty Days      = floor(late_days ÷ threshold) × deduct_days
+  OT Pay                 = (OT Minutes ÷ 60) × OT Rate per Hour
+  Gross Salary           = Plus Salary + OT + Attendance Bonus + Additions
+  Total Deduction        = Fixed Deductions + Absent Deduction + Loan + Negatives
+  Net Salary             = Gross Salary − Total Deduction
+
+================================================================

@@ -120,7 +120,7 @@
                                         </ul>
                                     </div>
                                 </td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $leave->approved_by??'--' }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $leave->approver->full_name ?? '--' }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">
                                     <div class="action-icon inline-flex">
                                         <button type="button" wire:click="deleteLeave({{ $leave->id }})"

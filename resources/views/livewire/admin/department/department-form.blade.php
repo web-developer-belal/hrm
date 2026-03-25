@@ -41,8 +41,12 @@
                 <form wire:submit.prevent="save" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
                     <x-form.input label="Department Name" name="name" :isRequired="true" :error="true"
                         placeholder="Enter Department Name" />
+                    @if (!$isEditMode)
+                        <x-form.select label="Branch Group" name="group" :isRequired="true" :error="true"
+                            :options="$group_options" :search="true" placeholder="Select branch group." />
+                    @endif
                     <x-form.select label="Branch" name="branch" :isRequired="true" :error="true"
-                        :options="$branch_options"  :search="true" placeholder="Select brach." />
+                        :options="$branch_options" :isMultiple="$isEditMode ? false : true"  :search="true" placeholder="Select brach." />
                     <div class="md:col-span-2">
                         <x-form.textarea label="Description" name="description" :error="true" />
                     </div>

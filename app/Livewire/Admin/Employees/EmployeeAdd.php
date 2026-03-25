@@ -117,7 +117,7 @@ class EmployeeAdd extends Component
             $this->loadDepartmentOptions();
             $this->loadDesignationOptions();
         }
-
+        $this->employee_code = Employee::generateEmployeeCode();
         $this->isInitializing = false;
     }
 

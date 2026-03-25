@@ -125,4 +125,19 @@ class Employee extends Authenticatable
         return $this->hasMany(Attendance::class);
     }
 
+
+    public static function generateEmployeeCode($number = null)
+    {
+        // output format: EMP-001, EMP-002, ...
+        $latestEmployee = self::latest()->first();
+        $number = $number ?? ($latestEmployee ? intval(substr($latestEmployee->employee_code, 4)) + 1 : 1);
+        $code = 'EMP-' . str_pad($number, 3, '0', STR_PAD_LEFT);
+        if (self::where('employee_code', $code)->exists()) {
+            // In the rare case of a collision, recursively generate a new code
+            return self::generateEmployeeCode($number + 1);
+        }
+        return $code;
+
+    }
+
 }

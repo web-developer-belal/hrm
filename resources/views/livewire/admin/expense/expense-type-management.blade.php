@@ -80,7 +80,7 @@
         </div>
 
         <!-- Modal -->
-        <div x-show="modalOpen" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div x-show="modalOpen" class="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
             <div class="bg-white rounded p-6 w-full max-w-md" @click.away="modalOpen = false">
                 <h3 class="text-lg font-semibold mb-4">
                     {{ $isEditMode ? 'Edit Expense Type' : 'Add Expense Type' }}</h3>

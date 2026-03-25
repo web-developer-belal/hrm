@@ -22,8 +22,9 @@ class StoreLeaveTypesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'branch_id' => 'required',
-            'name' => 'required|unique:leave_types,name',
+            'branch_id' => 'required|array',
+            'branch_id.*' => 'exists:branches,id',
+            'name' => 'required|string|max:255',
             'annual_limit'=>'required|integer',
             'is_paid'=>'required|integer',
         ];
@@ -33,6 +34,8 @@ class StoreLeaveTypesRequest extends FormRequest
     {
         return [
             'branch_id.required' => 'Branch name is required!',
+            'branch_id.array' => 'Branch name must be an array!',
+            'branch_id.*.exists' => 'Selected branch is invalid!',
             'name.required' => 'Leave Type name is required!',
             'annual_limit.required' => 'Annual limit is required!',
             'annual_limit.integer' => 'Annual limit must be an integer!',

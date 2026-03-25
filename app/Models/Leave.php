@@ -32,6 +32,16 @@ class Leave extends Model
         return $this->belongsTo(LeaveType::class, 'leave_type_id');
     }
 
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id');

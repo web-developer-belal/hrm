@@ -51,6 +51,8 @@
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Type Name</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Group</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Branch</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Annual Limit</th>
@@ -71,6 +73,8 @@
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-900 items-center" >
                                     {{ $type->name }}</td>
+                                <td class="px-5 py-2.5 text-gray-500" >
+                                    {{ $type->branch->branchGroup?->name ?? 'N/A' }}</td>
                                 <td class="px-5 py-2.5 text-gray-500" >
                                     {{ $type->branch->name ?? 'N/A' }}</td>
                                 <td class="px-5 py-2.5 text-gray-900" >
@@ -116,7 +120,7 @@
 
     <!-- MODAL -->
     @if ($typeModalShow)
-        <div class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[1055] justify-center items-center flex-wrap w-full md:inset-0 h-[calc(100%-1rem)] max-h-full transition-all duration-300 ease-in-out modal p-4 flex bg-black bg-opacity-50"
+        <div class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[1055] justify-center items-center flex-wrap w-full md:inset-0 h-[calc(100%-1rem)] max-h-full transition-all duration-300 ease-in-out modal p-4 flex bg-black/50"
             aria-modal="true" role="dialog" x-data x-on:keydown.escape.window="Livewire.emit('closeModal')">
             <div class="relative p-4 w-full max-w-[500px] max-h-full">
                 <div class="relative bg-white rounded-defaultradius shadow-lg">
@@ -135,9 +139,16 @@
                     <!-- Form -->
                     <form wire:submit.prevent="saveType">
                         <div class="p-4 space-y-4">
+                            @if (!$leaveTypeId)
+                                <!-- Branch Group -->
+                            <x-form.select label="Select Branch Group" name="group"  :error="true"
+                                :search="true" :options="$group_options"
+                                placeholder="Select Branch Group" />
+                            @endif
                             <!-- Branch -->
                             <x-form.select label="Select Branch" name="branch_id" :isRequired="true" :error="true"
-                                :search="true" :options="$branch_id_options" placeholder="Select Branch" />
+                                :search="true" :options="$branch_id_options" :isMultiple="!$leaveTypeId"
+                                placeholder="Select Branch" />
 
                             <!-- Name -->
                             <x-form.input label="Name" name="name" :isRequired="true" :error="true"

@@ -39,19 +39,28 @@
             </div>
 
             <div class="card-body p-5">
+                @php
+                    $branchKey = collect((array) $branch_id)->filter()->implode('-') ?: 'none';
+                    $departmentKey = collect((array) $department_id)->filter()->implode('-') ?: 'none';
+                @endphp
+
                 <form wire:submit.prevent="save" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
                     <!-- Roster Name -->
                     <x-form.input label="Roster Name" name="name" :isRequired="true" :error="true"
                         placeholder="Enter Roster Name" />
 
+                    <!-- Group Code -->
+                    <x-form.select placeholder="Select Group" label="Select Group" name="group" :error="true"
+                        :options="$group_options" :search="true" />
+
                     <!-- Branch -->
                     <x-form.select placeholder="Select Branch" label="Select Branch" name="branch_id" :isRequired="true" :error="true"
-                        :options="$branch_id_options" :search="true" />
+                        :options="$branch_id_options" :isMultiple="!$isEditMode" :search="true" />
 
                     <!-- Department (Optional) -->
-                    <x-form.select wire:key="department-select-{{ $branch_id ?? 'none' }}" placeholder="Select Department" label="Select Department" name="department_id" :isRequired="false" :error="true"
-                        :options="$department_id_options" :search="true" :live="true" />
+                    <x-form.select wire:key="department-select-{{ $branchKey }}" placeholder="Select Department" label="Select Department" name="department_id" :isRequired="true" :error="true"
+                        :options="$department_id_options" :search="true" :live="true" :isMultiple="!$isEditMode" />
 
                     <!-- Shift -->
                     <x-form.select placeholder="Select Shift" label="Select Shift" name="shift_id" :isRequired="true" :error="true" :live="true"
@@ -70,7 +79,7 @@
 
                     <!-- Employees -->
                     <x-form.select
-                        wire:key="employee-select-{{ $branch_id ?? 'none' }}-{{ $department_id ?? 'none' }}"
+                        wire:key="employee-select-{{ $branchKey }}-{{ $departmentKey }}"
                         placeholder="Select Employees"
                         label="Select Employee"
                         name="employees"

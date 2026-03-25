@@ -184,6 +184,56 @@ class Dashboard extends Component
         $leaves  = $branchFilter(Leave::latest())->take(5)->get();
         $notices = $branchFilter(Notice::latest())->take(5)->get();
 
+        // --- Previous period for change indicators ---
+        $periodStart    = \Carbon\Carbon::parse($this->startDate);
+        $periodEnd      = \Carbon\Carbon::parse($this->endDate);
+        $periodDays     = $periodStart->diffInDays($periodEnd) + 1;
+        $prevEnd        = $periodStart->copy()->subDay();
+        $prevStart      = $prevEnd->copy()->subDays($periodDays - 1);
+
+        $prevDateFilter = fn($q, $col = 'date') =>
+            $q->whereBetween($col, [$prevStart->format('Y-m-d'), $prevEnd->format('Y-m-d')]);
+
+        $prevState = [
+            'total_employee'          => $branchFilter(Employee::query())
+                ->where('created_at', '<=', $prevEnd->endOfDay())
+                ->count(),
+            'total_present'           => $prevDateFilter(
+                $branchFilter(Attendance::where('status', 'present'))
+            )->count(),
+            'total_absent'            => $prevDateFilter(
+                $branchFilter(Attendance::where('status', 'absent'))
+            )->count(),
+            'total_on_time'           => $prevDateFilter(
+                $branchFilter(
+                    Attendance::where('status', 'present')->where('late_minutes', '<=', 0)
+                )
+            )->count(),
+            'total_late'              => $prevDateFilter(
+                $branchFilter(Attendance::where('status', 'late'))
+            )->count(),
+            'total_leave'             => $branchFilter(Leave::where('status', 'approved'))
+                ->where(fn($q) =>
+                    $q->whereDate('from_date', '<=', $prevEnd)
+                        ->whereDate('to_date', '>=', $prevEnd)
+                )->count(),
+            'total_notice'            => $prevDateFilter(
+                $branchFilter(Notice::query()), 'created_at'
+            )->count(),
+            'total_leave_application' => $branchFilter(Leave::where('status', 'pending'))
+                ->where('created_at', '<=', $prevEnd->endOfDay())
+                ->count(),
+        ];
+
+        $pctChange = fn($current, $previous) => $previous == 0
+            ? ($current > 0 ? 100.0 : 0.0)
+            : round(($current - $previous) / $previous * 100, 1);
+
+        $changes = [];
+        foreach (array_keys($state) as $key) {
+            $changes[$key] = $pctChange($state[$key], $prevState[$key]);
+        }
+
         return view('livewire.admin.dashboard', compact(
             'state',
             'attendance',
@@ -192,7 +242,8 @@ class Dashboard extends Component
             'pendingLeave',
             'leaveMonths',
             'leaves',
-            'notices'
+            'notices',
+            'changes'
         ));
     }
 }

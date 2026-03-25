@@ -90,7 +90,7 @@
         </div>
     </div>
     <!-- Modal -->
-    <div x-show="modalOpen" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50" x-cloak>
+    <div x-show="modalOpen" class="fixed inset-0 flex items-center justify-center z-50 bg-black/50" x-cloak>
         <div class="bg-white rounded p-6 w-full max-w-md" @click.away="modalOpen = false">
             <h3 class="text-lg font-semibold mb-4">{{ $isEditMode ? 'Edit Expense' : 'Add Expense' }}</h3>
             <div class="space-y-2">

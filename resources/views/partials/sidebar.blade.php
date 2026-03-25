@@ -125,6 +125,10 @@
                             </a>
                             <ul class="relative mt-2 before:absolute before:top-0 before:left-3.5 before:w-[1.5px] before:h-full before:bg-gray-100"
                                 style="display: {{ $isHrActive ? 'block' : 'none' }};">
+                                  @if(auth()->user()->hasPermission('branches.groups.show'))
+                                <li><a href="{{ route('admin.branches.groups') }}"
+                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.branches.groups') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Group</a></li>
+                                @endif
                                 @if(auth()->user()->hasPermission('branches.show'))
                                 <li><a href="{{ route('admin.branches.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.branches.index') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Branch</a></li>
@@ -161,10 +165,7 @@
                                 <li><a href="{{ route('admin.resignations.index') }}"
                                         class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.resignations.index') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Resignation</a></li>
                                 @endif
-                                @if(auth()->user()->hasPermission('branches.groups.show'))
-                                <li><a href="{{ route('admin.branches.groups') }}"
-                                        class="relative flex items-center w-full text-xs leading-normal p-2 ps-8 {{ request()->routeIs('admin.branches.groups') ? 'text-primary font-medium' : 'text-gray-500 hover:text-primary' }}">Group</a></li>
-                                @endif
+                              
                             </ul>
                         </li>
                         @endif

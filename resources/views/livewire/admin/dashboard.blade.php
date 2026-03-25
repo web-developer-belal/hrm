@@ -37,6 +37,15 @@
     <div class="">
 
         <!-- Widget Info -->
+        @php
+            // $goodWhenUp=true  → green on increase (present, on_time, employee, notice)
+            // $goodWhenUp=false → green on decrease (absent, late, leave, leave_application)
+            $chg = fn(string $key, bool $goodWhenUp = true): array => [
+                'color' => ($changes[$key] >= 0) === $goodWhenUp ? 'text-success' : 'text-danger',
+                'icon'  => $changes[$key] >= 0 ? 'fa-caret-up' : 'fa-caret-down',
+                'label' => ($changes[$key] >= 0 ? '+' : '') . $changes[$key] . '%',
+            ];
+        @endphp
         <div class="flex">
             <div class="grid grid-cols-1 md:grid-cols-12 w-full gap-x-6">
                 <div class="md:col-span-3 flex mb-6">
@@ -47,9 +56,10 @@
                                 <i class="ti ti-users text-base leading-none"></i>
                             </span>
                             <h6 class="text-[13px] font-medium text-default mb-1">Total employee</h6>
+                            @php $c = $chg('total_employee', true); @endphp
                             <h3 class="flex gap-2 items-center">{{ $state['total_employee'] }}<span
-                                    class="text-xs leading-normal font-medium text-success"><i
-                                        class="fa-solid fa-caret-up me-1"></i>+2.1%</span></h3>
+                                    class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                        class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span></h3>
 
                         </div>
                     </div>
@@ -62,9 +72,10 @@
                                 <i class="ti ti-fingerprint text-base leading-none"></i>
                             </span>
                             <h6 class="text-[13px] font-medium text-default mb-1">Total Present</h6>
+                            @php $c = $chg('total_present', true); @endphp
                             <h3 class="flex gap-2 items-center">{{ $state['total_present'] }} <span
-                                    class="text-xs leading-normal font-medium text-danger"><i
-                                        class="fa-solid fa-caret-down me-1"></i>-2.1%</span></h3>
+                                    class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                        class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span></h3>
                         </div>
                     </div>
                 </div>
@@ -76,9 +87,10 @@
                                 <i class="ti ti-fingerprint-off text-base leading-none"></i>
                             </span>
                             <h6 class="text-[13px] font-medium text-default mb-1">Total Absent</h6>
+                            @php $c = $chg('total_absent', false); @endphp
                             <h3 class="flex gap-2 items-center">{{ $state['total_absent'] }}<span
-                                    class="text-xs leading-normal font-medium text-danger"><i
-                                        class="fa-solid fa-caret-down me-1"></i>-11.2%</span></h3>
+                                    class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                        class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span></h3>
                         </div>
                     </div>
                 </div>
@@ -90,9 +102,10 @@
                                 <i class="ti ti-door-exit text-base leading-none"></i>
                             </span>
                             <h6 class="text-[13px] font-medium text-default mb-1">Total leave</h6>
+                            @php $c = $chg('total_leave', false); @endphp
                             <h3 class="flex gap-2 items-center">{{ $state['total_leave'] }}<span
-                                    class="text-xs leading-normal font-medium text-success"><i
-                                        class="fa-solid fa-caret-down me-1"></i>+11.2%</span></h3>
+                                    class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                        class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span></h3>
                         </div>
                     </div>
                 </div>
@@ -104,9 +117,10 @@
                                 <i class="ti ti-stopwatch text-base leading-none"></i>
                             </span>
                             <h6 class="text-[13px] font-medium text-default mb-1">On Time</h6>
+                            @php $c = $chg('total_on_time', true); @endphp
                             <h3 class="flex gap-2 items-center">{{ $state['total_on_time'] }} <span
-                                    class="text-xs leading-normal font-medium text-success"><i
-                                        class="fa-solid fa-caret-up me-1"></i>+10.2%</span></h3>
+                                    class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                        class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span></h3>
                         </div>
                     </div>
                 </div>
@@ -118,9 +132,10 @@
                                 <i class="ti ti-alarm-off text-base leading-none"></i>
                             </span>
                             <h6 class="text-[13px] font-medium text-default mb-1">Total Late</h6>
+                            @php $c = $chg('total_late', false); @endphp
                             <h3 class="flex gap-2 items-center">{{ $state['total_late'] }}<span
-                                    class="text-xs leading-normal font-medium text-success"><i
-                                        class="fa-solid fa-caret-up me-1"></i>+2.1%</span></h3>
+                                    class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                        class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span></h3>
                         </div>
                     </div>
                 </div>
@@ -132,9 +147,10 @@
                                 <i class="ti ti-mail text-base leading-none"></i>
                             </span>
                             <h6 class="text-[13px] font-medium text-default mb-1">Today Notice</h6>
+                            @php $c = $chg('total_notice', true); @endphp
                             <h3 class="flex gap-2 items-center">{{ $state['total_notice'] }}<span
-                                    class="text-xs leading-normal font-medium text-success"><i
-                                        class="fa-solid fa-caret-up me-1"></i>+2.1%</span></h3>
+                                    class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                        class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span></h3>
                         </div>
                     </div>
                 </div>
@@ -146,9 +162,10 @@
                                 <i class="ti ti-clipboard-list text-base leading-none"></i>
                             </span>
                             <h6 class="text-[13px] font-medium text-default mb-1">Leave Application</h6>
+                            @php $c = $chg('total_leave_application', false); @endphp
                             <h3 class="flex gap-2 items-center">{{ $state['total_leave_application'] }}<span
-                                    class="text-xs leading-normal font-medium text-danger"><i
-                                        class="fa-solid fa-caret-down me-1"></i>-11.2%</span></h3>
+                                    class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                        class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span></h3>
                         </div>
                     </div>
                 </div>

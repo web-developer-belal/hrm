@@ -277,6 +277,14 @@
                                 {{ $employee->account_holder_name }}
                             </h6>
                         </div>
+                         <div class="md:col-span-3">
+                                <span class="inline-flex items-center text-gray-600 text-sm">
+                                MFS Account number
+                                </span>
+                                <h6 class="flex items-center fw-medium mt-1">
+                                    {{ $employee->mfs_account }}
+                                </h6>
+                            </div>
                         <div class="md:col-span-3">
                             <span class="inline-flex items-center text-gray-600 text-sm">
                                 Bank account no
@@ -306,9 +314,9 @@
                             <h5 class="text-lg font-semibold text-gray-800">Employee Documents</h5>
                             @php
                                 $documentCount = 0;
-                                $docFields = ['resume', 'offer_letter', 'joining_letter', 'contract_agreement', 'id_proof'];
+                                $docFields = ['resume', 'offer_letter', 'joining_letter', 'contract_agreement', 'id_proof', 'checkbook'];
                                 foreach($docFields as $field) {
-                                    if(!empty($employee->$field) && Storage::disk('public')->exists('employees/documents/' . $employee->$field)) {
+                                    if(!empty($employee->$field) && Storage::disk('public')->exists($employee->$field)) {
                                         $documentCount++;
                                     }
                                 }
@@ -326,7 +334,8 @@
                             ['name' => 'Offer Letter', 'field' => 'offer_letter', 'icon' => 'ti ti-file-description'],
                             ['name' => 'Joining Letter', 'field' => 'joining_letter', 'icon' => 'ti ti-file-check'],
                             ['name' => 'Contract', 'field' => 'contract_agreement', 'icon' => 'ti ti-file-signature'],
-                            ['name' => 'ID Proof', 'field' => 'id_proof', 'icon' => 'ti ti-id']
+                            ['name' => 'ID Proof', 'field' => 'id_proof', 'icon' => 'ti ti-id'],
+                            ['name' => 'Checkbook', 'field' => 'checkbook', 'icon' => 'ti ti-book']
                         ];
                     @endphp
 
@@ -334,8 +343,8 @@
                         @foreach($documents as $doc)
                             @php
                                 $fileName = $employee->{$doc['field']} ?? null;
-                                $fileExists = !empty($fileName) && Storage::disk('public')->exists('employees/documents/' . $fileName);
-                                $fileUrl = $fileExists ? Storage::url('employees/documents/' . $fileName) : null;
+                                $fileExists = !empty($fileName) && Storage::disk('public')->exists($fileName);
+                                $fileUrl = $fileExists ? Storage::url($fileName) : null;
                                 $extension = $fileName ? pathinfo($fileName, PATHINFO_EXTENSION) : '';
                             @endphp
 

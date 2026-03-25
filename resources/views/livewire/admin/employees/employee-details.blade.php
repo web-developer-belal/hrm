@@ -21,14 +21,7 @@
             </nav>
         </div>
 
-        <div class="flex my-xl-auto right-content items-center flex-wrap ">
-            <div class="mb-2">
-                <a href="#" wire:click="addOrUpdateSalary"
-                    class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">
-                    <i class="ti ti-circle-plus me-2"></i>Salary
-                </a>
-            </div>
-        </div>
+
     </div>
     <!-- /Breadcrumb -->
 
@@ -85,7 +78,7 @@
                             <div class="flex items-center justify-between mb-2">
                                 <span class="inline-flex items-center">
                                     <i class="ti ti-calendar-check me-2"></i>
-                                    Brach Office
+                                    Branch Office
                                 </span>
                                 <div class="flex items-center">
                                     <span class="size-6 flex items-center justify-center rounded-full me-2">
@@ -96,14 +89,13 @@
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-2">
-                                <a href="javascript:void(0);" data-modal-toggle="edit_employee"
-                                    data-modal-target="edit_employee"
+                                <a href="{{ route('admin.employees.edit', $employee->id) }}"
                                     class="flex items-center justify-center btn bg-dark text-sm font-medium py-2 rounded text-white px-3 hover:bg-black hover:text-white">
                                     <i class="ti ti-edit me-1"></i>Edit Info
                                 </a>
-                                <a href="chat.html"
-                                    class="flex items-center justify-center btn bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">
-                                    <i class="ti ti-message-heart me-1"></i>Message
+                                <a href="#" wire:click="addOrUpdateSalary"
+                                    class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white">
+                                    <i class="ti ti-circle-plus me-2"></i>Salary
                                 </a>
                             </div>
                         </div>
@@ -182,163 +174,158 @@
             </div>
         </div>
         <div class="xl:col-span-8">
-            <div>
-                <div class="tab-content custom-accordion-items">
-                    <div class="tab-pane active show" id="bottom-justified-tab1" role="tabpanel">
-                        <div class="accordion accordions-items-seperate" id="accordionExample"
-                            data-accordion="collapse">
-
-                            <div class="accordion-item bg-white rounded mb-5">
-                                <div class="accordion-header" id="headingTwo">
-                                    <div class="accordion-button border-b p-5">
-                                        <div class="flex items-center flex-fill">
-                                            <h5>Bank Information</h5>
-
-                                            <a href="#"
-                                                class="ms-auto flex items-center bg-white collapsearrow text-gray-500 dark:text-gray-400"
-                                                data-accordion-toggle="primaryBorderTwo"
-                                                data-accordion-target="#primaryBorderTwo" aria-expanded="true"
-                                                aria-controls="primaryBorderTwo">
-                                                <i class="ti ti-chevron-down fs-18"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="primaryBorderTwo" class="hidden text-dark" aria-labelledby="headingTwo">
-                                    <div class="accordion-body p-5">
-                                        <div class="grid grid-cols-1 md:grid-cols-12 gap-y-4 gap-x-6">
-                                            <div class="md:col-span-3">
-                                                <span class="inline-flex items-center">
-                                                    Bank Name
-                                                </span>
-                                                <h6 class="flex items-center fw-medium mt-1">
-                                                    {{ $employee->bank_name }}
-                                                </h6>
-                                            </div>
-                                            <div class="md:col-span-3">
-                                                <span class="inline-flex items-center">
-                                                    Bank account no
-                                                </span>
-                                                <h6 class="flex items-center fw-medium mt-1">
-                                                    {{ $employee->account_number }}</h6>
-                                            </div>
-                                            <div class="md:col-span-3">
-                                                <span class="inline-flex items-center">
-                                                    Routing No
-                                                </span>
-                                                <h6 class="flex items-center fw-medium mt-1">
-                                                    {{ $employee->routing_number }}</h6>
-                                            </div>
-                                            {{-- <div class="md:col-span-3">
-                                                <span class="inline-flex items-center">
-                                                    Branch
-                                                </span>
-                                                <h6 class="flex items-center fw-medium mt-1">{{$employee->bank_name}}</h6>
-                                            </div> --}}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+            <!-- Bank Information Card -->
+            <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white mb-6">
+                <div class="card-header p-5 border-b border-borderColor">
+                    <h5 class="card-title">Bank Information</h5>
+                </div>
+                <div class="card-body p-5">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-y-4 gap-x-6">
+                        <div class="md:col-span-3">
+                            <span class="inline-flex items-center text-gray-600 text-sm">
+                                Bank Name
+                            </span>
+                            <h6 class="flex items-center fw-medium mt-1">
+                                {{ $employee->bank_name }}
+                            </h6>
+                        </div>
+                        <div class="md:col-span-3">
+                            <span class="inline-flex items-center text-gray-600 text-sm">
+                                MFS Account number
+                            </span>
+                            <h6 class="flex items-center fw-medium mt-1">
+                                {{ $employee->mfs_account }}
+                            </h6>
+                        </div>
+                        <div class="md:col-span-3">
+                            <span class="inline-flex items-center text-gray-600 text-sm">
+                                Account Holder Name
+                            </span>
+                            <h6 class="flex items-center fw-medium mt-1">
+                                {{ $employee->account_holder_name }}
+                            </h6>
+                        </div>
+                        <div class="md:col-span-3">
+                            <span class="inline-flex items-center text-gray-600 text-sm">
+                                Bank account no
+                            </span>
+                            <h6 class="flex items-center fw-medium mt-1">
+                                {{ $employee->account_number }}</h6>
+                        </div>
+                        <div class="md:col-span-3">
+                            <span class="inline-flex items-center text-gray-600 text-sm">
+                                Routing No
+                            </span>
+                            <h6 class="flex items-center fw-medium mt-1">
+                                {{ $employee->routing_number }}</h6>
                         </div>
                     </div>
-                    <div class="tab-pane " id="bottom-justified-tab1" role="tabpanel">
-                        <div class="accordion accordions-items-seperate" id="accordionExample"
-                            data-accordion="collapse">
+                </div>
+            </div>
 
-                            <div class="accordion-item bg-white rounded mb-5">
-                                <div class="accordion-header" id="headingTwo">
-                                    <div class="accordion-button border-b p-5">
-                                        <div class="flex items-center flex-fill">
-                                            <h5>Document</h5>
-
-                                            <a href="#"
-                                                class="ms-auto flex items-center bg-white collapsearrow text-gray-500 dark:text-gray-400"
-                                                data-accordion-toggle="empDocument"
-                                                data-accordion-target="#empDocument" aria-expanded="true"
-                                                aria-controls="empDocument">
-                                                <i class="ti ti-chevron-down fs-18"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="empDocument" class="hidden text-dark" aria-labelledby="headingTwo">
-                                    <div class="accordion-body p-5">
-                                        <div class="grid grid-cols-1 md:grid-cols-12 gap-y-4 gap-x-6">
-
-                                            @php
-                                                use Illuminate\Support\Facades\File;
-
-                                                $resume = File::extension($employee->resume);
-                                                $offerletter = File::extension($employee->offer_letter);
-                                                $Joingletter = File::extension($employee->joining_letter);
-                                                $Contract = File::extension($employee->contract_agreement);
-                                                $idproof = File::extension($employee->id_proof);
-
-                                            @endphp
-                                            <div class="md:col-span-2">
-                                                <span class="inline-flex items-center">
-                                                    Resume
-                                                </span>
-                                                <h6 class="flex items-center fw-medium mt-1">
-                                                    <a href="{{ documentAsset($employee->resume) }}" target="_blank"
-                                                        class="btn btn-info"> View {{ getDocumentIcon($resume) }}</a>
-
-                                                </h6>
-                                            </div>
-                                            <div class="md:col-span-2">
-                                                <span class="inline-flex items-center">
-                                                    Offer Letter
-                                                </span>
-                                                <h6 class="flex items-center fw-medium mt-1">
-                                                    <a href="{{ documentAsset($employee->offer_letter) }}"
-                                                        target="_blank" class="btn btn-info"> View
-                                                        {{ getDocumentIcon($offerletter) }}</a>
-
-                                                </h6>
-                                            </div>
-                                            <div class="md:col-span-2">
-                                                <span class="inline-flex items-center">
-                                                    joining Letter
-                                                </span>
-                                                <h6 class="flex items-center fw-medium mt-1">
-                                                    <a href="{{ documentAsset($employee->joining_letter) }}"
-                                                        target="_blank" class="btn btn-info"> View
-                                                        {{ getDocumentIcon($Joingletter) }}</a>
-
-                                                </h6>
-                                            </div>
-                                            <div class="md:col-span-2">
-                                                <span class="inline-flex items-center">
-                                                    Contract
-                                                </span>
-                                                <h6 class="flex items-center fw-medium mt-1">
-                                                    <a href="{{ documentAsset($employee->contract_agreement) }}"
-                                                        target="_blank" class="btn btn-info"> View
-                                                        {{ getDocumentIcon($Contract) }}</a>
-
-                                                </h6>
-                                            </div>
-                                            <div class="md:col-span-2">
-                                                <span class="inline-flex items-center">
-                                                    ID Proof
-                                                </span>
-                                                <h6 class="flex items-center fw-medium mt-1">
-                                                    <a href="{{ documentAsset($employee->id_proof) }}"
-                                                        target="_blank" class="btn btn-info"> View
-                                                        {{ getDocumentIcon($idproof) }}</a>
-
-                                                </h6>
-                                            </div>
-
-
-                                        </div>
-                                    </div>
-                                </div>
+            <!-- Employee Documents Card -->
+            <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white mb-6">
+                <div class="card-header p-5 border-b border-borderColor">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+                                <i class="ti ti-file-text text-blue-500 fs-18"></i>
                             </div>
-
+                            <h5 class="text-lg font-semibold text-gray-800">Employee Documents</h5>
+                            @php
+                                $documentCount = 0;
+                                $docFields = [
+                                    'resume',
+                                    'offer_letter',
+                                    'joining_letter',
+                                    'contract_agreement',
+                                    'checkbook',
+                                    'id_proof',
+                                ];
+                                foreach ($docFields as $field) {
+                                    if (!empty($employee->$field) && Storage::disk('public')->exists($employee->$field)) {
+                                        $documentCount++;
+                                    }
+                                }
+                            @endphp
+                            <span class="bg-blue-100 text-blue-600 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                {{ $documentCount }} Files
+                            </span>
                         </div>
                     </div>
+                </div>
+                <div class="card-body p-6">
+                    @php
+                        $documents = [
+                            ['name' => 'Resume', 'field' => 'resume', 'icon' => 'ti ti-file-text'],
+                            ['name' => 'Offer Letter', 'field' => 'offer_letter', 'icon' => 'ti ti-file-description'],
+                            ['name' => 'Joining Letter', 'field' => 'joining_letter', 'icon' => 'ti ti-file-check'],
+                            ['name' => 'Contract', 'field' => 'contract_agreement', 'icon' => 'ti ti-file-signature'],
+                            ['name' => 'ID Proof', 'field' => 'id_proof', 'icon' => 'ti ti-id'],
+                            ['name' => 'Checkbook', 'field' => 'checkbook', 'icon' => 'ti ti-book'],
+                        ];
+                    @endphp
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                        @foreach ($documents as $doc)
+                            @php
+                                $fileName = $employee->{$doc['field']} ?? null;
+                                $fileExists =
+                                    !empty($fileName) &&
+                                    Storage::disk('public')->exists($fileName);
+                                $fileUrl = $fileExists ? Storage::url($fileName) : null;
+                                $extension = $fileName ? pathinfo($fileName, PATHINFO_EXTENSION) : '';
+                            @endphp
+
+                            <div
+                                class="group relative bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-all duration-200 {{ !$fileExists ? 'opacity-60' : '' }}">
+                                <!-- Document Icon -->
+                                <div class="flex items-start justify-between mb-3">
+                                    <div
+                                        class="w-10 h-10 rounded-lg {{ $fileExists ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-400' }} flex items-center justify-center">
+                                        <i class="{{ $doc['icon'] }} fs-20"></i>
+                                    </div>
+
+                                    @if ($fileExists)
+                                        <span
+                                            class="text-xs font-medium px-2 py-1 rounded-full bg-green-100 text-green-600">
+                                            {{ strtoupper($extension) }}
+                                        </span>
+                                    @else
+                                        <span
+                                            class="text-xs font-medium px-2 py-1 rounded-full bg-gray-200 text-gray-500">
+                                            Missing
+                                        </span>
+                                    @endif
+                                </div>
+
+                                <!-- Document Info -->
+                                <h6 class="font-medium text-gray-800 mb-1">{{ $doc['name'] }}</h6>
+                                <p class="text-xs text-gray-500 mb-3 truncate">
+                                    {{ $fileExists ? $fileName : 'No file uploaded' }}
+                                </p>
+
+                                <!-- Action Button -->
+                                @if ($fileExists)
+                                    <a href="{{ $fileUrl }}" target="_blank"
+                                        class="inline-flex items-center justify-center w-full px-3 py-2 text-sm font-medium text-blue-600 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 group-hover:shadow-sm">
+                                        <i class="ti ti-eye mr-2 fs-16"></i>
+                                        View Document
+                                        <i
+                                            class="ti ti-external-link ml-2 fs-14 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></i>
+                                    </a>
+                                @else
+                                    <button disabled
+                                        class="inline-flex items-center justify-center w-full px-3 py-2 text-sm font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
+                                        <i class="ti ti-cloud-off mr-2 fs-16"></i>
+                                        Not Available
+                                    </button>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+
+
                 </div>
             </div>
 
@@ -348,468 +335,29 @@
     {{-- modal On --}}
 
     @if ($salaryModalshow)
-        <div class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[1055] justify-center items-center flex-wrap w-full md:inset-0 h-[calc(100%-1rem)] max-h-full transition-all duration-300 ease-in-out modal p-4 flex"
-            data-select2-id="select2-data-add_bank_satutory" aria-modal="true" role="dialog">
-            <div class="relative p-4 w-full max-w-[800px] max-h-full" data-select2-id="select2-data-32-9dal">
-                <div class="relative bg-white rounded-defaultradius">
-                    <div class="flex items-center justify-between p-4 border-b border-borderColor">
-                        <h4 class="font-semibold">Bank &amp; Statutory</h4>
-                        <button type="button"
-                            class="end-2.5 text-white bg-gray-500 hover:bg-danger hover:text-white rounded-full text-xs leading-normal size-5 ms-auto inline-flex justify-center items-center"
-                            data-modal-hide="add_bank_satutory">
-                            <i class="ti ti-x" wire:click="closeModal"></i>
-                            <span class="sr-only">Close modal</span>
-                        </button>
-                    </div>
-                    <form wire:submit="addOrUpdateSalarySubmit">
-                        <div class="p-4" data-select2-id="select2-data-30-25jf">
-                            <div class="border-b mb-4">
-                                <h5 class="mb-3">Salary Information (Addition)</h5>
-                                <div class="grid grid-cols-1 md:grid-cols-12 gap-y-4 gap-x-6 mb-2">
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-200">
+            <div data-modal-overlay class="absolute inset-0 bg-black/50"></div>
 
-                                    <div class="md:col-span-4">
-
-
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">Salary
-                                                basic</label>
-                                            <input type="text" wire:model.live="basicSalary"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                            @error('basicSalary')
-                                                <span>{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">Percent
-                                                %</label>
-
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">Fixed
-                                                Amount</label>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-12 gap-y-4 gap-x-6 mb-2">
-
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">House
-                                                Rent</label>
-
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-                                            <input type="text" wire:model.live="houseRentPercent"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                            @error('houseRentPercent')
-                                                <span>{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-                                            <input type="text" wire:model.live="houseRentAmount"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                            @error('houseRentAmount')
-                                                <span>{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-12 gap-y-4 gap-x-6 mb-2">
-
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">Medical
-                                                Allowance</label>
-
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-
-                                            <input type="text" wire:model.live="medicalAllowancePercent"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                            @error('medicalAllowancePercent')
-                                                <span>{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-
-                                            <input type="text" wire:model.live="medicalAllowanceAmount"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                            @error('medicalAllowanceAmount')
-                                                <span>{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-12 gap-y-4 gap-x-6 mb-2">
-
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">Dear
-                                                Allowance</label>
-
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-
-                                            <input type="text" wire:model.live="dearAllowancePercent"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                            @error('dearAllowancePercent')
-                                                <span>{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-
-                                            <input type="text" wire:model.live="dearAllowanceAmout"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                            @error('dearAllowanceAmout')
-                                                <span>{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-12 gap-y-4 gap-x-6 mb-2">
-
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">Transport
-                                                Allowance</label>
-
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-
-                                            <input type="text" wire:model.live="transportAllowancePercent"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                            @error('transportAllowancePercent')
-                                                <span>{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-
-                                            <input type="text" wire:model.live="transportAllowanceAmount"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                            @error('transportAllowanceAmount')
-                                                <span>{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-12 gap-y-4 gap-x-6 mb-2">
-
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">Provident
-                                                Fund</label>
-
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-
-                                            <input type="text" wire:model.live="pfEployerContributionPercent"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                            @error('pfEployerContributionPercent')
-                                                <span>{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-
-                                            <input type="text" wire:model.live="pfEployerContributionAmount"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                            @error('pfEployerContributionAmount')
-                                                <span>{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-12 gap-y-4 gap-x-6 mb-2">
-
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">Other
-                                                Allowance</label>
-
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-
-                                            <input type="text" wire:model.live="otherAllowancePercent"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                            @error('otherAllowancePercent')
-                                                <span>{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-4">
-                                        <div class="mb-3">
-
-                                            <input type="text" wire:model.live="otherAllowanceAmount"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-
-                                            @error('otherAllowanceAmount')
-                                                <span>{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="border-bottom mb-4">
-                                <h5 class="mb-3">Salary Deduction</h5>
-                                <div class="row mb-2">
-                                    <div class="grid grid-cols-1 md:grid-cols-12 gap-y-4 gap-x-6 mb-2">
-
-                                        <div class="md:col-span-4">
-                                            <div class="mb-3">
-                                                <label
-                                                    class="block mb-1 text-sm leading-normal font-medium text-title">PF
-                                                    Employee Contributon</label>
-
-                                            </div>
-                                        </div>
-                                        <div class="md:col-span-4">
-                                            <div class="mb-3">
-
-                                                <input type="text" wire:model.live="pfEmployeeContributionPercent"
-                                                    class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-
-                                                @error('pfEmployeeContributionPercent')
-                                                    <span>{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="md:col-span-4">
-                                            <div class="mb-3">
-
-                                                <input type="text" wire:model.live="pfEmployeeContributionAmount"
-                                                    class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                                @error('pfEmployeeContributionAmount')
-                                                    <span>{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div class="grid grid-cols-1 md:grid-cols-12 gap-y-4 gap-x-6 mb-2">
-
-                                        <div class="md:col-span-4">
-                                            <div class="mb-3">
-                                                <label
-                                                    class="block mb-1 text-sm leading-normal font-medium text-title">Welface
-                                                    Contributon</label>
-
-                                            </div>
-                                        </div>
-                                        <div class="md:col-span-4">
-                                            <div class="mb-3">
-
-                                                <input type="text" wire:model.live="welfareContributionPercnet"
-                                                    class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                                @error('welfareContributionPercnet')
-                                                    <span>{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="md:col-span-4">
-                                            <div class="mb-3">
-
-                                                <input type="text" wire:model.live="welfareContributionAmount"
-                                                    class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                                @error('welfareContributionAmount')
-                                                    <span>{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div class="grid grid-cols-1 md:grid-cols-12 gap-y-4 gap-x-6 mb-2">
-
-                                        <div class="md:col-span-4">
-                                            <div class="mb-3">
-                                                <label
-                                                    class="block mb-1 text-sm leading-normal font-medium text-title">Tax
-                                                    Deduction</label>
-
-                                            </div>
-                                        </div>
-                                        <div class="md:col-span-4">
-                                            <div class="mb-3">
-
-                                                <input type="text" wire:model.live="taxDeductionPercent"
-                                                    class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                                @error('taxDeductionPercent')
-                                                    <span>{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="md:col-span-4">
-                                            <div class="mb-3">
-
-                                                <input type="text" wire:model.live="taxDeductionAmount"
-                                                    class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                                @error('taxDeductionAmount')
-                                                    <span>{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-
-
-                                </div>
-                            </div>
-                            <h5 class="mb-3">Total Salary</h5>
-                            <div class="row">
-                                <div class="grid grid-cols-1 md:grid-cols-12 gap-y-4 gap-x-6 mb-2">
-
-                                    <div class="md:col-span-2">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">Basic</label>
-                                            <input type="text" readonly wire:model="basic_salary"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">House
-                                                Rent</label>
-                                            <input type="text" readonly wire:model="house_rent"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">Med.
-                                                Allow</label>
-                                            <input type="text" readonly wire:model="medical_allowance"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">Dear
-                                                Allow.</label>
-                                            <input type="text" readonly wire:model="dear_allowance"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">TA</label>
-                                            <input type="text" readonly wire:model="transport_allowance"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">PF</label>
-                                            <input type="text" readonly wire:model="pf_employer_contribution"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">Other
-                                                Allow</label>
-                                            <input type="text" readonly wire:model="other_allowance"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <div class="mb-3">
-                                            <label class="block mb-1 text-sm leading-normal font-medium text-title">PF
-                                                E (-)</label>
-                                            <input type="text" readonly wire:model="pf_employee_contribution"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">Welfare(-)</label>
-                                            <input type="text" readonly wire:model="welfare_contribution"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <div class="mb-3">
-                                            <label
-                                                class="block mb-1 text-sm leading-normal font-medium text-title">Tax(-)
-                                            </label>
-                                            <input type="text" readonly wire:model="tax_deduction"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <div class="mb-3">
-                                            <label class="block mb-1 text-sm leading-normal font-medium text-title">Net
-                                                Salary</label>
-                                            <input type="text" readonly wire:model="totalSalary"
-                                                class="bg-white border-borderColor text-gray-900 text-sm rounded-input  block w-full py-2 px-2.5 h-[38px] placeholder:text-gray-400">
-                                        </div>
-                                    </div>
-
-
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-end p-4 border-t border-borderColor">
-                            <button data-modal-hide="add_bank_satutory" type="button"
-                                class="btn bg-light border border-light text-gray-900 text-center hover:bg-light-900 hover:text-gray-900 font-medium me-2"
-                                wire:click="closeModal">Cancel</button>
-                            <button type="submit"
-                                class="btn bg-primary border border-primary text-white text-center hover:bg-primary-900 hover:text-white font-medium">Save</button>
-                        </div>
-                    </form>
-                </div>
+            <div
+                class="relative bg-white rounded-lg shadow-xl w-full max-w-4xl salary-modal-panel-max overflow-hidden transition-all duration-200">
+                @include('livewire.admin.employees.partials.salary-modal-content', [
+                    'submitAction' => 'addOrUpdateSalarySubmit',
+                    'cancelAction' => 'closeModal',
+                    'employeeName' => $employee->full_name ?: 'Select an employee',
+                ])
             </div>
         </div>
     @endif
 
 </div>
+@push('css')
+    <style>
+        .salary-modal-panel-max {
+            max-height: 90vh;
+        }
+
+        .salary-modal-form-scroll {
+            max-height: calc(90vh - 130px);
+        }
+    </style>
+@endpush

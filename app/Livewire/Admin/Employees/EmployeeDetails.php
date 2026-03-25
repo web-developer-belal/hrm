@@ -106,6 +106,17 @@ class EmployeeDetails extends Component
 
     public function addOrUpdateSalary()
     {
+        $this->basicSalary = $this->basic_salary;
+        $this->houseRentAmount = $this->house_rent;
+        $this->medicalAllowanceAmount = $this->medical_allowance;
+        $this->dearAllowanceAmout = $this->dear_allowance;
+        $this->transportAllowanceAmount = $this->transport_allowance;
+        $this->pfEployerContributionAmount = $this->pf_employer_contribution;
+        $this->otherAllowanceAmount = $this->other_allowance;
+        $this->pfEmployeeContributionAmount = $this->pf_employee_contribution;
+        $this->welfareContributionAmount = $this->welfare_contribution;
+        $this->taxDeductionAmount = $this->tax_deduction;
+
         $this->salaryModalshow = true;
 
 
@@ -143,7 +154,7 @@ class EmployeeDetails extends Component
         $this->basic_salary             = $this->basicSalary;
         $this->house_rent               = $this->houseRentAmount ? $this->houseRentAmount : round($this->basicSalary / 100 * $this->houseRentPercent);
         $this->medical_allowance        = $this->medicalAllowanceAmount ? $this->medicalAllowanceAmount : round($this->basicSalary / 100 * $this->medicalAllowancePercent);
-        $this->dear_allowance           = $this->dearAllowanceAmout ? $this->dearAllowanceAmout : round($this->basicSalary / 100 * $this->dearAllowanceAmout);
+        $this->dear_allowance           = $this->dearAllowanceAmout ? $this->dearAllowanceAmout : round($this->basicSalary / 100 * $this->dearAllowancePercent);
         $this->transport_allowance      = $this->transportAllowanceAmount ? $this->transportAllowanceAmount : round($this->basicSalary / 100 * $this->transportAllowancePercent);
         $this->pf_employer_contribution = $this->pfEployerContributionAmount ? $this->pfEployerContributionAmount : round($this->basicSalary / 100 * $this->pfEployerContributionPercent);
         $this->other_allowance          = $this->otherAllowanceAmount ? $this->otherAllowanceAmount : round($this->basicSalary / 100 * $this->otherAllowancePercent);

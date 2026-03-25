@@ -30,9 +30,9 @@
             </nav>
         </div>
         <div class="flex my-xl-auto right-content items-center flex-wrap gap-2">
-            <div class="mb-2 flex gap-2 items-center" x-show="selectedEmployees.length > 0" x-cloak>
+            <div class="mb-2 flex gap-2 items-center">
                 <div x-data="{ openOtDropdown: false }" class="relative inline-block">
-                    <button type="button" @click="openOtDropdown = !openOtDropdown"
+                    <button x-bind:disabled="selectedEmployees.length === 0" type="button" @click="openOtDropdown = !openOtDropdown"
                         class="flex items-center bg-warning text-sm font-medium py-2 rounded text-white px-3 hover:bg-warning-900 hover:text-white">
                         <i class="ti ti-user-cog me-2"></i>Update OT
                         <i class="ti ti-chevron-down ms-1"></i>
@@ -50,7 +50,7 @@
                         </button>
                     </div>
                 </div>
-                <button wire:click="exportEmployees" type="button"
+                <button wire:click="exportEmployees" x-bind:disabled="selectedEmployees.length === 0" type="button"
                     class="flex items-center bg-success text-sm font-medium py-2 rounded text-white px-3 hover:bg-success-900 hover:text-white">
                     <i class="ti ti-file-export me-2"></i>Export Selected (<span
                         x-text="selectedEmployees.length"></span>)
@@ -145,7 +145,7 @@
                                                     href="{{ route('admin.employees.details', ['emp' => $emp->id]) }}"
                                                     class="text-gray-900 hover:text-primary">{{ $emp->full_name }}</a>
                                             </h6>
-                                            <span class="text-xs leading-normal"> {{ $emp->designation->name }}</span>
+                                            <span class="bg-success text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs w-fit"> {{ $emp->designation->name }}</span>
                                             <span class="text-xs leading-normal"> {{ $emp->email }}</span>
                                             <span class="text-xs leading-normal"> {{ $emp->contact_number }}</span>
                                         </div>
@@ -222,126 +222,12 @@
         <div data-modal-overlay class="absolute inset-0 bg-black/50"></div>
 
         <div id="salarySetupPanel"
-            class="relative bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden transform scale-95 translate-y-3 transition-all duration-200">
-            <div class="px-5 py-4 border-b border-borderColor flex items-center justify-between">
-                <div>
-                    <h5 class="mb-1">Setup Employee Salary</h5>
-                    <p class="text-xs text-gray-500">{{ $salaryEmployeeName ?: 'Select an employee' }}</p>
-                </div>
-                <button type="button" data-close-modal
-                    class="size-8 flex items-center justify-center rounded-md hover:bg-gray-100 text-gray-600">
-                    <i class="ti ti-x"></i>
-                </button>
-            </div>
-
-            <form wire:submit.prevent="saveSalary" class="p-5 overflow-y-auto max-h-[calc(90vh-130px)]">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">Basic Salary</label>
-                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.basic_salary"
-                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
-                        @error('salaryForm.basic_salary')
-                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">House Rent</label>
-                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.house_rent"
-                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
-                        @error('salaryForm.house_rent')
-                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">Medical Allowance</label>
-                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.medical_allowance"
-                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
-                        @error('salaryForm.medical_allowance')
-                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">Dear Allowance</label>
-                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.dear_allowance"
-                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
-                        @error('salaryForm.dear_allowance')
-                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">Transport Allowance</label>
-                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.transport_allowance"
-                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
-                        @error('salaryForm.transport_allowance')
-                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">PF Employer Contribution</label>
-                        <input type="number" step="0.01" min="0"
-                            wire:model.defer="salaryForm.pf_employer_contribution"
-                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
-                        @error('salaryForm.pf_employer_contribution')
-                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">Other Allowance</label>
-                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.other_allowance"
-                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
-                        @error('salaryForm.other_allowance')
-                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">PF Employee Contribution</label>
-                        <input type="number" step="0.01" min="0"
-                            wire:model.defer="salaryForm.pf_employee_contribution"
-                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
-                        @error('salaryForm.pf_employee_contribution')
-                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">Welfare Contribution</label>
-                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.welfare_contribution"
-                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
-                        @error('salaryForm.welfare_contribution')
-                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">Tax Deduction</label>
-                        <input type="number" step="0.01" min="0" wire:model.defer="salaryForm.tax_deduction"
-                            class="mt-1 w-full rounded border-borderColor focus:border-primary focus:ring-primary" />
-                        @error('salaryForm.tax_deduction')
-                            <p class="text-xs text-danger mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="mt-5 pt-4 border-t border-borderColor flex items-center justify-end gap-2">
-                    <button type="button" data-close-modal
-                        class="px-4 py-2 rounded border border-borderColor text-gray-700 hover:bg-gray-50">
-                        Cancel
-                    </button>
-                    <button type="submit"
-                        class="px-4 py-2 rounded bg-primary text-white hover:bg-primary-900 disabled:opacity-70"
-                        wire:loading.attr="disabled" wire:target="saveSalary">
-                        <span wire:loading.remove wire:target="saveSalary">Save Salary</span>
-                        <span wire:loading wire:target="saveSalary">Saving...</span>
-                    </button>
-                </div>
-            </form>
+            class="relative bg-white rounded-lg shadow-xl w-full max-w-4xl salary-modal-panel-max overflow-hidden transform scale-95 translate-y-3 transition-all duration-200">
+            @include('livewire.admin.employees.partials.salary-modal-content', [
+                'submitAction' => 'saveSalary',
+                'cancelAction' => 'closeSalaryModal',
+                'employeeName' => $salaryEmployeeName ?: 'Select an employee',
+            ])
         </div>
     </div>
 
@@ -405,3 +291,14 @@
         })();
     </script>
 </div>
+@push('css')
+    <style>
+        .salary-modal-panel-max {
+            max-height: 90vh;
+        }
+
+        .salary-modal-form-scroll {
+            max-height: calc(90vh - 130px);
+        }
+    </style>
+@endpush

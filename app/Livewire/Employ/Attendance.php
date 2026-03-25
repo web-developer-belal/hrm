@@ -270,6 +270,7 @@ class Attendance extends Component
             ->when($this->selectedStatus, function ($q) {
                 $q->where('status', $this->selectedStatus);
             })
+            ->whereDate('date', '<=', today())
             ->latest('date')
             ->paginate(10);
         
