@@ -25,6 +25,14 @@
     </div>
     <!-- /Breadcrumb -->
 
+    @php
+        $chg = fn(string $key, bool $goodWhenUp = true): array => [
+            'color' => ($attendanceData[$key] >= 0) === $goodWhenUp ? 'text-success' : 'text-danger',
+            'icon'  => $attendanceData[$key] >= 0 ? 'fa-caret-up' : 'fa-caret-down',
+            'label' => ($attendanceData[$key] >= 0 ? '+' : '') . $attendanceData[$key] . '%',
+        ];
+    @endphp
+
     <!-- Employee Attendance  View -->
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 pb-5">
        
@@ -39,14 +47,13 @@
                                         <i class="ti ti-clock-stop text-white"></i>
                                     </span>
                                     <div class="mt-2">
-                                        <h2>{{ $attendanceData['present'] }}</h2>
+                                        <h2 class="flex gap-2 items-center">{{ $attendanceData['present'] }}
+                                            @php $c = $chg('present_change', true); @endphp
+                                            <span class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                                    class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span>
+                                        </h2>
                                         <p class="font-medium truncate">Total Present</p>
                                     </div>
-                                </div>
-                                <div class="mt-3">
-                                    <span class="flex items-center text-xs truncate"><i
-                                            class="ti ti-arrow-up me-2 filled p-1 bg-success text-white rounded-full"></i>5%
-                                        This Week</span>
                                 </div>
 
                             </div>
@@ -62,14 +69,13 @@
                                         <i class="ti ti-clock-up text-white"></i>
                                     </span>
                                     <div class="mt-2">
-                                        <h2>{{ $attendanceData['absent'] }}</h2>
+                                        <h2 class="flex gap-2 items-center">{{ $attendanceData['absent'] }}
+                                            @php $c = $chg('absent_change', false); @endphp
+                                            <span class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                                    class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span>
+                                        </h2>
                                         <p class="font-medium truncate">Total Absent</p>
                                     </div>
-                                </div>
-                                <div class="mt-3">
-                                    <span class="flex items-center text-xs truncate"><i
-                                            class="ti ti-arrow-up me-2 filled p-1 bg-success text-white rounded-full"></i>7%
-                                        Last Week</span>
                                 </div>
 
                             </div>
@@ -85,15 +91,13 @@
                                         <i class="ti ti-calendar-up text-white"></i>
                                     </span>
                                     <div class="mt-2">
-                                        <h2>{{ $attendanceData['on_time'] }}</h2>
+                                        <h2 class="flex gap-2 items-center">{{ $attendanceData['on_time'] }}
+                                            @php $c = $chg('on_time_change', true); @endphp
+                                            <span class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                                    class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span>
+                                        </h2>
                                         <p class="font-medium truncate">Total On time</p>
                                     </div>
-                                </div>
-                                <div class="mt-3">
-                                    <span
-                                        class="flex items-center text-xs overflow-hidden text-ellipsis whitespace-nowrap"><i
-                                            class="ti ti-arrow-down me-2 filled p-1 bg-danger text-white rounded-full"></i>8%
-                                        Last Month</span>
                                 </div>
 
                             </div>

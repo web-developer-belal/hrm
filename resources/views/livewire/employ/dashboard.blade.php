@@ -51,6 +51,15 @@
         </button>
     </div> --}}
     <!-- /Welcome Wrap -->
+
+    @php
+        $chg = fn(string $key, bool $goodWhenUp = true): array => [
+            'color' => ($attendanceData[$key] >= 0) === $goodWhenUp ? 'text-success' : 'text-danger',
+            'icon'  => $attendanceData[$key] >= 0 ? 'fa-caret-up' : 'fa-caret-down',
+            'label' => ($attendanceData[$key] >= 0 ? '+' : '') . $attendanceData[$key] . '%',
+        ];
+    @endphp
+    
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 pb-5">
         <div class="col-span-8 flex">
             <div class="grid grid-cols-1 xl:grid-cols-12 gap-x-6 w-full">
@@ -63,14 +72,13 @@
                                         <i class="ti ti-clock-stop text-white"></i>
                                     </span>
                                     <div class="mt-2">
-                                        <h2>{{ $attendanceData['present'] }}</h2>
+                                        <h2 class="flex gap-2 items-center">{{ $attendanceData['present'] }}
+                                            @php $c = $chg('present_change', true); @endphp
+                                            <span class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                                    class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span>
+                                        </h2>
                                         <p class="font-medium truncate">Total Present</p>
                                     </div>
-                                </div>
-                                <div class="mt-3">
-                                    <span class="flex items-center text-xs truncate"><i
-                                            class="ti ti-arrow-up me-2 filled p-1 bg-success text-white rounded-full"></i>5%
-                                        This Week</span>
                                 </div>
 
                             </div>
@@ -86,14 +94,13 @@
                                         <i class="ti ti-clock-up text-white"></i>
                                     </span>
                                     <div class="mt-2">
-                                        <h2>{{ $attendanceData['absent'] }}</h2>
+                                        <h2 class="flex gap-2 items-center">{{ $attendanceData['absent'] }}
+                                            @php $c = $chg('absent_change', false); @endphp
+                                            <span class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                                    class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span>
+                                        </h2>
                                         <p class="font-medium truncate">Total Absent</p>
                                     </div>
-                                </div>
-                                <div class="mt-3">
-                                    <span class="flex items-center text-xs truncate"><i
-                                            class="ti ti-arrow-up me-2 filled p-1 bg-success text-white rounded-full"></i>7%
-                                        Last Week</span>
                                 </div>
 
                             </div>
@@ -109,15 +116,13 @@
                                         <i class="ti ti-calendar-up text-white"></i>
                                     </span>
                                     <div class="mt-2">
-                                        <h2>{{ $attendanceData['on_time'] }}</h2>
+                                        <h2 class="flex gap-2 items-center">{{ $attendanceData['on_time'] }}
+                                            @php $c = $chg('on_time_change', true); @endphp
+                                            <span class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                                    class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span>
+                                        </h2>
                                         <p class="font-medium truncate">Total On time</p>
                                     </div>
-                                </div>
-                                <div class="mt-3">
-                                    <span
-                                        class="flex items-center text-xs overflow-hidden text-ellipsis whitespace-nowrap"><i
-                                            class="ti ti-arrow-down me-2 filled p-1 bg-danger text-white rounded-full"></i>8%
-                                        Last Month</span>
                                 </div>
 
                             </div>
@@ -133,16 +138,14 @@
                                         <i class="ti ti-calendar-star text-white"></i>
                                     </span>
                                     <div class="mt-2">
-                                        <h2>{{ $attendanceData['late'] }}</h2>
+                                        <h2 class="flex gap-2 items-center">{{ $attendanceData['late'] }}
+                                            @php $c = $chg('late_change', false); @endphp
+                                            <span class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                                    class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span>
+                                        </h2>
                                         <p class="font-medium overflow-hidden text-ellipsis whitespace-nowrap">Total
                                             Late</p>
                                     </div>
-                                </div>
-                                <div class="mt-3">
-                                    <span
-                                        class="flex items-center text-xs overflow-hidden text-ellipsis whitespace-nowrap"><i
-                                            class="ti ti-arrow-down me-2 filled p-1 bg-danger text-white rounded-full"></i>6%
-                                        Last Month</span>
                                 </div>
 
                             </div>
@@ -225,7 +228,7 @@
                     {{-- Current Date Time --}}
                     <div class="text-center mb-4">
                         <h6 class="text-gray-500 mb-2 font-medium">Attendance</h6>
-                        <h4>{{ now()->format('h:i A, d-M-Y') }}</h4>
+                        <h4 id="live-time-display">{{ now()->format('h:i A, d-M-Y') }}</h4>
                     </div>
 
                     {{-- Circular Total Hours --}}
@@ -307,9 +310,28 @@
                         const clockOutStr = @js($todayAttendanceForCircle?->clock_out?->toDateTimeString());
                         const shiftSeconds = {{ $shiftSeconds }};
 
-                        if (!clockInStr) return;
+                        function updateLiveTime() {
+                            const now = new Date();
+                            const timeStr = String(now.getHours()).padStart(2, '0') + ':' + 
+                                           String(now.getMinutes()).padStart(2, '0') + ':' + 
+                                           String(now.getSeconds()).padStart(2, '0');
+                            const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' });
+                            document.getElementById('live-time-display').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }) + ', ' + dateStr;
+                        }
 
                         function updateCircle() {
+                            if (!clockInStr) {
+                                // Show half circle (50% fill) when no punch in
+                                const rotation = 90;
+                                document.getElementById('time-display').textContent = '--:--:--';
+                                document.getElementById('production-display').textContent = '0h 0m';
+                                const circleLeft = document.getElementById('circle-left');
+                                if (circleLeft) {
+                                    circleLeft.style.transform = 'rotate(' + rotation + 'deg)';
+                                }
+                                return;
+                            }
+
                             const clockInTime = new Date(clockInStr);
                             const clockOutTime = clockOutStr ? new Date(clockOutStr) : new Date();
                             const workedSeconds = Math.floor((clockOutTime - clockInTime) / 1000);
@@ -335,7 +357,9 @@
                             }
                         }
 
+                        updateLiveTime();
                         updateCircle();
+                        setInterval(updateLiveTime, 1000);
                         setInterval(updateCircle, 1000);
                     })();
                     </script>

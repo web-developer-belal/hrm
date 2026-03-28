@@ -37,6 +37,10 @@
         <div
             class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3">
             <h5>Expense List</h5>
+            <div class="w-fit">
+
+                <x-form.date-range-picker />
+            </div>
         </div>
         <div class="card-body p-0">
             <div class="overflow-x-auto">
@@ -82,6 +86,14 @@
                             </tr>
                         @endforeach
                     </tbody>
+                    <tfoot>
+                            <tr class="bg-gray-200">
+                                <th colspan="4" class="px-4 py-2 text-end">Total : </th>
+                                <th class="px-4 py-2" colspan="2">{{ number_format($expenses->sum('amount'), 2) }}</th>
+                                <th class="px-4 py-2" colspan="1"></th>
+
+                            </tr>
+                    </tfoot>
                 </table>
                 <div class="mt-2">
                     {{ $expenses->links() }}

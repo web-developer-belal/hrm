@@ -4,98 +4,87 @@
         {{-- Back Button --}}
         <div class="mb-6">
             <a href="{{ url()->previous() }}"
-               class="inline-flex items-center px-4 py-2 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-700 transition">
+                class="inline-flex items-center px-4 py-2 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-700 transition">
                 ← Back
             </a>
         </div>
 
-        {{-- Notice Card --}}
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-
-            {{-- Header --}}
-            <div class="border-b pb-4 mb-4">
-                <h1 class="text-2xl font-bold text-gray-800">
-                    {{ $notice->title }}
-                </h1>
-
-                <div class="mt-2 flex flex-wrap gap-4 text-sm text-gray-500">
-                    <span>
-                        <strong>Branch:</strong>
-                        {{ $notice->branch->name ?? 'N/A' }}
-                    </span>
-
-                    <span>
-                        <strong>Department:</strong>
-                        {{ $notice->department->name ?? 'N/A' }}
-                    </span>
-
-                    <span>
-                        <strong>Status:</strong>
-                        <span class="px-2 py-1 rounded-full text-xs 
-                            {{ $notice->status === 'active' 
-                                ? 'bg-green-100 text-green-700' 
-                                : 'bg-red-100 text-red-700' }}">
-                            {{ ucfirst($notice->status) }}
-                        </span>
-                    </span>
-                </div>
-            </div>
-
-            {{-- Description --}}
-            <div class="prose max-w-none text-gray-700 mb-6">
-                {!! nl2br(e($notice->description)) !!}
-            </div>
-
-            {{-- Attachments --}}
-            @if($notice->attachments && count($notice->attachments))
-                <div>
-                    <h2 class="text-lg font-semibold mb-3 text-gray-800">
-                        Attachments
-                    </h2>
-
-                    <div class="space-y-6">
-                        @foreach($notice->attachments as $file)
-
-                            @php
-                                $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-                                $fileUrl = asset(Storage::url($file));
-                                $imageExtensions = ['jpg','jpeg','png','gif','webp'];
-                                $docExtensions = ['pdf','doc','docx'];
-                            @endphp
-
-                            {{-- Image Preview --}}
-                            @if(in_array($extension, $imageExtensions))
-                                <div class="border rounded-lg overflow-hidden shadow">
-                                    <img src="{{ $fileUrl }}"
-                                         class="w-full max-h-96 object-contain bg-gray-50"
-                                         alt="Attachment Image">
-                                </div>
-
-                            {{-- Document / PDF Preview --}}
-                            @elseif(in_array($extension, $docExtensions))
-                                <div class="border rounded-lg overflow-hidden shadow">
-                                    <iframe src="{{ $fileUrl }}"
-                                            class="w-full h-96"
-                                            frameborder="0">
-                                    </iframe>
-                                </div>
-
-                            {{-- Fallback Download --}}
-                            @else
-                                <div class="p-4 bg-gray-50 border rounded-lg">
-                                    <a href="{{ $fileUrl }}"
-                                       target="_blank"
-                                       class="text-blue-600 underline">
-                                        Download Attachment
-                                    </a>
-                                </div>
-                            @endif
-
-                        @endforeach
+        <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white">
+            <div class="card-body p-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h5 class="text-sm font-medium text-gray-500">Branch</h5>
+                        <p class="text-base text-gray-800">{{ $notice->branch?->name }}</p>
                     </div>
-                </div>
-            @endif
+                    <div>
+                        <h5 class="text-sm font-medium text-gray-500">Department</h5>
+                        <p class="text-base text-gray-800">{{ $notice->department?->name }}</p>
+                    </div>
+                    <div>
+                        <h5 class="text-sm font-medium text-gray-500">Notice Title</h5>
+                        <p class="text-base text-gray-800">{{ $notice->title }}</p>
+                    </div>
+                    <div>
+                        <h5 class="text-sm font-medium text-gray-500">Date</h5>
+                        <p class="text-base text-gray-800">{{ $notice->created_at->format('F j, Y') }}</p>
+                    </div>
+                    @if ($notice->description)
+                        <div class="md:col-span-2">
+                            <h5 class="text-sm font-medium text-gray-500">Description</h5>
+                            <p class="text-base text-gray-800 whitespace-pre-wrap">{!! $notice->description !!}</p>
+                        </div>
+                    @endif
 
+                    @php
+                        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
+                        $iframeExtensions = ['pdf'];
+                    @endphp
+
+                    @if ($notice->attachments)
+                        <div class="md:col-span-2 flex flex-col gap-1">
+                            <h5 class="text-sm font-medium text-gray-500">Attachment</h5>
+                            @foreach ($notice->attachments as $attachment)
+                                @php
+                                    $extension = strtolower(pathinfo($attachment, PATHINFO_EXTENSION));
+                                    $fileUrl = route('file.download', ['filePath' => $attachment]);
+                                @endphp
+
+                                @if (in_array($extension, $imageExtensions))
+                                    <div class="flex flex-col gap-2">
+                                        <img width="150" src="{{ $fileUrl }}" alt="{{ basename($attachment) }}"
+                                            class="rounded border border-borderColor">
+                                        <a href="{{ $fileUrl }}" target="_blank" class="text-primary text-base">
+                                            {{ basename($attachment) }}
+                                        </a>
+                                    </div>
+                                @elseif (in_array($extension, $iframeExtensions))
+                                    <div class="flex flex-col gap-2">
+                                        <iframe src="{{ $fileUrl }}" title="{{ basename($attachment) }}"
+                                            class="w-full h-96 rounded border border-borderColor"></iframe>
+                                        <a href="{{ $fileUrl }}" target="_blank" class="text-primary text-base">
+                                            {{ basename($attachment) }}
+                                        </a>
+                                    </div>
+                                @else
+                                    <a href="{{ $fileUrl }}" target="_blank" class="text-primary text-base">
+                                        {{ basename($attachment) }}
+                                    </a>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
+
+                    {{-- @if ($notice->readers->count())
+                <div class="md:col-span-2">
+                    <h5 class="text-sm font-medium text-gray-500">Readers</h5>
+                    <p class="text-base text-gray-800">
+                        {{ $notice->readers->pluck('employee_name')->join(', ') }}
+                    </p>
+                </div>
+                @endif --}}
+
+                </div>
+            </div>
         </div>
     </div>
 </div>

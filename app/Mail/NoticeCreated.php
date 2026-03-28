@@ -8,30 +8,30 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class LeaveUpdate extends Mailable
+class NoticeCreated extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $leave;
+    public $notice;
+    public $employee;
 
-    public function __construct($leave)
+    public function __construct($notice, $employee)
     {
-        $this->leave = $leave;
+        $this->notice = $notice;
+        $this->employee = $employee;
     }
 
     public function envelope(): Envelope
     {
-        $employeeName = $this->leave->employee?->full_name ?? 'Employee';
-
         return new Envelope(
-            subject: 'Leave Request ' . ucfirst($this->leave->status) . ' - ' . $employeeName,
+            subject: 'New Notice: ' . $this->notice->title,
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.leave',
+            view: 'emails.notice-created',
         );
     }
 

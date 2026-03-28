@@ -29,14 +29,43 @@
                     </div>
                 @endif
 
+                @php
+                    $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
+                    $iframeExtensions = ['pdf'];
+                @endphp
+
                 @if ($notice->attachments)
                     <div class="md:col-span-2 flex flex-col gap-1">
                         <h5 class="text-sm font-medium text-gray-500">Attachment</h5>
                         @foreach ($notice->attachments as $attachment)
-                            <a href="{{ route('file.download', ['filePath' => $attachment]) }}" target="_blank"
-                                class="text-primary text-base">
-                                {{ basename($attachment) }}
-                            </a>
+                            @php
+                                $extension = strtolower(pathinfo($attachment, PATHINFO_EXTENSION));
+                                $fileUrl = route('file.download', ['filePath' => $attachment]);
+                            @endphp
+
+                            @if (in_array($extension, $imageExtensions))
+                                <div class="flex flex-col gap-2">
+                                    <img width="150" src="{{ $fileUrl }}"
+                                        alt="{{ basename($attachment) }}" class="rounded border border-borderColor">
+                                    <a href="{{ $fileUrl }}" target="_blank"
+                                        class="text-primary text-base">
+                                        {{ basename($attachment) }}
+                                    </a>
+                                </div>
+                            @elseif (in_array($extension, $iframeExtensions))
+                                <div class="flex flex-col gap-2">
+                                    <iframe src="{{ $fileUrl }}" title="{{ basename($attachment) }}"
+                                        class="w-full h-96 rounded border border-borderColor"></iframe>
+                                    <a href="{{ $fileUrl }}" target="_blank" class="text-primary text-base">
+                                        {{ basename($attachment) }}
+                                    </a>
+                                </div>
+                            @else
+                                <a href="{{ $fileUrl }}" target="_blank"
+                                    class="text-primary text-base">
+                                    {{ basename($attachment) }}
+                                </a>
+                            @endif
                         @endforeach
                     </div>
                 @endif

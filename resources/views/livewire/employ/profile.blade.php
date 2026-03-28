@@ -194,7 +194,10 @@
                                         class="flex items-center justify-center btn bg-dark text-sm font-medium py-2 rounded text-white px-3 hover:bg-black hover:text-white">
                                         <i class="ti ti-edit me-1"></i>Edit Info
                                     </a>
-
+                                    <a href="#" wire:click="viewSalary"
+                                        class="flex items-center bg-primary text-sm font-medium py-2 rounded text-white px-3 hover:bg-primary-900 hover:text-white justify-center">
+                                        <i class="ti ti-circle-plus me-2"></i>Salary
+                                    </a>
                                 </div>
                             </div>
                             <div class="p-4 border-b border-borderColor">
@@ -415,4 +418,122 @@
             </div>
         </div>
     </div>
+
+    {{-- Salary Modal --}}
+    @if ($salaryModalshow)
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-200">
+            <div data-modal-overlay class="absolute inset-0 bg-black/50"></div>
+
+            <div
+                class="relative bg-white rounded-lg shadow-xl w-full max-w-4xl salary-modal-panel-max overflow-hidden transition-all duration-200">
+                <div class="px-5 py-4 border-b border-borderColor flex items-center justify-between">
+                    <div>
+                        <h5 class="mb-1">Salary Information</h5>
+                        <p class="text-xs text-gray-500">{{ $employee->full_name }}</p>
+                    </div>
+                    <button type="button" wire:click="closeModal"
+                        class="size-8 flex items-center justify-center rounded-md hover:bg-gray-100 text-gray-600">
+                        <i class="ti ti-x"></i>
+                    </button>
+                </div>
+
+                <div class="p-5 overflow-y-auto salary-modal-form-scroll max-h-96">
+                    @if ($salary)
+                        <div class="space-y-4">
+                            {{-- Salary Addition Section --}}
+                            <div class="border rounded-md border-borderColor p-4 bg-gray-50">
+                                <h6 class="font-medium mb-3">Salary Addition</h6>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="text-sm text-gray-600">Basic Salary</label>
+                                        <p class="text-lg font-semibold text-gray-900">{{ number_format($salary->basic_salary, 2) }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm text-gray-600">House Rent</label>
+                                        <p class="text-lg font-semibold text-gray-900">{{ number_format($salary->house_rent, 2) }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm text-gray-600">Medical Allowance</label>
+                                        <p class="text-lg font-semibold text-gray-900">{{ number_format($salary->medical_allowance, 2) }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm text-gray-600">Dear Allowance</label>
+                                        <p class="text-lg font-semibold text-gray-900">{{ number_format($salary->dear_allowance, 2) }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm text-gray-600">Transport Allowance</label>
+                                        <p class="text-lg font-semibold text-gray-900">{{ number_format($salary->transport_allowance, 2) }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm text-gray-600">Provident Fund (Employer)</label>
+                                        <p class="text-lg font-semibold text-gray-900">{{ number_format($salary->pf_employer_contribution, 2) }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm text-gray-600">Other Allowance</label>
+                                        <p class="text-lg font-semibold text-gray-900">{{ number_format($salary->other_allowance, 2) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Salary Deduction Section --}}
+                            <div class="border rounded-md border-borderColor p-4 bg-gray-50">
+                                <h6 class="font-medium mb-3">Salary Deduction</h6>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="text-sm text-gray-600">PF Employee Contribution</label>
+                                        <p class="text-lg font-semibold text-gray-900">{{ number_format($salary->pf_employee_contribution, 2) }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm text-gray-600">Welfare Contribution</label>
+                                        <p class="text-lg font-semibold text-gray-900">{{ number_format($salary->welfare_contribution, 2) }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm text-gray-600">Tax Deduction</label>
+                                        <p class="text-lg font-semibold text-gray-900">{{ number_format($salary->tax_deduction, 2) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Total Section --}}
+                            @php
+                                $totalAddition = ($salary->basic_salary ?? 0) + ($salary->house_rent ?? 0) + ($salary->medical_allowance ?? 0) + 
+                                                ($salary->dear_allowance ?? 0) + ($salary->transport_allowance ?? 0) + 
+                                                ($salary->pf_employer_contribution ?? 0) + ($salary->other_allowance ?? 0);
+                                $totalDeduction = ($salary->pf_employee_contribution ?? 0) + ($salary->welfare_contribution ?? 0) + ($salary->tax_deduction ?? 0);
+                                $netSalary = $totalAddition - $totalDeduction;
+                            @endphp
+                            <div class="border rounded-md border-gray-300 p-4 bg-gradient-to-r from-blue-50 to-blue-100">
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div class="text-center">
+                                        <label class="text-sm text-gray-600">Total Addition</label>
+                                        <p class="text-2xl font-bold text-green-600">{{ number_format($totalAddition, 2) }}</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <label class="text-sm text-gray-600">Total Deduction</label>
+                                        <p class="text-2xl font-bold text-red-600">{{ number_format($totalDeduction, 2) }}</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <label class="text-sm text-gray-600">Net Salary</label>
+                                        <p class="text-2xl font-bold text-blue-600">{{ number_format($netSalary, 2) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="text-center py-8">
+                            <i class="ti ti-alert-circle text-4xl text-gray-400 mb-3"></i>
+                            <p class="text-gray-600">No salary information available</p>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="px-5 py-4 border-t border-borderColor bg-gray-50 flex justify-end gap-2">
+                    <button type="button" wire:click="closeModal"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

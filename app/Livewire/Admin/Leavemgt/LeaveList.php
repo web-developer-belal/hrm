@@ -1,10 +1,12 @@
 <?php
 namespace App\Livewire\Admin\Leavemgt;
 
+use App\Mail\LeaveUpdate;
 use App\Models\Attendance;
 use App\Models\Branch;
 use App\Models\Leave;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -42,7 +44,7 @@ class LeaveList extends Component
     {
         // dd($leaveId);
 
-        $leave = Leave::findOrFail($leaveId);
+        $leave = Leave::with(['employee', 'type', 'approver'])->findOrFail($leaveId);
         $leave->status = $status;
         if(!empty($leave->approved_by) && $status === 'pending') {
             $leave->approved_by = null;
@@ -56,6 +58,10 @@ class LeaveList extends Component
             $this->updateAttendanceForLeave($leave);
         } elseif (in_array($status, ['rejected', 'pending'])) {
             $this->revertAttendanceForLeave($leave);
+        }
+
+        if (in_array($status, ['approved', 'rejected']) && filled($leave->employee?->email)) {
+            Mail::to($leave->employee->email)->queue(new LeaveUpdate($leave));
         }
 
         flash()->success('Leave status change updated successfully.');

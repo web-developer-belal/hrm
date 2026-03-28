@@ -50,7 +50,7 @@
                 <form wire:submit.prevent="submitComplain" class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 
                     <!-- Employees -->
-                    <x-form.select label="Against Employee" name="against_employee_id" :isRequired="true"
+                    <x-form.select label="Against Employee" name="against_employee_id"
                         :options="$employeesData" />
 
                     <x-form.input label="Complain Subject" name="subject" :isRequired="true" :error="true"

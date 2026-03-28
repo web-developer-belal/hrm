@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Salary;
 
 class Profile extends Component
 {
@@ -21,6 +22,8 @@ class Profile extends Component
     public $photo;
 
     public $isEdit=false;
+    public $salaryModalshow = false;
+    public $salary = null;
 
     public function mount()
     {
@@ -35,6 +38,18 @@ class Profile extends Component
 
     public function toggleEdit(){
         $this->isEdit = !$this->isEdit;
+    }
+
+    public function viewSalary()
+    {
+        $this->salary = Salary::where('employee_id', $this->employee->id)->first();
+        $this->salaryModalshow = true;
+    }
+
+    public function closeModal()
+    {
+        $this->salaryModalshow = false;
+        $this->salary = null;
     }
 
     public function save()

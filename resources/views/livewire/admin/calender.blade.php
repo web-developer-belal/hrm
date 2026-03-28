@@ -21,7 +21,11 @@
         </div>
         <div class="flex my-xl-auto right-content items-center flex-wrap ">
             <div class="me-3">
-                <x-form.select name="branch" wire:model.live="branch" placeholder="Select branch" :options="$branch_options"
+                <x-form.select name="group" :live="true" placeholder="Select group" :options="$group_options"
+                    :search="true" />
+            </div>
+            <div class="me-3">
+                <x-form.select name="branch" :live="true" placeholder="Select branch" :options="$branch_options"
                     :search="true" />
             </div>
             <div class="head-icons ml-2 mb-2">
@@ -38,16 +42,11 @@
 
    
 
-    <div x-data="{
+    <div wire:key="calendar-{{ md5(json_encode($holidayEvents)) }}" x-data="{
         calendarInstance: null,
-        holidayEvents: {{ $holidayEvents }},
+        holidayEvents: @js($holidayEvents),
         init() {
             this.$nextTick(() => {
-                this.initializeCalendar();
-            });
-
-            document.addEventListener('livewire:updated', () => {
-                this.holidayEvents = holidayEventsData;
                 this.initializeCalendar();
             });
         },
@@ -75,7 +74,10 @@
                         modal.show();
                         const eventTitle = document.getElementById('eventTitle');
                         if (eventTitle) {
-                            eventTitle.innerText = info.event.title;
+                            const branchName = info.event.extendedProps.branchName
+                                ? ` - ${info.event.extendedProps.branchName}`
+                                : '';
+                            eventTitle.innerText = `${info.event.title}${branchName}`;
                         }
                     }
                 },

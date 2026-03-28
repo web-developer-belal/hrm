@@ -91,6 +91,31 @@ class Dashboard extends Component
         $totalOvertimeMinutes = Attendance::where('employee_id', $employeeId)
             ->whereBetween('date', [$this->startDate, $this->endDate])
             ->sum('overtime_minutes');
+    
+        // Get previous period for comparison (last month)
+        $prevStart = Carbon::parse($this->startDate)->subMonth()->startOfMonth()->toDateString();
+        $prevEnd = Carbon::parse($this->startDate)->subMonth()->endOfMonth()->toDateString();
+
+        $prevPresent = Attendance::where('employee_id', $employeeId)
+            ->where('status', 'present')
+            ->whereBetween('date', [$prevStart, $prevEnd])
+            ->count();
+
+        $prevAbsent = Attendance::where('employee_id', $employeeId)
+            ->where('status', 'absent')
+            ->whereBetween('date', [$prevStart, $prevEnd])
+            ->count();
+
+        $prevLate = Attendance::where('employee_id', $employeeId)
+            ->where('status', 'late')
+            ->whereBetween('date', [$prevStart, $prevEnd])
+            ->count();
+
+        $prevOnTime = Attendance::where('employee_id', $employeeId)
+            ->where('status', 'present')
+            ->where('late_minutes', 0)
+            ->whereBetween('date', [$prevStart, $prevEnd])
+            ->count();
 
         $totalBreakMinutes = Attendance::where('employee_id', $employeeId)
             ->whereBetween('date', [$this->startDate, $this->endDate])
@@ -111,11 +136,21 @@ class Dashboard extends Component
 
         $productiveMinutes = max(0, $totalWorkingMinutes - $totalBreakMinutes);
 
+        // Calculate percentage changes
+        $presentChange = $prevPresent > 0 ? round((($present - $prevPresent) / $prevPresent) * 100) : ($present > 0 ? 100 : 0);
+        $absentChange = $prevAbsent > 0 ? round((($absent - $prevAbsent) / $prevAbsent) * 100) : ($absent > 0 ? 100 : 0);
+        $lateChange = $prevLate > 0 ? round((($late - $prevLate) / $prevLate) * 100) : ($late > 0 ? 100 : 0);
+        $onTimeChange = $prevOnTime > 0 ? round((($onTime - $prevOnTime) / $prevOnTime) * 100) : ($onTime > 0 ? 100 : 0);
+
         return [
             'present'          => $present,
             'absent'           => $absent,
             'late'             => $late,
             'on_time'          => $onTime,
+            'present_change'   => $presentChange,
+            'absent_change'    => $absentChange,
+            'late_change'      => $lateChange,
+            'on_time_change'   => $onTimeChange,
             'working_hours'    => $this->formatMinutes($totalWorkingMinutes),
             'productive_hours' => $this->formatMinutes($productiveMinutes),
             'break_hours'      => $this->formatMinutes($totalBreakMinutes),

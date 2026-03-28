@@ -46,13 +46,21 @@
                     <x-form.input label="Notice Title" name="title" :isRequired="true" :error="true"
                         placeholder="Enter Notice Title" />
 
+                    @if (!$isEdit)
+                        <x-form.select label="Branch Group" name="group" :isRequired="true" :error="true"
+                            :options="$group_options" :search="true" placeholder="Select branch group" />
+                    @endif
+
                     {{-- Branch --}}
-                    <x-form.select label="Select Branch" name="branch_id" live="true" :isRequired="true"
-                        :error="true" :options="$branch_id_options" :search="true" />
+                    <x-form.select label="{{ $isEdit ? 'Select Branch' : 'Select Branches' }}" name="branch_id" live="true"
+                        :isRequired="true" :error="true" :options="$branch_id_options" :search="true"
+                        :isMultiple="$isEdit ? false : true" placeholder="{{ $isEdit ? 'Select branch' : 'Select branches' }}" />
 
                     {{-- Department --}}
-                    <x-form.select label="Select Department" name="department_id" :isRequired="false" :error="true"
-                        :options="$department_id_options" :search="true" />
+                    <x-form.select label="{{ $isEdit ? 'Select Department' : 'Select Departments' }}" name="department_id"
+                        :isRequired="$isEdit ? false : true" :error="true" :options="$department_id_options"
+                        :search="true" :isMultiple="$isEdit ? false : true"
+                        placeholder="{{ $isEdit ? 'Select department' : 'Select departments' }}" />
 
                     {{-- Status --}}
                     <x-form.select label="Status" name="status" :isRequired="true" :error="true"

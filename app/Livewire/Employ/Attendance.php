@@ -117,11 +117,46 @@ class Attendance extends Component
         
         $productiveMinutes = max(0, $totalWorkingMinutes - $totalBreakMinutes);
 
+        // Get last 30 days stats for comparison
+        $last30DaysStart = Carbon::now()->subDays(30)->toDateString();
+        $currentDate = Carbon::now()->toDateString();
+
+        $prevPresent = ModelsAttendance::where('employee_id', $employeeId)
+            ->where('status', 'present')
+            ->whereBetween('date', [$last30DaysStart, $currentDate])
+            ->count();
+
+        $prevAbsent = ModelsAttendance::where('employee_id', $employeeId)
+            ->where('status', 'absent')
+            ->whereBetween('date', [$last30DaysStart, $currentDate])
+            ->count();
+
+        $prevLate = ModelsAttendance::where('employee_id', $employeeId)
+            ->where('status', 'late')
+            ->whereBetween('date', [$last30DaysStart, $currentDate])
+            ->count();
+
+        $prevOnTime = ModelsAttendance::where('employee_id', $employeeId)
+            ->where('status', 'present')
+            ->where('late_minutes', 0)
+            ->whereBetween('date', [$last30DaysStart, $currentDate])
+            ->count();
+
+        // Calculate changes (last 30 days vs older records)
+        $presentChange = $present > 0 && $prevPresent > 0 ? round((($present - $prevPresent) / $prevPresent) * 100) : 0;
+        $absentChange = $absent > 0 && $prevAbsent > 0 ? round((($absent - $prevAbsent) / $prevAbsent) * 100) : 0;
+        $lateChange = $late > 0 && $prevLate > 0 ? round((($late - $prevLate) / $prevLate) * 100) : 0;
+        $onTimeChange = $onTime > 0 && $prevOnTime > 0 ? round((($onTime - $prevOnTime) / $prevOnTime) * 100) : 0;
+
         return [
             'present'           => $present,
             'absent'            => $absent,
             'late'              => $late,
             'on_time'           => $onTime,
+            'present_change'    => $presentChange,
+            'absent_change'     => $absentChange,
+            'late_change'       => $lateChange,
+            'on_time_change'    => $onTimeChange,
             'working_hours'     => $this->formatMinutes($totalWorkingMinutes),
             'productive_hours'  => $this->formatMinutes($productiveMinutes),
             'break_hours'       => $this->formatMinutes($totalBreakMinutes),

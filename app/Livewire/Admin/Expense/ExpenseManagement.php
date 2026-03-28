@@ -3,6 +3,7 @@ namespace App\Livewire\Admin\Expense;
 
 use App\Models\Expense;
 use App\Models\ExpenseType;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -18,6 +19,9 @@ class ExpenseManagement extends Component
     public $date;
     public $types = [];
     public $note;
+
+    public $startDate;
+    public $endDate;
 
     public $isEditMode         = false;
     protected $paginationTheme = 'tailwind';
@@ -61,6 +65,13 @@ class ExpenseManagement extends Component
         $this->date            = $exp->date->format('Y-m-d');
         $this->isEditMode      = true;
     }
+    #[On('date-range-update')]
+    public function dateRangeUpdate($start, $end)
+    {
+        $this->startDate = $start;
+        $this->endDate   = $end;
+        $this->dispatch('update-chart');
+    }
 
     public function saveExpense()
     {
@@ -100,7 +111,9 @@ class ExpenseManagement extends Component
 
     public function render()
     {
-        $expenses = Expense::with('branch', 'type')->latest()->paginate(10);
+        $expenses = Expense::when($this->startDate && $this->endDate, function ($query) {
+            $query->whereBetween('date', [$this->startDate, $this->endDate]);
+        })->with('branch', 'type')->latest()->paginate(10);
         return view('livewire.admin.expense.expense-management', compact('expenses'));
     }
 }
