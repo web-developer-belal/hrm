@@ -537,3 +537,10 @@
         </div>
     @endif
 </div>
+@push('css')
+    <style>
+        .max-h-96{
+            max-height: 24rem   ;
+        }
+    </style>
+@endpush

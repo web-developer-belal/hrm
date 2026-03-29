@@ -153,70 +153,7 @@
                     </div>
                 </div>
                 <div class="xl:col-span-12 flex">
-                    <div class="card border-bordercolor bg-white rounded-[5px] shadow-xs w-full">
-                        <div class="card-body p-5">
-                            <div class="flex items-center justify-center mb-4">
-                                <div class="w-full">
-                                    <span class="flex items-center mb-1"><i class="ti ti-point-filled me-1"></i>Total
-                                        Working hours</span>
-                                    <h3>{{ $attendanceData['working_hours'] }}</h3>
-                                </div>
-                                <div class="w-full">
-                                    <span class="flex items-center mb-1"><i
-                                            class="ti ti-point-filled text-success me-1"></i>Productive Hours</span>
-                                    <h3>{{ $attendanceData['productive_hours'] }}</h3>
-                                </div>
-                                <div class="w-full">
-                                    <span class="flex items-center mb-1"><i
-                                            class="ti ti-point-filled text-warning me-1"></i>Break hours</span>
-                                    <h3>{{ $attendanceData['break_hours'] }}</h3>
-                                </div>
-                                <div class="w-full">
-                                    <span class="flex items-center mb-1"><i
-                                            class="ti ti-point-filled text-info me-1"></i>Overtime</span>
-                                    <h3>{{ $attendanceData['overtime'] }}</h3>
-                                </div>
-                            </div>
-                            <div class="flex item-center justify-center mb-3">
-                                <div class="h-6 bg-white rounded-[5px]" style="width: 20%"></div>
-                                <div class="h-6 bg-success rounded-[5px]" style="width: 10%"></div>
-                                <div class="h-6 bg-gray-200 rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-warning rounded-[5px]" style="width: 5%"></div>
-                                <div class="h-6 bg-gray-200 rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-success rounded-[5px]" style="width: 10%"></div>
-                                <div class="h-6 bg-gray-200 rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-warning rounded-[5px]" style="width: 10%"></div>
-                                <div class="h-6 bg-gray-200 rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-success rounded-[5px]" style="width: 20%"></div>
-                                <div class="h-6 bg-gray-200 rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-warning rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-gray-200 rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-info rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-gray-200 rounded-[5px]" style="width: 1%"></div>
-                                <div class="h-6 bg-info rounded-[5px]" style="width: 1%"></div>
-                            </div>
-                            <div class="flex items-center justify-center gap-2 flex-wrap ">
-                                <span class="text-xs">06:00</span>
-                                <span class="text-xs">07:00</span>
-                                <span class="text-xs">08:00</span>
-                                <span class="text-xs">09:00</span>
-                                <span class="text-xs">10:00</span>
-                                <span class="text-xs">11:00</span>
-                                <span class="text-xs">12:00</span>
-                                <span class="text-xs">01:00</span>
-                                <span class="text-xs">02:00</span>
-                                <span class="text-xs">03:00</span>
-                                <span class="text-xs">04:00</span>
-                                <span class="text-xs">05:00</span>
-                                <span class="text-xs">06:00</span>
-                                <span class="text-xs">07:00</span>
-                                <span class="text-xs">08:00</span>
-                                <span class="text-xs">09:00</span>
-                                <span class="text-xs">10:00</span>
-                                <span class="text-xs">11:00</span>
-                            </div>
-                        </div>
-                    </div>
+                    <x-attendance.today-work-distribution :attendance="$todayAttendanceForCircle" />
                 </div>
             </div>
         </div>
@@ -236,24 +173,39 @@
                         <div class="w-32.5 h-32.5 bg-white rounded-full relative mx-auto mb-3"
                             id="circle-container"
                             style="width: 130px; height: 130px; line-height: 38px;">
+                            <svg
+                                class="absolute inset-0 -rotate-90"
+                                viewBox="0 0 130 130"
+                                role="progressbar"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                aria-valuenow="0">
+                                <circle
+                                    cx="65"
+                                    cy="65"
+                                    r="56"
+                                    fill="none"
+                                    stroke="#e5e7eb"
+                                    stroke-width="6">
+                                </circle>
+                                <circle
+                                    id="circle-progress"
+                                    cx="65"
+                                    cy="65"
+                                    r="56"
+                                    fill="none"
+                                    stroke="#10b981"
+                                    stroke-width="6"
+                                    stroke-linecap="round"
+                                    stroke-dasharray="351.858"
+                                    stroke-dashoffset="351.858">
+                                </circle>
+                            </svg>
 
-                            <span class="absolute left-0 overflow-hidden top-0" style="width: 50%; height: 100%; z-index: 1;">
-                                <span 
-                                    id="circle-left"
-                                    style="left: 100%; width: 100%; height: 100%; border-radius: 0 80px 80px 0; border: 4px solid #10b981; border-left: none; background: transparent; position: absolute; top: 0; transform-origin: left center; transform: rotate(0deg);"
-                                    class="w-full h-full">
-                                </span>
-                            </span>
-
-                            <span class="absolute right-0 overflow-hidden top-0" style="width: 50%; height: 100%; z-index: 1;">
-                                <span
-                                    style="transform: rotate(180deg); left: -100%; width: 100%; height: 100%; border-radius: 80px 0 0 80px; border: 4px solid #10b981; border-right: none; background: transparent; position: absolute; top: 0; transform-origin: right center;"
-                                    class="w-full h-full">
-                                </span>
-                            </span>
+                            <div class="absolute rounded-full bg-white" style="inset: 11px; z-index: 1;"></div>
 
                             <div class="absolute leading-normal text-center" 
-                                style="left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%;">
+                                style="left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%; z-index: 2;">
                                 <span class="text-xs block mb-1">Total Hours</span>
                                 <h6 id="time-display">00:00:00</h6>
                             </div>
@@ -306,61 +258,87 @@
 
                     <script>
                     (function() {
-                        const clockInStr = @js($todayAttendanceForCircle?->clock_in?->toDateTimeString());
-                        const clockOutStr = @js($todayAttendanceForCircle?->clock_out?->toDateTimeString());
+                        const clockInTimestamp = @js($todayAttendanceForCircle?->clock_in?->timestamp);
+                        const clockOutTimestamp = @js($todayAttendanceForCircle?->clock_out?->timestamp);
                         const shiftSeconds = {{ $shiftSeconds }};
+                        const circleCircumference = 2 * Math.PI * 56;
+                        const dhakaTimeFormatter = new Intl.DateTimeFormat('en-US', {
+                            timeZone: 'Asia/Dhaka',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: true,
+                        });
+                        const dhakaDateFormatter = new Intl.DateTimeFormat('en-US', {
+                            timeZone: 'Asia/Dhaka',
+                            year: 'numeric',
+                            month: 'short',
+                            day: '2-digit',
+                        });
+                        const liveTimeDisplay = document.getElementById('live-time-display');
+                        const timeDisplay = document.getElementById('time-display');
+                        const productionDisplay = document.getElementById('production-display');
+                        const circleProgress = document.getElementById('circle-progress');
+                        const circleContainer = document.getElementById('circle-container');
 
-                        function updateLiveTime() {
-                            const now = new Date();
-                            const timeStr = String(now.getHours()).padStart(2, '0') + ':' + 
-                                           String(now.getMinutes()).padStart(2, '0') + ':' + 
-                                           String(now.getSeconds()).padStart(2, '0');
-                            const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' });
-                            document.getElementById('live-time-display').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }) + ', ' + dateStr;
-                        }
-
-                        function updateCircle() {
-                            if (!clockInStr) {
-                                // Show half circle (50% fill) when no punch in
-                                const rotation = 90;
-                                document.getElementById('time-display').textContent = '--:--:--';
-                                document.getElementById('production-display').textContent = '0h 0m';
-                                const circleLeft = document.getElementById('circle-left');
-                                if (circleLeft) {
-                                    circleLeft.style.transform = 'rotate(' + rotation + 'deg)';
-                                }
+                        function setCircleProgress(percentage) {
+                            if (!circleProgress || !circleContainer) {
                                 return;
                             }
 
-                            const clockInTime = new Date(clockInStr);
-                            const clockOutTime = clockOutStr ? new Date(clockOutStr) : new Date();
-                            const workedSeconds = Math.floor((clockOutTime - clockInTime) / 1000);
+                            const safePercentage = Math.max(0, Math.min(100, percentage));
+                            const dashOffset = circleCircumference - ((safePercentage / 100) * circleCircumference);
+
+                            circleProgress.style.strokeDasharray = String(circleCircumference);
+                            circleProgress.style.strokeDashoffset = String(dashOffset);
+                            circleContainer.setAttribute('aria-valuenow', Math.round(safePercentage));
+                        }
+
+                        function updateLiveTime() {
+                            const now = new Date();
+                            if (liveTimeDisplay) {
+                                liveTimeDisplay.textContent = dhakaTimeFormatter.format(now) + ', ' + dhakaDateFormatter.format(now);
+                            }
+                        }
+
+                        function updateCircle() {
+                            if (!clockInTimestamp) {
+                                timeDisplay.textContent = '00:00:00';
+                                productionDisplay.textContent = '0h 0m';
+                                setCircleProgress(0);
+                                return;
+                            }
+
+                            const nowTimestamp = Math.floor(Date.now() / 1000);
+                            const activeEndTimestamp = clockOutTimestamp ?? nowTimestamp;
+                            const workedSeconds = Math.max(0, activeEndTimestamp - clockInTimestamp);
 
                             const hours = Math.floor(workedSeconds / 3600);
                             const minutes = Math.floor((workedSeconds % 3600) / 60);
                             const seconds = workedSeconds % 60;
 
-                            const percentage = Math.min(100, (workedSeconds / shiftSeconds) * 100);
-                            const rotation = (percentage / 100) * 180;
+                            const percentage = shiftSeconds > 0 ? (workedSeconds / shiftSeconds) * 100 : 0;
 
-                            // Update time display
                             const timeStr = String(hours).padStart(2, '0') + ':' + 
                                            String(minutes).padStart(2, '0') + ':' + 
                                            String(seconds).padStart(2, '0');
-                            document.getElementById('time-display').textContent = timeStr;
-                            document.getElementById('production-display').textContent = hours + 'h ' + minutes + 'm';
+                            timeDisplay.textContent = timeStr;
+                            productionDisplay.textContent = hours + 'h ' + minutes + 'm';
+                            setCircleProgress(percentage);
+                        }
 
-                            // Update circle rotation
-                            const circleLeft = document.getElementById('circle-left');
-                            if (circleLeft) {
-                                circleLeft.style.transform = 'rotate(' + rotation + 'deg)';
-                            }
+                        if (window.attendanceDashboardLiveTimer) {
+                            clearInterval(window.attendanceDashboardLiveTimer);
+                        }
+
+                        if (window.attendanceDashboardProgressTimer) {
+                            clearInterval(window.attendanceDashboardProgressTimer);
                         }
 
                         updateLiveTime();
                         updateCircle();
-                        setInterval(updateLiveTime, 1000);
-                        setInterval(updateCircle, 1000);
+                        window.attendanceDashboardLiveTimer = setInterval(updateLiveTime, 1000);
+                        window.attendanceDashboardProgressTimer = setInterval(updateCircle, 1000);
                     })();
                     </script>
                 </div>

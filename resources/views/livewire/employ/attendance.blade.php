@@ -113,16 +113,14 @@
                                         <i class="ti ti-calendar-star text-white"></i>
                                     </span>
                                     <div class="mt-2">
-                                        <h2>{{ $attendanceData['late'] }}</h2>
+                                        <h2 class="flex gap-2 items-center">{{ $attendanceData['late'] }}
+                                            @php $c = $chg('late_change', false); @endphp
+                                            <span class="text-xs leading-normal font-medium {{ $c['color'] }}"><i
+                                                    class="fa-solid {{ $c['icon'] }} me-1"></i>{{ $c['label'] }}</span>
+                                        </h2>
                                         <p class="font-medium overflow-hidden text-ellipsis whitespace-nowrap">Total
                                             Late</p>
                                     </div>
-                                </div>
-                                <div class="mt-3">
-                                    <span
-                                        class="flex items-center text-xs overflow-hidden text-ellipsis whitespace-nowrap"><i
-                                            class="ti ti-arrow-down me-2 filled p-1 bg-danger text-white rounded-full"></i>6%
-                                        Last Month</span>
                                 </div>
 
                             </div>
@@ -130,70 +128,7 @@
                     </div>
                 </div>
                 <div class="xl:col-span-12 flex">
-                    <div class="card border-bordercolor bg-white rounded-[5px] shadow-xs w-full">
-                        <div class="card-body p-5">
-                            <div class="flex items-center justify-center mb-4">
-                                <div class="w-full">
-                                    <span class="flex items-center mb-1"><i class="ti ti-point-filled me-1"></i>Total
-                                        Working hours</span>
-                                    <h3>{{ $attendanceData['working_hours'] }}</h3>
-                                </div>
-                                <div class="w-full">
-                                    <span class="flex items-center mb-1"><i
-                                            class="ti ti-point-filled text-success me-1"></i>Productive Hours</span>
-                                    <h3>{{ $attendanceData['productive_hours'] }}</h3>
-                                </div>
-                                <div class="w-full">
-                                    <span class="flex items-center mb-1"><i
-                                            class="ti ti-point-filled text-warning me-1"></i>Break hours</span>
-                                    <h3>{{ $attendanceData['break_hours'] }}</h3>
-                                </div>
-                                <div class="w-full">
-                                    <span class="flex items-center mb-1"><i
-                                            class="ti ti-point-filled text-info me-1"></i>Overtime</span>
-                                    <h3>{{ $attendanceData['overtime'] }}</h3>
-                                </div>
-                            </div>
-                            <div class="flex item-center justify-center mb-3">
-                                <div class="h-6 bg-white rounded-[5px]" style="width: 20%"></div>
-                                <div class="h-6 bg-success rounded-[5px]" style="width: 10%"></div>
-                                <div class="h-6 bg-gray-200 rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-warning rounded-[5px]" style="width: 5%"></div>
-                                <div class="h-6 bg-gray-200 rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-success rounded-[5px]" style="width: 10%"></div>
-                                <div class="h-6 bg-gray-200 rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-warning rounded-[5px]" style="width: 10%"></div>
-                                <div class="h-6 bg-gray-200 rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-success rounded-[5px]" style="width: 20%"></div>
-                                <div class="h-6 bg-gray-200 rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-warning rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-gray-200 rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-info rounded-[5px]" style="width: 2%"></div>
-                                <div class="h-6 bg-gray-200 rounded-[5px]" style="width: 1%"></div>
-                                <div class="h-6 bg-info rounded-[5px]" style="width: 1%"></div>
-                            </div>
-                            <div class="flex items-center justify-center gap-2 flex-wrap ">
-                                <span class="text-xs">06:00</span>
-                                <span class="text-xs">07:00</span>
-                                <span class="text-xs">08:00</span>
-                                <span class="text-xs">09:00</span>
-                                <span class="text-xs">10:00</span>
-                                <span class="text-xs">11:00</span>
-                                <span class="text-xs">12:00</span>
-                                <span class="text-xs">01:00</span>
-                                <span class="text-xs">02:00</span>
-                                <span class="text-xs">03:00</span>
-                                <span class="text-xs">04:00</span>
-                                <span class="text-xs">05:00</span>
-                                <span class="text-xs">06:00</span>
-                                <span class="text-xs">07:00</span>
-                                <span class="text-xs">08:00</span>
-                                <span class="text-xs">09:00</span>
-                                <span class="text-xs">10:00</span>
-                                <span class="text-xs">11:00</span>
-                            </div>
-                        </div>
-                    </div>
+                    <x-attendance.today-work-distribution :attendance="$todayAttendanceForCircle" />
                 </div>
             </div>
         </div>
