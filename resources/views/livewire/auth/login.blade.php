@@ -58,15 +58,9 @@
                 <button type="submit" class="btn btn-primary w-full bg-primary text-white">Sign
                     In</button>
             </div>
-            <div class="text-center">
-                <h6 class="font-normal text-dark mb-0">Don’t have an account?
-                    <a href="" class="hover-a text-primary"> Create Account</a>
-                </h6>
-            </div>
-
         </div>
         <div class="mt-8 pb-4 text-center">
-            <p class="mb-0 text-gray-9">Copyright &copy; {{ date('Y') }} - {{ config('app.name') }}</p>
+            <p class="mb-0 text-gray-9">Copyright &copy; {{ date('Y') }} - {{ settingData('company_name') }}</p>
         </div>
     </div>
 </form>

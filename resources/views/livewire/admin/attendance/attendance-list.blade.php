@@ -46,6 +46,9 @@
 
             <div class="flex my-xl-auto right-content items-center flex-wrap gap-3">
                 <div class="me-3">
+                    <x-form.date-range-picker :startDate="$startDate" :endDate="$endDate" />
+                </div>
+                <div class="me-3">
                     <x-form.input name="search" placeholder="Search employee" :live="true" />
                 </div>
                 <div class="me-3">
@@ -122,18 +125,19 @@
                                     {{ $attendance->clock_out?->format('h:i A') ?? '' }}</td>
 
                                 <td class="px-5 py-2.5 text-gray-500 p-3">
+                                    {{ formatDuration(gmdate('H:i:s', $attendance->late_minutes * 60)) }}
 
-
-                                    {{ formatDuration($attendance->late_minutes) ?? '' }}
+                                  
                                 </td>
 
                                 <td class="px-5 py-2.5 text-gray-500 p-3">
-
-                                    {{ formatDuration($attendance?->early_exit_minutes) ?? '' }}
+                                  
+                                    {{ formatDuration(gmdate('H:i:s', $attendance->early_exit_minutes * 60)) }}
+                                 
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500 p-3">
-
-                                    {{ formatDuration($attendance->overtime_minutes) ?? '' }}
+                                    {{ formatDuration(gmdate('H:i:s', $attendance->overtime_minutes * 60)) }}
+                                  
                                 </td>
 
                                 <td class="px-5 py-2.5 text-gray-500">

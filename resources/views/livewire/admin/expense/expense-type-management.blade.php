@@ -1,4 +1,4 @@
-<div x-data="{ modalOpen: false }" x-window:close-modal="modalOpen = false">
+<div x-data="{ modalOpen: false }" @close-modal.window="modalOpen = false">
     <!-- Breadcrumb -->
     <div class="md:flex block items-center justify-between page-breadcrumb mb-4">
         <div class="my-auto mb-2">

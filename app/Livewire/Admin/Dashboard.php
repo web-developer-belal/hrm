@@ -108,17 +108,25 @@ class Dashboard extends Component
 
         // Attendance stats
         $presentRecords = $dateFilter(
-            $branchFilter(Attendance::where('status', 'present'))
+            $branchFilter(Attendance::whereIn('status', ['present', 'early exit', 'late']))
         );
 
         $lateRecords = $dateFilter(
-            $branchFilter(Attendance::where('status', 'late'))
+            // $branchFilter(Attendance::where('status', 'late'))
+                    $branchFilter(
+        Attendance::whereRaw("TIME(clock_in) > shift_start_time")
+    )
         );
 
         $onTimeRecords = $dateFilter(
-            $branchFilter(
-                Attendance::where('status', 'present')->where('late_minutes', '<=', 0)
-            )
+            // $branchFilter(
+            //     Attendance::where('status', 'present')->where('late_minutes', '<=', 0)
+                
+            // )
+            
+             $branchFilter(
+        Attendance::whereRaw("TIME(clock_in) < shift_start_time")
+    )
         );
 
         $absentRecords = $dateFilter(
@@ -130,7 +138,8 @@ class Dashboard extends Component
             $branchFilter(
                 Attendance::query()
             )
-        )->count();
+        )->whereDate('date', today())->count();
+        
 
         // --- State for overall stats ---
         $state = [

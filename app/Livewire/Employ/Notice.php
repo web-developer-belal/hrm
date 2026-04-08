@@ -19,7 +19,7 @@ class Notice extends Component
     {
         $notices = ModelsNotice::when($this->search, function ($query) {
             $query->where('title', 'like', '%' . $this->search . '%');
-        })->where('status','active')->latest()->paginate(10);
+        })->where('branch_id', $this->employee->branch_id)->where('department_id', $this->employee->department_id)->where('status','active')->latest()->paginate(10);
         return view('livewire.employ.notice', compact('notices'));
     }
 }

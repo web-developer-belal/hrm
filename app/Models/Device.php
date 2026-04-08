@@ -14,6 +14,7 @@ class Device extends Model
         'branch_id',
         'no_sn',
         'online',
+        'branch_id',
     ];
 
     public function branch()

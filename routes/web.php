@@ -30,6 +30,7 @@ use App\Livewire\Admin\Holiday\HolidayList;
 use App\Livewire\Admin\Leavemgt\LeaveApplication;
 use App\Livewire\Admin\Leavemgt\LeaveList;
 use App\Livewire\Admin\Leavemgt\LeaveType;
+use App\Livewire\Admin\Leavemgt\ViewLeave;
 use App\Livewire\Admin\Loan\LoanCreate;
 use App\Livewire\Admin\Loan\LoanDetails;
 use App\Livewire\Admin\Loan\LoanList;
@@ -75,6 +76,10 @@ Route::get('/admin/login', AdminLogin::class)->name('admin.login');
 
 Route::get('/create/storage', function () {
     Artisan::call('storage:link');
+});
+
+Route::get('/queue-work', function () {
+    Artisan::call('queue:work');
 });
 
 // Route to view the leave approval email template
@@ -173,6 +178,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
             ->name('leave.list')->middleware('permission:leave-list.show');
         Route::livewire('/leave/application', LeaveApplication::class)
             ->name('leave.application')->middleware('permission:leave-application.show');
+        Route::livewire('view/leave/application/{leave}', ViewLeave::class)
+            ->name('leave.view')->middleware('permission:leave-application.show');
 
     });
 
@@ -382,10 +389,16 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::livewire('/activity-log', ActivityLog::class)
         ->name('activity-log')->middleware('permission:activity-log.show');
 
-    // handshake
-    Route::get('/iclock/cdata', [AdmsController::class, 'handshake']);
-    Route::post('/iclock/cdata', [AdmsController::class, 'receiveRecords']);
-    Route::get('/iclock/test', [AdmsController::class, 'test']);
-    Route::get('/iclock/getrequest', [AdmsController::class, 'getrequest']);
+   
 
 });
+
+ // handshake
+  Route::match(['get', 'post'], '/iclock/cdata', [AdmsController::class, 'handle']);
+  
+// Route::any('/iclock/cdata', [AdmsController::class, 'receiveRecords']);    
+// Route::get('/iclock/cdata', [AdmsController::class, 'handshake']);
+// Route::post('/iclock/cdata', [AdmsController::class, 'receiveRecords']);
+Route::get('/iclock/test', [AdmsController::class, 'test']);
+Route::get('/iclock/getrequest', [AdmsController::class, 'getrequest']);
+

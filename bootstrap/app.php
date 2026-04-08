@@ -21,6 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
         'employee' => EmployeeMiddleware::class,
         'permission' => AdminPermissionMiddleware::class,
     ]);
+    $middleware->validateCsrfTokens(except: [
+        'iclock/*',
+    ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

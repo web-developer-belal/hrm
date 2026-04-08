@@ -230,8 +230,22 @@
         <div
             class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3">
             <h5>Leave List</h5>
-            <div class="">
-                <x-form.date-range-picker :startDate="$startDate" :endDate="$endDate" />
+           <div class="flex-1 grid grid-cols-1 md:grid-cols-4 gap-3">
+                <div>
+                    <x-form.select name="branch" :options="$branch_options" :live="true" :search="true"
+                        placeholder="Select Branch" />
+                </div>
+                <div>
+                    <x-form.select name="department" :options="$department_options" :live="true" :search="true"
+                        placeholder="Select Department" />
+                </div>
+                <div>
+                    <x-form.select name="employee" :options="$employee_options" :live="true" :search="true"
+                        placeholder="Select Employee" />
+                </div>
+                <div class="flex justify-end">
+                    <x-form.date-range-picker :startDate="$startDate" :endDate="$endDate" />
+                </div>
             </div>
         </div>
         <div class="card-body p-0">
@@ -274,7 +288,7 @@
                                 <td class="px-5 py-2.5 text-gray-500">
                                     {{ $loop->iteration }}
                                 </td>
-                                <td class="px-5 py-2.5 text-gray-900">{{ $leave->employee->full_name }}</td>
+                                <td class="px-5 py-2.5 text-gray-900">{{ $leave->employee?->full_name }}</td>
                                 <td class="px-5 py-2.5 text-gray-900">{{ $leave->type->name }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $leave->from_date->format('d-M-Y') }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $leave->to_date->format('d-M-Y') }}</td>
@@ -291,7 +305,7 @@
                                                 {{ ucfirst($leave->status) }}<i class="ti ti-chevron-down ml-1"></i>
                                             </span></a>
                                         <ul id="designation-dropdown-{{ $leave->id }}"
-                                            class="hidden p-4 border rounded bg-white shadow-lg w-40 z-[1]"
+                                            class="hidden p-4 border rounded bg-white shadow-lg w-40 z-1"
                                             data-popper-placement="bottom"
                                             style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(1597px, 398px);">
                                             <li>
@@ -313,7 +327,7 @@
                                         </ul>
                                     </div>
                                 </td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $leave->approved_by ?? '--' }}</td>
+                                <td class="px-5 py-2.5 text-gray-500">{{ $leave->approver?->full_name ?? '--' }}</td>
 
                             </tr>
                         @endforeach

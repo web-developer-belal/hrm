@@ -35,7 +35,7 @@
 
         <!-- Page Wrapper -->
         <div class="page-wrapper relative pt-[50px] ml-[252px]">
-            <div class="content p-6 pb-0">
+            <div class="content p-6 pb-5">
                 @yield('content')
                 {{ $slot ?? '' }}
             </div>

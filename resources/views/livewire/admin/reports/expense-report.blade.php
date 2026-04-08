@@ -227,8 +227,13 @@
         <div
             class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3">
             <h5>Expense List</h5>
-            <div class="">
-                <x-form.date-range-picker :startDate="$startDate" :endDate="$endDate" />
+            <div class="flex-1 grid grid-cols-1 md:grid-cols-4 gap-3">
+                <div>
+                    <x-form.select name="branch" :options="$branch_options" :live="true" :search="true" placeholder="Select Branch" />
+                </div>
+                <div class="flex justify-end">
+                    <x-form.date-range-picker :startDate="$startDate" :endDate="$endDate" />
+                </div>
             </div>
         </div>
         <div class="card-body p-0">

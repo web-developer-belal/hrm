@@ -1,4 +1,4 @@
-<div x-data="{ modalOpen: false }" x-window:close-modal="modalOpen = false">
+<div x-data="{ modalOpen: false }" @close-modal.window="modalOpen = false">
     <!-- Breadcrumb -->
     <div class="md:flex block items-center justify-between page-breadcrumb mb-4">
         <div class="my-auto mb-2">
@@ -85,7 +85,9 @@
             </div>
         </div>
 
-        <!-- Modal -->
+       
+    </div>
+ <!-- Modal -->
         <div x-show="modalOpen" class="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
             <div class="bg-white rounded p-6 w-full max-w-md" @click.away="modalOpen = false">
                 <h3 class="text-lg font-semibold mb-4">
@@ -104,6 +106,4 @@
                 </div>
             </div>
         </div>
-    </div>
-
 </div>

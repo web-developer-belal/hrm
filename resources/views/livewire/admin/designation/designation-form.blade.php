@@ -46,13 +46,15 @@
                             :options="$group_options" :search="true" placeholder="Select branch group." />
                     @endif
                     <x-form.select label="Select department" name="department_id" :search="true"
-                        placeholder="Select department" :isMultiple="!$isEditMode" :isRequired="true" :error="true" :options="$department_id_options" />
+                        placeholder="Select department" :isMultiple="!$isEditMode" :isRequired="true" :error="true"
+                        :options="$department_id_options" />
+                    <x-form.select label="Status" name="status" :isRequired="true" :error="true"
+                        :options="['active' => 'Active', 'inactive' => 'Inactive']" />
                     <div class="md:col-span-2">
                         <x-form.textarea label="Description" name="description" :error="true" />
                     </div>
 
-                    <x-form.select label="Status" name="status" :isRequired="true" :error="true"
-                        :options="['active' => 'Active', 'inactive' => 'Inactive']" />
+
 
                     <div class="text-end md:col-span-2">
                         <x-form.button type="submit" />

@@ -22211,3 +22211,8 @@ textarea.form-control {
 .w-fit {
     width: fit-content;
 }
+@media (min-width: 768px) {
+.md\:flex-row {
+    flex-direction: row;
+}
+}

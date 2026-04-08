@@ -220,24 +220,23 @@
                             </div>
 
                             {{-- Punch In Info --}}
-                           {{-- @if ($todayAttendanceForCircle && $todayAttendanceForCircle->clock_in)--}}
+                            @if ($todayAttendanceForCircle && $todayAttendanceForCircle->clock_in)
                                 <h6 class="fw-medium flex items-center justify-center mb-4">
                                     <i class="ti ti-fingerprint text-primary me-1"></i>
-                                   Last Punch at {{ \Carbon\Carbon::parse($lastPunch?->device_timestamp)->format('h:i A') }}
+                                    Punch In at {{ \Carbon\Carbon::parse($todayAttendanceForCircle->clock_in)->format('h:i A') }}
                                 </h6>
-                          {{-- @endif--}}
+                            @endif
 
                             {{-- Button Toggle --}}
                             <div>
-                               {{--   @if (!$todayAttendanceForCircle || !$todayAttendanceForCircle->clock_in)  --}}
+                                @if (!$todayAttendanceForCircle || !$todayAttendanceForCircle->clock_in)
                                     <button wire:click="punchIn" type="button"
                                         class="btn btn-primary font-medium me-2 mt-2 w-full">
                                         <span wire:loading wire:target="punchIn">
                                             <i class="ti ti-loader animate-spin"></i>
                                         </span>
-                                        Punch
+                                        Punch In
                                     </button>
-                                     {{--
                                 @elseif(!$todayAttendanceForCircle->clock_out)
                                     <button wire:click="punchOut" type="button"
                                         class="btn btn-primary font-medium me-2 mt-2 w-full">
@@ -252,7 +251,6 @@
                                         Completed
                                     </button>
                                 @endif
-                                --}}
                             </div>
 
                         </div>

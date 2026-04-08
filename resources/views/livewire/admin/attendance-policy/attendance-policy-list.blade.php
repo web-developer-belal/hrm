@@ -115,7 +115,7 @@
                                                 class="ti ti-edit"></i></a>
                                         <button wire:confirm="Are you sure to delete this attendance policy?"
                                             class="size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"
-                                            wire:click="deleteAttendacePolicy({{ $item->id }})"><i
+                                            wire:click="deleteAttendancePolicy({{ $item->id }})"><i
                                                 class="ti ti-trash"></i></button>
                                     </div>
                                 </td>

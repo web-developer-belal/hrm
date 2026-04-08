@@ -6,7 +6,8 @@
             <nav class="flex" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-2">
                     <li class="inline-flex items-center">
-                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center text-xs text-gray-500 hover:text-primary">
+                        <a href="{{ route('admin.dashboard') }}"
+                            class="inline-flex items-center text-xs text-gray-500 hover:text-primary">
                             <i class="ti ti-smart-home"></i>
                         </a>
                     </li>
@@ -21,7 +22,7 @@
                 </ol>
             </nav>
         </div>
-       
+
     </div>
     <!-- /Breadcrumb -->
 
@@ -46,13 +47,16 @@
                                 <div class="w-full bg-light-900 rounded-full h-1" role="progressbar"
                                     aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
                                     style="width: 100%;height: 5px;">
-                                    <div class="h-1 rounded-full bg-pink" style="width: {{ $stats['workingDays']['progress'] }}%"></div>
+                                    <div class="h-1 rounded-full bg-pink"
+                                        style="width: {{ $stats['workingDays']['progress'] }}%"></div>
                                 </div>
                             </div>
                             <div class="flex mt-2">
                                 <p class="text-[12px] font-normal flex items-center text-truncate">
-                                    <span class="text-{{ $stats['workingDays']['percentage'] >= 0 ? 'success' : 'danger' }} text-[12px] flex items-center me-1">
-                                        <i class="ti ti-arrow-wave-right-{{ $stats['workingDays']['percentage'] >= 0 ? 'up' : 'down' }} me-1"></i>
+                                    <span
+                                        class="text-{{ $stats['workingDays']['percentage'] >= 0 ? 'success' : 'danger' }} text-[12px] flex items-center me-1">
+                                        <i
+                                            class="ti ti-arrow-wave-right-{{ $stats['workingDays']['percentage'] >= 0 ? 'up' : 'down' }} me-1"></i>
                                         {{ $stats['workingDays']['percentage'] >= 0 ? '+' : '' }}{{ $stats['workingDays']['percentage'] }}%
                                     </span>from last month
                                 </p>
@@ -76,13 +80,16 @@
                                 <div class="w-full bg-light-900 rounded-full h-1" role="progressbar"
                                     aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
                                     style="width: 100%;height: 5px;">
-                                    <div class="h-1 rounded-full bg-success" style="width: {{ $stats['leave']['progress'] }}%"></div>
+                                    <div class="h-1 rounded-full bg-success"
+                                        style="width: {{ $stats['leave']['progress'] }}%"></div>
                                 </div>
                             </div>
                             <div class="flex mt-2">
                                 <p class="text-[12px] font-normal flex items-center text-truncate">
-                                    <span class="text-{{ $stats['leave']['percentage'] >= 0 ? 'success' : 'danger' }} text-[12px] flex items-center me-1">
-                                        <i class="ti ti-arrow-wave-right-{{ $stats['leave']['percentage'] >= 0 ? 'up' : 'down' }} me-1"></i>
+                                    <span
+                                        class="text-{{ $stats['leave']['percentage'] >= 0 ? 'success' : 'danger' }} text-[12px] flex items-center me-1">
+                                        <i
+                                            class="ti ti-arrow-wave-right-{{ $stats['leave']['percentage'] >= 0 ? 'up' : 'down' }} me-1"></i>
                                         {{ $stats['leave']['percentage'] >= 0 ? '+' : '' }}{{ $stats['leave']['percentage'] }}%
                                     </span>from last month
                                 </p>
@@ -106,13 +113,16 @@
                                 <div class="w-full bg-light-900 rounded-full h-1" role="progressbar"
                                     aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
                                     style="width: 100%;height: 5px;">
-                                    <div class="h-1 rounded-full bg-danger" style="width: {{ $stats['holidays']['progress'] }}%"></div>
+                                    <div class="h-1 rounded-full bg-danger"
+                                        style="width: {{ $stats['holidays']['progress'] }}%"></div>
                                 </div>
                             </div>
                             <div class="flex mt-2">
                                 <p class="text-[12px] font-normal flex items-center text-truncate">
-                                    <span class="text-{{ $stats['holidays']['percentage'] >= 0 ? 'success' : 'danger' }} text-[12px] flex items-center me-1">
-                                        <i class="ti ti-arrow-wave-right-{{ $stats['holidays']['percentage'] >= 0 ? 'up' : 'down' }} me-1"></i>
+                                    <span
+                                        class="text-{{ $stats['holidays']['percentage'] >= 0 ? 'success' : 'danger' }} text-[12px] flex items-center me-1">
+                                        <i
+                                            class="ti ti-arrow-wave-right-{{ $stats['holidays']['percentage'] >= 0 ? 'up' : 'down' }} me-1"></i>
                                         {{ $stats['holidays']['percentage'] >= 0 ? '+' : '' }}{{ $stats['holidays']['percentage'] }}%
                                     </span>from last month
                                 </p>
@@ -134,15 +144,18 @@
                                     </div>
                                 </div>
                                 <div class="w-full bg-light-900 rounded-full h-1" role="progressbar"
-                                    aria-label="Basic example" aria-valuenow="0" aria-valuemin="0"
-                                    aria-valuemax="100" style="width: 100%;height: 5px;">
-                                    <div class="h-1 rounded-full bg-purple" style="width: {{ $stats['halfdays']['progress'] }}%"></div>
+                                    aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                                    style="width: 100%;height: 5px;">
+                                    <div class="h-1 rounded-full bg-purple"
+                                        style="width: {{ $stats['halfdays']['progress'] }}%"></div>
                                 </div>
                             </div>
                             <div class="flex mt-2">
                                 <p class="text-[12px] font-normal flex items-center text-truncate">
-                                    <span class="text-{{ $stats['halfdays']['percentage'] >= 0 ? 'success' : 'danger' }} text-[12px] flex items-center me-1">
-                                        <i class="ti ti-arrow-wave-right-{{ $stats['halfdays']['percentage'] >= 0 ? 'up' : 'down' }} me-1"></i>
+                                    <span
+                                        class="text-{{ $stats['halfdays']['percentage'] >= 0 ? 'success' : 'danger' }} text-[12px] flex items-center me-1">
+                                        <i
+                                            class="ti ti-arrow-wave-right-{{ $stats['halfdays']['percentage'] >= 0 ? 'up' : 'down' }} me-1"></i>
                                         {{ $stats['halfdays']['percentage'] >= 0 ? '+' : '' }}{{ $stats['halfdays']['percentage'] }}%
                                     </span>from last month
                                 </p>
@@ -156,77 +169,75 @@
         <!-- Total Exponses -->
 
         <!-- Attendance Chart -->
-        <div class="col-span-6 flex" 
-            x-data="{
-                chart: null,
-                chartData: @js($chartData),
-                
-                initChart() {
-                    const options = {
-                        series: [{
+        <div class="col-span-6 flex" x-data="{
+            chart: null,
+            chartData: @js($chartData),
+        
+            initChart() {
+                const options = {
+                    series: [{
+                        name: 'Present',
+                        data: this.chartData.present
+                    }, {
+                        name: 'Absent',
+                        data: this.chartData.absent
+                    }],
+                    chart: {
+                        height: 200,
+                        type: 'line',
+                        zoom: {
+                            enabled: false
+                        }
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        curve: 'smooth'
+                    },
+                    grid: {
+                        row: {
+                            colors: ['#f3f3f3', 'transparent'],
+                            opacity: 0.5
+                        },
+                    },
+                    xaxis: {
+                        categories: this.chartData.categories,
+                    },
+                    yaxis: {
+                        labels: {
+                            offsetX: -15,
+                        }
+                    },
+                    colors: ['#28a745', '#ff69b4']
+                };
+        
+                this.chart = new ApexCharts(document.querySelector('#my-attendance-report'), options);
+                this.chart.render();
+            },
+        
+            updateChart(event) {
+                if (event.detail && event.detail.chartData) {
+                    this.chartData = event.detail.chartData;
+        
+                    if (this.chart) {
+                        this.chart.updateOptions({
+                            xaxis: {
+                                categories: this.chartData.categories
+                            }
+                        });
+        
+                        this.chart.updateSeries([{
                             name: 'Present',
                             data: this.chartData.present
                         }, {
                             name: 'Absent',
                             data: this.chartData.absent
-                        }],
-                        chart: {
-                            height: 200,
-                            type: 'line',
-                            zoom: {
-                                enabled: false
-                            }
-                        },
-                        dataLabels: {
-                            enabled: false
-                        },
-                        stroke: {
-                            curve: 'smooth'
-                        },
-                        grid: {
-                            row: {
-                                colors: ['#f3f3f3', 'transparent'],
-                                opacity: 0.5
-                            },
-                        },
-                        xaxis: {
-                            categories: this.chartData.categories,
-                        },
-                        yaxis: {
-                            labels: {
-                                offsetX: -15,
-                            }
-                        },
-                        colors: ['#28a745', '#ff69b4']
-                    };
-
-                    this.chart = new ApexCharts(document.querySelector('#my-attendance-report'), options);
-                    this.chart.render();
-                },
-                
-                updateChart(event) {
-                    if (event.detail && event.detail.chartData) {
-                        this.chartData = event.detail.chartData;
-                        
-                        if (this.chart) {
-                            this.chart.updateOptions({
-                                xaxis: {
-                                    categories: this.chartData.categories
-                                }
-                            });
-                            
-                            this.chart.updateSeries([{
-                                name: 'Present',
-                                data: this.chartData.present
-                            }, {
-                                name: 'Absent',
-                                data: this.chartData.absent
-                            }]);
-                        }
+                        }]);
                     }
                 }
-            }"
-            x-init="initChart()"
+            }
+        }" x-init="initChart()"
             @update-chart.window="updateChart($event)">
             <div class="card border border-borderColor rounded-[5px] shadow-xs bg-white flex-1">
                 <div class="card-header border-0 pb-0 pt-4 px-5">
@@ -254,8 +265,22 @@
         <div
             class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3">
             <h5>Employee Attendance</h5>
-            <div class="">
-                <x-form.date-range-picker :startDate="$startDate" :endDate="$endDate" />
+            <div class="flex-1 grid grid-cols-1 md:grid-cols-4 gap-3">
+                <div>
+                    <x-form.select name="branch" :options="$branch_options" :live="true" :search="true"
+                        placeholder="Select Branch" />
+                </div>
+                <div>
+                    <x-form.select name="department" :options="$department_options" :live="true" :search="true"
+                        placeholder="Select Department" />
+                </div>
+                <div>
+                    <x-form.select name="employee" :options="$employee_options" :live="true" :search="true"
+                        placeholder="Select Employee" />
+                </div>
+                <div class="flex justify-end">
+                    <x-form.date-range-picker :startDate="$startDate" :endDate="$endDate" />
+                </div>
             </div>
         </div>
         <div class="card-body p-0">
@@ -310,11 +335,11 @@
                                         </a>
                                         <div class="ms-2">
                                             <h6 class="font-medium"><a
-                                                    href="{{ route('admin.employees.details', ['emp' => $attendance->id]) }}"
+                                                    href="{{ route('admin.employees.details', ['emp' => $attendance->employee_id]) }}"
                                                     class="text-gray-900 hover:text-primary">{{ $attendance->employee->full_name }}</a>
                                             </h6>
                                             <span
-                                                class="text-xs leading-normal">{{ $attendance->employee->designation->name }}</span>
+                                                class="text-xs leading-normal">{{ $attendance->employee->designation->name ?? '--' }}</span>
                                         </div>
                                     </div>
                                 </td>

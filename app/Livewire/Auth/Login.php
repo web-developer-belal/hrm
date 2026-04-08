@@ -6,8 +6,8 @@ use Livewire\Component;
 
 class Login extends Component
 {
-    public $email='employee1@gmail.com';
-    public $password='1234';
+    public $email='';
+    public $password='';
 
     public function login()
     {

@@ -2,39 +2,164 @@
 namespace App\Livewire\Admin\Reports;
 
 use App\Models\Attendance;
-use App\Models\Holiday;
+use App\Models\Branch;
+use App\Models\Department;
+use App\Models\Employee;
+use Carbon\Carbon;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Carbon\Carbon;
 
 class AttendanceReport extends Component
 {
     use WithPagination;
+
     public $startDate;
     public $endDate;
+    public $branch;
+    public $branch_options = [];
+    public $branch_search = '';
+    public $department;
+    public $department_options = [];
+    public $department_search = '';
+    public $employee;
+    public $employee_options = [];
+    public $employee_search = '';
 
     public function mount()
     {
         $this->startDate = now()->subMonth()->format('Y-m-d');
-        $this->endDate   = now()->format('Y-m-d');
+        $this->endDate = now()->format('Y-m-d');
+
+        $this->loadBranches();
+        $this->loadDepartments();
+        $this->loadEmployees();
+    }
+
+    public function loadBranches()
+    {
+        $this->branch_options = Branch::query()
+            ->whereHas('departments')
+            ->where('status', 'active')
+            ->when($this->branch_search, fn($query) =>
+                $query->where('name', 'like', '%' . $this->branch_search . '%')
+            )
+            ->orderBy('name')
+            ->take(10)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    public function loadDepartments()
+    {
+        $this->department_options = Department::query()
+            ->when($this->branch, fn($query) => $query->where('branch_id', $this->branch))
+            ->where('status', 'active')
+            ->when($this->department_search, fn($query) =>
+                $query->where('name', 'like', '%' . $this->department_search . '%')
+            )
+            ->orderBy('name')
+            ->take(10)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    public function loadEmployees()
+    {
+        $this->employee_options = Employee::query()
+            ->where('status', 1)
+            ->when($this->branch, fn($query) => $query->where('branch_id', $this->branch))
+            ->when($this->department, fn($query) => $query->where('department_id', $this->department))
+            ->when($this->employee_search, function ($query) {
+                $query->where(function ($employeeQuery) {
+                    $employeeQuery->where('first_name', 'like', '%' . $this->employee_search . '%')
+                        ->orWhere('last_name', 'like', '%' . $this->employee_search . '%')
+                        ->orWhere('employee_code', 'like', '%' . $this->employee_search . '%');
+                });
+            })
+            ->orderBy('first_name')
+            ->take(10)
+            ->get()
+            ->mapWithKeys(fn($employee) => [
+                $employee->id => $employee->full_name . ' (' . $employee->employee_code . ')',
+            ])
+            ->toArray();
+    }
+
+    public function updatedBranchSearch()
+    {
+        $this->loadBranches();
+    }
+
+    public function updatedDepartmentSearch()
+    {
+        $this->loadDepartments();
+    }
+
+    public function updatedEmployeeSearch()
+    {
+        $this->loadEmployees();
+    }
+
+    public function updatedBranch()
+    {
+        $this->department = null;
+        $this->employee = null;
+
+        $this->loadDepartments();
+        $this->loadEmployees();
+        $this->refreshReportData();
+    }
+
+    public function updatedDepartment()
+    {
+        $this->employee = null;
+
+        $this->loadEmployees();
+        $this->refreshReportData();
+    }
+
+    public function updatedEmployee()
+    {
+        $this->refreshReportData();
     }
 
     #[On('date-range-update')]
     public function dateRangeUpdate($start, $end)
     {
         $this->startDate = $start;
-        $this->endDate   = $end;
-        $this->dispatch('update-chart', 
+        $this->endDate = $end;
+
+        $this->refreshReportData();
+    }
+
+    private function refreshReportData(): void
+    {
+        $this->resetPage();
+
+        $this->dispatch('update-chart',
             chartData: $this->getChartData(),
             stats: $this->getStats()
         );
     }
 
+    private function attendanceQuery()
+    {
+        return Attendance::query()
+            ->whereNotNull('status')
+            ->when($this->branch, fn($query) => $query->where('branch_id', $this->branch))
+            ->when($this->department, function ($query) {
+                $query->whereHas('employee', function ($employeeQuery) {
+                    $employeeQuery->where('department_id', $this->department);
+                });
+            })
+            ->when($this->employee, fn($query) => $query->where('employee_id', $this->employee));
+    }
+
     public function getStats()
     {
-        $attendances = Attendance::where('date', '>=', $this->startDate)
-            ->where('date', '<=', $this->endDate)
+        $attendances = $this->attendanceQuery()
+            ->whereBetween('date', [$this->startDate, $this->endDate])
             ->get();
 
         $totalWorkingDays = $attendances->whereIn('status', ['present', 'late'])->count();
@@ -42,13 +167,12 @@ class AttendanceReport extends Component
         $totalHolidays = $attendances->where('status', 'holiday')->count();
         $totalHalfdays = $attendances->where('status', 'half_day')->count();
 
-        // Calculate previous period for comparison
-        $daysDiff = Carbon::parse($this->startDate)->diffInDays(Carbon::parse($this->endDate));
+        $daysDiff = max(1, Carbon::parse($this->startDate)->diffInDays(Carbon::parse($this->endDate)) + 1);
         $prevStart = Carbon::parse($this->startDate)->subDays($daysDiff)->format('Y-m-d');
         $prevEnd = Carbon::parse($this->startDate)->subDay()->format('Y-m-d');
-        
-        $prevAttendances = Attendance::where('date', '>=', $prevStart)
-            ->where('date', '<=', $prevEnd)
+
+        $prevAttendances = $this->attendanceQuery()
+            ->whereBetween('date', [$prevStart, $prevEnd])
             ->get();
 
         $prevWorkingDays = $prevAttendances->whereIn('status', ['present', 'late'])->count();
@@ -84,57 +208,49 @@ class AttendanceReport extends Component
     {
         $start = Carbon::parse($this->startDate);
         $end = Carbon::parse($this->endDate);
-        
+
         $categories = [];
         $presentData = [];
         $absentData = [];
-        
-        // Group by month if date range is more than 60 days
+
         if ($start->diffInDays($end) > 60) {
             $current = $start->copy()->startOfMonth();
             $endMonth = $end->copy()->endOfMonth();
-            
+
             while ($current->lte($endMonth)) {
                 $monthStart = $current->copy()->startOfMonth();
                 $monthEnd = $current->copy()->endOfMonth();
-                
+
                 $categories[] = $current->format('M Y');
-                
-                $present = Attendance::whereIn('status', ['present', 'late'])
+                $presentData[] = $this->attendanceQuery()
+                    ->whereIn('status', ['present', 'late'])
                     ->whereBetween('date', [$monthStart, $monthEnd])
                     ->count();
-                    
-                $absent = Attendance::where('status', 'absent')
+                $absentData[] = $this->attendanceQuery()
+                    ->where('status', 'absent')
                     ->whereBetween('date', [$monthStart, $monthEnd])
                     ->count();
-                
-                $presentData[] = $present;
-                $absentData[] = $absent;
-                
+
                 $current->addMonth();
             }
         } else {
-            // Group by day
             $current = $start->copy();
-            
+
             while ($current->lte($end)) {
                 $categories[] = $current->format('M d');
-                
-                $present = Attendance::whereIn('status', ['present', 'late'])
+                $presentData[] = $this->attendanceQuery()
+                    ->whereIn('status', ['present', 'late'])
                     ->whereDate('date', $current)
                     ->count();
-                    
-                $absent = Attendance::where('status', 'absent')
+                $absentData[] = $this->attendanceQuery()
+                    ->where('status', 'absent')
                     ->whereDate('date', $current)
                     ->count();
-                
-                $presentData[] = $present;
-                $absentData[] = $absent;
-                
+
                 $current->addDay();
             }
         }
-        
+
         return [
             'categories' => $categories,
             'present' => $presentData,
@@ -144,20 +260,16 @@ class AttendanceReport extends Component
 
     public function render()
     {
-        $attendanceRecords = Attendance::with('employee')
-            ->whereNotNull('status')
-            ->where('date', '>=', $this->startDate)
-            ->where('date', '<=', $this->endDate)
+        $attendanceRecords = $this->attendanceQuery()
+            ->with(['employee.designation'])
+            ->whereBetween('date', [$this->startDate, $this->endDate])
             ->orderBy('date', 'desc')
             ->paginate(10);
-        
-        $stats = $this->getStats();
-        $chartData = $this->getChartData();
-            
+
         return view('livewire.admin.reports.attendance-report', [
             'attendanceRecords' => $attendanceRecords,
-            'stats' => $stats,
-            'chartData' => $chartData,
+            'stats' => $this->getStats(),
+            'chartData' => $this->getChartData(),
         ]);
     }
 }

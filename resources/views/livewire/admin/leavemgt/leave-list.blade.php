@@ -81,7 +81,7 @@
                                 <td class="px-5 py-2.5 text-gray-500">
                                     {{ $loop->iteration }}
                                 </td>
-                                <td class="px-5 py-2.5 text-gray-900">{{ $leave->employee->full_name }}</td>
+                                <td class="px-5 py-2.5 text-gray-900">{{ $leave->employee?->full_name }}</td>
                                 <td class="px-5 py-2.5 text-gray-900">{{ $leave->type->name }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $leave->from_date->format('d-M-Y') }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $leave->to_date->format('d-M-Y') }}</td>
@@ -122,7 +122,11 @@
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $leave->approver->full_name ?? '--' }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    <div class="action-icon inline-flex">
+                                    <div class="action-icon inline-flex gap-1">
+                                        <a href="{{ route('admin.leavemgt.leave.view', $leave) }}"
+                                            class="size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900">
+                                            <i class="ti ti-eye"></i>
+                                        </a>
                                         <button type="button" wire:click="deleteLeave({{ $leave->id }})"
                                             wire:confirm="Are you sure you want to delete this leave?"
                                             class="size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i

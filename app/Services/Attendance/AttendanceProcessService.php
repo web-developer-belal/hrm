@@ -121,6 +121,8 @@ if ($lastPunch->lessThan($shiftStart)) {
             $earlyExitMinutes = $lastPunch->diffInMinutes($shiftEnd);
             $status = 'early exit';
         }
+        
+
 
     // Overtime Calculation
         if ($lastPunch->greaterThan($shiftEnd)) {

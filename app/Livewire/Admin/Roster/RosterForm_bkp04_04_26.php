@@ -310,13 +310,10 @@ class RosterForm extends Component
             (new RosterRequest())->messages()
         );
 
-        // $payload = collect($data)->except(['employees'])->all();
-        $payload = collect($data)
-    ->except(['employees', 'branch_id', 'department_id']) 
-    ->all();
+        $payload = collect($data)->except(['employees'])->all();
+       
         $createdCount = 0;
-        // \Log::info("Roster Data". $payload);
-        // dd($payload );
+       
 
         DB::transaction(function () use ($data, $payload, &$createdCount) {
 
@@ -366,24 +363,11 @@ class RosterForm extends Component
                 }
 
                 $rosterData = $payload;
-               $rosterData['branch_id'] = (int) $department->branch_id;
-                $rosterData['department_id'] = (int) $department->id;
-                 try {
-        $roster = Roster::create($rosterData);
-    } catch (\Throwable $e) {
-        \Log::error('Roster create failed', [
-            'data' => $rosterData,
-            'error' => $e->getMessage()
-        ]);
-        continue; 
-    }
+                $rosterData['branch_id'] = $department->branch_id;
+                $rosterData['department_id'] = $department->id;
 
-                // $roster = Roster::create($rosterData);
+                $roster = Roster::create($rosterData);
                 $roster->load('shift');
-                 if (!$roster->shift) {
-        \Log::error('Shift not found', ['shift_id' => $roster->shift_id]);
-        continue;
-    }
 
                 $syncData = [];
 
@@ -405,7 +389,7 @@ class RosterForm extends Component
                         : 'offday';
 
                     foreach ($departmentEmployees as $employee) {
-                        Attendance::insertOrIgnore([
+                        Attendance::create([
                             'branch_id'        => $department->branch_id,
                             'employee_id'      => $employee->id,
                             'roster_id'        => $roster->id,
@@ -413,8 +397,6 @@ class RosterForm extends Component
                             'shift_start_time' => $roster->shift->start_time,
                             'shift_end_time'   => $roster->shift->end_time,
                             'status'           => $status,
-                            'created_at'       => now(),
-                            'updated_at'       => now(),
                         ]);
                     }
                 }

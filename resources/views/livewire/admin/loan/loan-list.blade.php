@@ -78,7 +78,7 @@
                                   {{ $loop->iteration }}
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $item->branch->name ?? 'N/A' }}</td>
-                                <td class="px-5 py-2.5 text-gray-900">{{ $item->employee->first_name }}</td>
+                                <td class="px-5 py-2.5 text-gray-900">{{ $item->employee?->first_name }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $item->amount ?? 'N/A' }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">{{ $item->installments ?? 'N/A' }}</td>
 

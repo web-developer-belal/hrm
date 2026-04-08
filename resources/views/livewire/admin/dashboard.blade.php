@@ -336,7 +336,7 @@
                                         <td class="px-5 py-2.5 text-gray-500">
                                             {{ $loop->index + 1 }}
                                         </td>
-                                        <td class="px-5 py-2.5 text-gray-900">{{ $leave->employee->full_name }}</td>
+                                        <td class="px-5 py-2.5 text-gray-900">{{ $leave->employee?->full_name }}</td>
                                         <td class="px-5 py-2.5 text-gray-900">{{ $leave->type->name }}</td>
                                         <td class="px-5 py-2.5 text-gray-500">{{ $leave->from_date->format('d-M-Y') }}
                                         </td>

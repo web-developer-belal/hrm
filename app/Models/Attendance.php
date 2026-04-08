@@ -33,6 +33,9 @@ class Attendance extends Model
         'date'      => 'date',
         'clock_in'  => 'datetime',
         'clock_out' => 'datetime',
+        'in_grace_period_minutes'=> 'int',
+        'out_grace_period_minutes'=> 'int',
+        
     ];
 
     public function employee()

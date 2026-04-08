@@ -1,7 +1,6 @@
 <?php
 namespace App\Livewire\Employ;
 
-use App\Models\AttendanceLog;
 use App\Models\Attendance;
 use App\Models\AttendancePolicy;
 use App\Models\Employee;
@@ -26,8 +25,6 @@ class Dashboard extends Component
 
     public $todayBirthdayEmployees = [];
     public $holidays               = [];
-    
-    public $lastPunch;
 
     public function mount()
     {
@@ -45,10 +42,6 @@ class Dashboard extends Component
             ->orderBy('date', 'asc')
             ->take(10)
             ->get();
-        $this->lastPunch = AttendanceLog::where('employee_id', $this->employee->id)
-            ->whereDate('attendance_date', Carbon::today())
-            ->latest()
-            ->first();
 
         $this->loadTodayAttendance();
         $this->startDate = Carbon::now()->startOfMonth()->toDateString();
@@ -68,30 +61,16 @@ class Dashboard extends Component
         $this->todayAttendance = Attendance::where('employee_id', $this->employee->id)
             ->whereDate('date', Carbon::today())
             ->first();
-        // $this->todayAttendance = AttendanceLog::where('employee_id', $this->employee->id)
-        //     ->whereDate('attendance_date', Carbon::today())
-        //     ->first();
     }
 
     public function getAttendanceData()
     {
         $employeeId = $this->employee->id;
 
-        // $present = Attendance::where('employee_id', $this->employee->id)
-        //     // ->where('status', 'present')
-        //     ->where('status', 'present')->orwhere('status','early exit')->orWhere('status','late')
-        //     ->whereBetween('date', [$this->startDate, $this->endDate])
-        //     ->count();
-        //     dd($employeeId);
-        
-        $present = Attendance::where('employee_id', $this->employee->id)
-    ->where(function ($q) {
-        $q->where('status', 'present')
-          ->orWhere('status', 'early exit')
-          ->orWhere('status', 'late');
-    })
-    ->whereBetween('date', [$this->startDate, $this->endDate])
-    ->count();
+        $present = Attendance::where('employee_id', $employeeId)
+            ->where('status', 'present')
+            ->whereBetween('date', [$this->startDate, $this->endDate])
+            ->count();
 
         $absent = Attendance::where('employee_id', $employeeId)
             ->where('status', 'absent')
@@ -99,16 +78,13 @@ class Dashboard extends Component
             ->count();
 
         $late = Attendance::where('employee_id', $employeeId)
-            // ->where('status', 'late')
-            ->whereRaw("TIME(clock_in) > shift_start_time")
+            ->where('status', 'late')
             ->whereBetween('date', [$this->startDate, $this->endDate])
             ->count();
 
         $onTime = Attendance::where('employee_id', $employeeId)
-            // ->where('status', 'present')
-            // ->where('late_minutes', 0)
-            ->whereRaw("TIME(clock_in) < shift_start_time")
-            
+            ->where('status', 'present')
+            ->where('late_minutes', 0)
             ->whereBetween('date', [$this->startDate, $this->endDate])
             ->count();
 
@@ -275,25 +251,6 @@ class Dashboard extends Component
     {
         $today = Carbon::today();
         $now   = Carbon::now();
-        
-        // Save to Attendance Log Data 
-         $minuteKey = $today->format('Y-m-d') . ' ' . $now->format('H:i');
-
-$exists = AttendanceLog::where('employee_id', $this->employee->id)
-    ->where('attendance_minute', $minuteKey)
-    ->exists();
-
-if (!$exists) {
-    AttendanceLog::create([
-        'employee_id'        => $this->employee->id,
-        'attendance_date'    => $today->toDateString(),
-        'attendance_time'    => $now->format('H:i:s'),
-        'attendance_minute'  => $minuteKey,
-        'device_timestamp'   => $now,
-    ]);
-}else{
-     flash()->success('Already Punch in 1 Minute..');
-}
 
         $attendance = Attendance::where('employee_id', $this->employee->id)
             ->whereDate('date', $today)
@@ -342,21 +299,7 @@ if (!$exists) {
             $attendance->save();
             flash()->success('Punched in successfully.');
         } else {
-            
-             $attendance->clock_out = Carbon::now();
-
-            $attendance->overtime_minutes = 0;
-            if ($attendance->shift_end_time && $attendance->clock_out && $this->canCountOvertime($attendance)) {
-                $shiftEnd = Carbon::parse($attendance->date)->setTimeFromTimeString($attendance->shift_end_time);
-                if ($attendance->clock_out->gt($shiftEnd)) {
-                    $attendance->overtime_minutes = $shiftEnd->diffInMinutes($attendance->clock_out);
-                }
-            }
-
-            $attendance->save();
-            flash()->success('Punched successfully added');
-            
-           
+            flash()->warning('You have already punched in today.');
         }
         $this->loadTodayAttendance();
     }

@@ -10,5 +10,6 @@ class DeviceLog extends Model
         'sn',
         'option',
         'url',
+        'data',
     ];
 }

@@ -97,7 +97,7 @@
                                             wire:click="deleteDesignation({{ $item->id }})"><i
                                                 class="ti ti-trash"></i></button>
                                         <button title="Salary" wire:click="addOrUpdateSalary({{ $item->id }})"
-                                            class="size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900" "><i
+                                            class="size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-coin"></i></button>
                                     </div>
                                 </td>
@@ -119,19 +119,19 @@
 
 
     @if ($salaryModalshow)
-        <div class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[1055] justify-center items-center flex-wrap w-full md:inset-0 h-[calc(100%-1rem)] max-h-full transition-all duration-300 ease-in-out modal p-4 flex"
-            data-select2-id="select2-data-add_bank_satutory" aria-modal="true" role="dialog">
-            <div class="relative p-4 w-full max-w-[800px] max-h-full" data-select2-id="select2-data-32-9dal">
-                <div class="relative bg-white rounded-defaultradius">
-                    <div class="flex items-center justify-between p-4 border-b border-borderColor">
-                        <h4 class="font-semibold">Salary Template</h4>
-                        <button type="button"
-                            class="end-2.5 text-white bg-gray-500 hover:bg-danger hover:text-white rounded-full text-xs leading-normal size-5 ms-auto inline-flex justify-center items-center"
-                            data-modal-hide="add_bank_satutory">
-                            <i class="ti ti-x" wire:click="closeModal"></i>
-                            <span class="sr-only">Close modal</span>
-                        </button>
-                    </div>
+        <div class="fixed inset-0 z-50 overflow-y-auto" aria-modal="true" role="dialog">
+            <div class="min-h-full flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/50" wire:click="closeModal"></div>
+                <div class="relative w-full max-w-[800px] pointer-events-auto" >
+                    <div class="bg-white rounded-defaultradius max-h-[80vh] overflow-y-auto" style="height:80vh;">
+                        <div class="flex items-center justify-between p-4 border-b border-borderColor">
+                            <h4 class="font-semibold">Salary Template</h4>
+                            <button type="button" wire:click="closeModal"
+                                class="end-2.5 text-white bg-gray-500 hover:bg-danger hover:text-white rounded-full text-xs leading-normal size-5 ms-auto inline-flex justify-center items-center">
+                                <i class="ti ti-x"></i>
+                                <span class="sr-only">Close modal</span>
+                            </button>
+                        </div>
                     <form wire:submit="addOrUpdateSalarySubmit">
                         <div class="p-4" data-select2-id="select2-data-30-25jf">
                             <div class="border-b mb-4">

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('leave_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('branch_id')->nullable()->constrained()->onDelete('set null');
+             $table->foreignId('branch_id')->nullable()->constrained()->onDelete('set null');
             $table->string('name');
             $table->integer('annual_limit');
             $table->tinyInteger('is_paid')->default(0)->comment('0 for unpaid 1 for paid');

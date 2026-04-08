@@ -214,8 +214,22 @@
         <div
             class="card-header py-4 px-5 border-b border-borderColor flex items-center justify-between flex-wrap gap-3">
             <h5>Payslip List</h5>
-            <div class="">
-                <x-form.date-range-picker :startDate="$startDate" :endDate="$endDate" />
+           <div class="flex-1 grid grid-cols-1 md:grid-cols-4 gap-3">
+                <div>
+                    <x-form.select name="branch" :options="$branch_options" :live="true" :search="true"
+                        placeholder="Select Branch" />
+                </div>
+                <div>
+                    <x-form.select name="department" :options="$department_options" :live="true" :search="true"
+                        placeholder="Select Department" />
+                </div>
+                <div>
+                    <x-form.select name="employee" :options="$employee_options" :live="true" :search="true"
+                        placeholder="Select Employee" />
+                </div>
+                <div class="flex justify-end">
+                    <x-form.date-range-picker :startDate="$startDate" :endDate="$endDate" />
+                </div>
             </div>
         </div>
         <div class="card-body p-0">
@@ -233,9 +247,7 @@
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Branch</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Year</th>
-                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
-                                Month</th>
+                                Pay Period</th>
 
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Action</th>
@@ -250,26 +262,25 @@
                                 <td class="px-5 py-2.5 text-gray-500">{{ $pay->employee->employee_code }}</td>
                                 <td class="px-5 py-2.5 text-gray-500 p-3">
                                     <div class="flex items-center file-name-icon">
-                                        <a href="{{ route('admin.employees.details', ['emp' => $pay->id]) }}"
+                                        <a href="{{ route('admin.employees.details', ['emp' => $pay->employee_id]) }}"
                                             class="size-8 rounded-full border border-borderColor">
                                             <img src="{{ customAsset($pay->employee->photo, true, 'emp', $pay->employee->first_name) }}"
                                                 class="rounded-full size-8 img-fluid" alt="img">
                                         </a>
                                         <div class="ms-2">
                                             <h6 class="font-medium"><a
-                                                    href="{{ route('admin.employees.details', ['emp' => $pay->id]) }}"
+                                                    href="{{ route('admin.employees.details', ['emp' => $pay->employee_id]) }}"
                                                     class="text-gray-900 hover:text-primary">{{ $pay->employee->first_name . ' ' . $pay->employee->last_name }}</a>
                                             </h6>
                                             <span class="text-xs leading-normal">
-                                                {{ $pay->employee->designation->name }}</span>
+                                                {{ $pay->employee->designation->name ?? '--' }}</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $pay->branch->name ?? $pay->employee->branch->name }}</td>
-                                <td class="px-5 py-2.5 text-gray-500">{{ $pay->year }}</td>
+                                    {{ $pay->branch->name ?? $pay->employee->branch->name ?? '--' }}</td>
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {{ \Carbon\Carbon::create()->month($pay->month)->format('F') }}</td>
+                                    {{ $pay->period_start?->format('d M Y') ?? '--' }} - {{ $pay->period_end?->format('d M Y') ?? '--' }}</td>
 
                                 <td class="px-5 py-2.5">
                                     <a href="{{ route('admin.payroll.payslips.show', ['payslip' => $pay->id]) }}"

@@ -60,6 +60,13 @@ class EmployeeList extends Component
         $this->loadBranches();
     }
 
+    public function deleteEmployee($id)
+    {
+        $employee = Employee::findOrFail($id);
+        $employee->delete();
+        flash()->success('Employee deleted successfully.');
+    }
+
     protected function loadBranches(): void
     {
         $this->branch_options = Branch::query()

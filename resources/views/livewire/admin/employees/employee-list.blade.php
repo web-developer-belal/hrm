@@ -32,7 +32,8 @@
         <div class="flex my-xl-auto right-content items-center flex-wrap gap-2">
             <div class="mb-2 flex gap-2 items-center">
                 <div x-data="{ openOtDropdown: false }" class="relative inline-block">
-                    <button x-bind:disabled="selectedEmployees.length === 0" type="button" @click="openOtDropdown = !openOtDropdown"
+                    <button x-bind:disabled="selectedEmployees.length === 0" type="button"
+                        @click="openOtDropdown = !openOtDropdown"
                         class="flex items-center bg-warning text-sm font-medium py-2 rounded text-white px-3 hover:bg-warning-900 hover:text-white">
                         <i class="ti ti-user-cog me-2"></i>Update OT
                         <i class="ti ti-chevron-down ms-1"></i>
@@ -100,6 +101,8 @@
                                 SL
                             </th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
+                                Device ID</th>
+                            <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Emp ID</th>
                             <th class="text-sm leading-normal px-5 py-2.5 bg-gray-200 text-gray-900 border-borderColor">
                                 Employee info</th>
@@ -131,6 +134,9 @@
                                     {{ $loop->iteration }}
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">
+                                    {{ $emp->id }}
+                                </td>
+                                <td class="px-5 py-2.5 text-gray-500">
                                     {{ $emp->employee_code }}
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500 p-3">
@@ -145,7 +151,9 @@
                                                     href="{{ route('admin.employees.details', ['emp' => $emp->id]) }}"
                                                     class="text-gray-900 hover:text-primary">{{ $emp->full_name }}</a>
                                             </h6>
-                                            <span class="bg-success text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs w-fit"> {{ $emp->designation->name }}</span>
+                                            <span
+                                                class="bg-success text-white rounded text-[10px] font-medium leading-4 py-0.5 px-1.5 inline-flex items-center badge-xs w-fit">
+                                                {{ $emp->designation?->name }}</span>
                                             <span class="text-xs leading-normal"> {{ $emp->email }}</span>
                                             <span class="text-xs leading-normal"> {{ $emp->contact_number }}</span>
                                         </div>
@@ -153,7 +161,7 @@
                                 </td>
 
                                 <td class="px-5 py-2.5 text-gray-500">
-                                    {{ $emp->branch->name }}
+                                    {{ $emp->branch?->name }}
                                 </td>
                                 <td class="px-5 py-2.5 text-gray-500">
                                     {{ $emp->department->name }}
@@ -197,6 +205,13 @@
                                         <a href="{{ route('admin.employees.details', ['emp' => $emp->id]) }}"
                                             class="me-2 size-[26px] flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"><i
                                                 class="ti ti-eye"></i></a>
+
+                                        <button wire:confirm="Are you sure you want to delete this employee?" type="button" wire:click="deleteEmployee({{ $emp->id }})"
+                                            class="me-2 size-6.5 flex items-center justify-center rounded-[5px] hover:bg-light-900 hover:text-gray-900"
+                                            title="Delete Employee">
+                                            <i class="ti ti-trash"></i>
+                                        </button>
+
                                     </div>
                                 </td>
                             </tr>
@@ -275,7 +290,8 @@
             }
 
             modal.addEventListener('click', function(event) {
-                if (event.target.hasAttribute('data-modal-overlay') || event.target.hasAttribute('data-close-modal')) {
+                if (event.target.hasAttribute('data-modal-overlay') || event.target.hasAttribute(
+                        'data-close-modal')) {
                     closeModal();
                 }
             });
