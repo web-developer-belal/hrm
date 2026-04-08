@@ -1,4 +1,4 @@
-<div class="w-full">
+<div {{ $attributes->merge(['class' => 'w-full']) }}>
     @if ($label)
         <label class="block mb-1 text-sm font-medium text-gray-700">
             {{ $label }}

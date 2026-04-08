@@ -77,12 +77,12 @@
                     <x-form.input name="search" placeholder="Search here .." :live="true" />
                 </div>
                 <div class="">
-                    <x-form.select name="branch" placeholder="Select branch" :live="true" :option="$branch_options"
+                    <x-form.select name="branch" placeholder="Select branch" :live="true" :options="$branch_options"
                         :search="true" />
                 </div>
                 <div class="">
                     <x-form.select name="departments" placeholder="Select department" :live="true"
-                        :option="$departments_options" :isMultiple="true" :search="true" />
+                        :options="$departments_options" :isMultiple="true" :search="true" />
                 </div>
             </div>
         </div>

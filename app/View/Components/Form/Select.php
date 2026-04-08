@@ -14,13 +14,16 @@ class Select extends Component
         public string $label = '',
         public ?string $name = null,
         public ?array $options = [],
+        public ?array $option = [],
         public ?string $placeholder = null,
         public bool $isRequired = false,
         public bool $error = true,
         public bool $live = false,
         public bool $search = false,
         public bool $isMultiple = false,
-    ) {}
+    ) {
+        $this->options = $this->options ?: $this->option ?: [];
+    }
 
     /**
      * Get the view / contents that represent the component.

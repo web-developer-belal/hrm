@@ -36,7 +36,7 @@
                     <x-form.input name="search" placeholder="Search here" :live="true" />
                 </div>
                 <div class="me-3">
-                    <x-form.select name="branch" placeholder="Select branch" :live="true" :option="$branch_options"
+                    <x-form.select name="branch" placeholder="Select branch" :live="true" :options="$branch_options"
                         :search="true" />
                 </div>
             </div>

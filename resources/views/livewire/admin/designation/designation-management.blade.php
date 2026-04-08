@@ -42,7 +42,7 @@
                 </div>
                 <div class="me-3">
                     <x-form.select name="departments" placeholder="Select department" :live="true"
-                        :option="$departments_options" :isMultiple="true" :search="true" />
+                        :options="$departments_options" :isMultiple="true" :search="true" />
                 </div>
             </div>
         </div>

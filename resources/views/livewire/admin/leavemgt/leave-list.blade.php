@@ -41,7 +41,7 @@
                     <x-form.input name="search" placeholder="Search employee" :live="true" />
                 </div>
                 <div class="me-3">
-                    <x-form.select name="branches" placeholder="Select branch" :live="true" :option="$branches_options"
+                    <x-form.select name="branches" placeholder="Select branch" :live="true" :options="$branches_options"
                         :isMultiple="true" :search="true" />
                 </div>
             </div>

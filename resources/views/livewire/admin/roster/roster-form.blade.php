@@ -56,7 +56,7 @@
 
                     <!-- Branch -->
                     <x-form.select placeholder="Select Branch" label="Select Branch" name="branch_id" :isRequired="true" :error="true"
-                        :options="$branch_id_options" :isMultiple="!$isEditMode" :search="true" />
+                        :options="$branch_id_options" :isMultiple="!$isEditMode" :search="true" :live="true" />
 
                     <!-- Department (Optional) -->
                     <x-form.select wire:key="department-select-{{ $branchKey }}" placeholder="Select Department" label="Select Department" name="department_id" :isRequired="true" :error="true"

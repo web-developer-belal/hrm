@@ -11,6 +11,7 @@ use App\Models\Roster;
 use App\Models\Shift;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class RosterForm extends Component
@@ -46,7 +47,7 @@ class RosterForm extends Component
     public $shift_id_options = [];
     public $shift_id_search;
 
-        public $group;
+    public $group;
     public $group_options = [];
     public $group_search;
 
@@ -95,7 +96,7 @@ class RosterForm extends Component
         $this->loadBranchIdOptions();
     }
 
-        public function loadGroups()
+    public function loadGroups()
     {
         $this->group_options = BranchGroup::query()
             ->when($this->group_search, fn($q) =>
@@ -135,9 +136,9 @@ class RosterForm extends Component
         $this->shift_id_options = Shift::when($this->shift_id_search, fn($q) =>
             $q->where('name', 'like', '%' . $this->shift_id_search . '%')
         )
-        ->where('status', 'active')->take(5)
-        ->pluck('name', 'id')
-        ->toArray();
+            ->where('status', 'active')->take(5)
+            ->pluck('name', 'id')
+            ->toArray();
     }
 
     public function updatedShiftIdSearch()
@@ -167,9 +168,9 @@ class RosterForm extends Component
     {
         $this->department_id         = null;
         $this->employees             = [];
-        $this->department_id_search  = null;
+        $this->department_id_search  = '';
         $this->department_id_options = [];
-        $this->employees_search      = null;
+        $this->employees_search      = '';
         $this->employees_options     = [];
 
         $this->loadDepartmentIdOptions();
@@ -184,11 +185,13 @@ class RosterForm extends Component
             return;
         }
 
-        $this->department_id_options = Department::whereHas('employees')->where('status', 'active')
+        $this->department_id_options = Department::query()
             ->whereIn('branch_id', $branchIds)
+            ->where('status', 'active')
             ->when($this->department_id_search, fn($q) =>
                 $q->where('name', 'like', '%' . $this->department_id_search . '%')
             )
+            ->orderBy('name')
             ->pluck('name', 'id')
             ->toArray();
     }
@@ -201,7 +204,7 @@ class RosterForm extends Component
     public function updatedDepartmentId()
     {
         $this->employees         = [];
-        $this->employees_search  = null;
+        $this->employees_search  = '';
         $this->employees_options = [];
 
         $this->loadEmployeesOptions();
@@ -209,7 +212,7 @@ class RosterForm extends Component
 
     protected function loadEmployeesOptions()
     {
-        $branchIds = $this->selectedBranchIds();
+        $branchIds     = $this->selectedBranchIds();
         $departmentIds = $this->selectedDepartmentIds();
 
         if ($branchIds === [] || $departmentIds === []) {
@@ -277,21 +280,21 @@ class RosterForm extends Component
     {
         $rules = (new RosterRequest())->rules();
 
-        $rules['working_days'] = 'required|array|min:1';
+        $rules['working_days']    = 'required|array|min:1';
         $rules['weekly_off_days'] = 'required|array';
-        $rules['employees'] = 'required|array|min:1';
-        $rules['employees.*'] = 'required|exists:employees,id';
+        $rules['employees']       = 'required|array|min:1';
+        $rules['employees.*']     = 'required|exists:employees,id';
 
         if ($this->isEditMode) {
-            $rules['branch_id'] = 'required|exists:branches,id';
+            $rules['branch_id']     = 'required|exists:branches,id';
             $rules['department_id'] = 'required|exists:departments,id';
 
             return $rules;
         }
 
-        $rules['branch_id'] = 'required|array|min:1';
-        $rules['branch_id.*'] = 'required|exists:branches,id';
-        $rules['department_id'] = 'required|array|min:1';
+        $rules['branch_id']       = 'required|array|min:1';
+        $rules['branch_id.*']     = 'required|exists:branches,id';
+        $rules['department_id']   = 'required|array|min:1';
         $rules['department_id.*'] = 'required|exists:departments,id';
 
         return $rules;
@@ -299,7 +302,7 @@ class RosterForm extends Component
 
     public function save()
     {
-        
+
         $allDays = array_keys($this->working_days_options);
 
         $this->weekly_off_days = array_values(
@@ -312,8 +315,8 @@ class RosterForm extends Component
 
         // $payload = collect($data)->except(['employees'])->all();
         $payload = collect($data)
-    ->except(['employees', 'branch_id', 'department_id']) 
-    ->all();
+            ->except(['employees', 'branch_id', 'department_id'])
+            ->all();
         $createdCount = 0;
         // \Log::info("Roster Data". $payload);
         // dd($payload );
@@ -325,9 +328,9 @@ class RosterForm extends Component
                 return;
             }
 
-            $branchIds = $this->selectedBranchIds();
+            $branchIds     = $this->selectedBranchIds();
             $departmentIds = $this->selectedDepartmentIds();
-            $employeeIds = $this->selectedEmployeeIds();
+            $employeeIds   = $this->selectedEmployeeIds();
 
             $departments = Department::query()
                 ->whereIn('id', $departmentIds)
@@ -358,32 +361,32 @@ class RosterForm extends Component
             $createdRosters = collect();
 
             foreach ($departments as $department) {
-                $bucketKey = $department->branch_id . '-' . $department->id;
+                $bucketKey           = $department->branch_id . '-' . $department->id;
                 $departmentEmployees = $employeesByBucket->get($bucketKey, collect());
 
                 if ($departmentEmployees->isEmpty()) {
                     continue;
                 }
 
-                $rosterData = $payload;
-               $rosterData['branch_id'] = (int) $department->branch_id;
+                $rosterData                  = $payload;
+                $rosterData['branch_id']     = (int) $department->branch_id;
                 $rosterData['department_id'] = (int) $department->id;
-                 try {
-        $roster = Roster::create($rosterData);
-    } catch (\Throwable $e) {
-        \Log::error('Roster create failed', [
-            'data' => $rosterData,
-            'error' => $e->getMessage()
-        ]);
-        continue; 
-    }
+                try {
+                    $roster = Roster::create($rosterData);
+                } catch (\Throwable $e) {
+                    Log::error('Roster create failed', [
+                        'data'  => $rosterData,
+                        'error' => $e->getMessage(),
+                    ]);
+                    continue;
+                }
 
                 // $roster = Roster::create($rosterData);
                 $roster->load('shift');
-                 if (!$roster->shift) {
-        \Log::error('Shift not found', ['shift_id' => $roster->shift_id]);
-        continue;
-    }
+                if (! $roster->shift) {
+                    Log::error('Shift not found', ['shift_id' => $roster->shift_id]);
+                    continue;
+                }
 
                 $syncData = [];
 
